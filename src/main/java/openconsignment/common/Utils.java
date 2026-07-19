@@ -3,6 +3,8 @@ package openconsignment.common;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -63,6 +65,20 @@ public class Utils {
                 Desktop.getDesktop().open(pdfFile);
             } catch (IOException e) {
                 logger.log(Level.WARNING, "Error opening file: " + pdfFile.getAbsolutePath(), e);
+            }
+        });
+    }
+
+    public static void launchBrowser(String url) throws IOException {
+        if (!Desktop.isDesktopSupported()) {
+            throw new IOException("Desktop is not supported on this platform.");
+        }
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                logger.log(Level.WARNING, "Error opening browser link " + url, e);
             }
         });
     }

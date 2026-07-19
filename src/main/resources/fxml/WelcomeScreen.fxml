@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -8,12 +7,10 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.scene.control.Hyperlink?>
 <Group xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.WelcomeScreenController">
     <children>
         <AnchorPane id="AnchorPane" prefHeight="490.0" prefWidth="757.0">
-            <stylesheets>
-                <URL value="@welcomescreen.css" />
-            </stylesheets>
             <children>
                 <Rectangle arcHeight="50.0" arcWidth="50.0" height="469.0" layoutX="19.0" layoutY="19.0" stroke="#36016b" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="20.0" width="739.0">
                     <fill>
@@ -26,7 +23,7 @@
                         </LinearGradient>
                     </fill>
                 </Rectangle>
-                <Text layoutX="60.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OpenConsignment" textAlignment="CENTER" wrappingWidth="658.658203125">
+                <Text fx:id="organization_name" layoutX="60.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ORGANIZATION NAME" textAlignment="CENTER" wrappingWidth="658.658203125">
                     <font>
                         <Font name="System Bold Italic" size="40.0" />
                     </font>
@@ -44,11 +41,13 @@
                         <Image url="@../icons/transparent_logo.png" />
                     </image>
                 </ImageView>
-                <Text layoutX="182.0" layoutY="423.0" strokeType="OUTSIDE" strokeWidth="0.0" text="https://github.com/Razdeep/OpenConsignment" textAlignment="CENTER" wrappingWidth="414.658203125">
+                <Hyperlink layoutX="182.0" layoutY="405.0" prefWidth="400.0"
+                           text="https://github.com/Razdeep/OpenConsignment"
+                           textAlignment="CENTER" onAction="#handleOpenGithub">
                     <font>
                         <Font size="17.0" />
                     </font>
-                </Text>
+                </Hyperlink>
             </children>
         </AnchorPane>
     </children>
