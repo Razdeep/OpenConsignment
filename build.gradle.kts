@@ -27,9 +27,6 @@ dependencies {
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 
-    testCompileOnly(libs.lombok)
-    testAnnotationProcessor(libs.lombok)
-
     testImplementation(libs.testfx.junit5)
     testImplementation(libs.testfx.monocle)
     testImplementation(libs.hamcrest)
@@ -73,7 +70,7 @@ spotless {
 }
 
 application {
-    mainClass.set("satyamconsignment.Launcher")
+    mainClass.set("openconsignment.Launcher")
 }
 
 tasks.named<JavaExec>("run") {

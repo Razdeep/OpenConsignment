@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 <Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="satyamconsignment.controller.entry.bill.BillEntryController">
+       fx:controller="openconsignment.controller.entry.bill.BillEntryController">
     <children>
         <AnchorPane prefHeight="688.0" prefWidth="785.0">
             <children>

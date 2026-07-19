@@ -9,7 +9,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <Group xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="satyamconsignment.controller.master.TransportController">
+       fx:controller="openconsignment.controller.master.TransportController">
     <children>
         <AnchorPane id="AnchorPane" prefHeight="536.0" prefWidth="672.0" styleClass="mainFxmlClass">
             <children>

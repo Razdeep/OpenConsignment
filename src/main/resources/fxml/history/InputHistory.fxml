@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 <Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="satyamconsignment.controller.history.BillHistoryController">
+       fx:controller="openconsignment.controller.history.BillHistoryController">
     <children>
         <AnchorPane id="AnchorPane" prefHeight="548.0" prefWidth="621.0" styleClass="mainFxmlClass">
             <children>

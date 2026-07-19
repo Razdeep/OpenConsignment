@@ -9,7 +9,7 @@
 <?import javafx.scene.control.Button?>
 
 <Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="satyamconsignment.controller.entry.EntryController">
+       fx:controller="openconsignment.controller.entry.EntryController">
     <children>
         <Rectangle arcHeight="5.0" arcWidth="5.0" height="218.0" layoutX="5.0" layoutY="161.0" stroke="BLACK"
                    strokeType="INSIDE" width="686.0">

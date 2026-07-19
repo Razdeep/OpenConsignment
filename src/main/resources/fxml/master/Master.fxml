@@ -8,7 +8,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="satyamconsignment.controller.master.MasterController">
+       fx:controller="openconsignment.controller.master.MasterController">
     <children>
         <Text layoutX="246.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Master"
               wrappingWidth="167.00001107156277">

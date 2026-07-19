@@ -8,7 +8,7 @@
 <?import javafx.scene.control.RadioButton?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="400.0" prefWidth="600.0"
             styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.111"
-            fx:controller="satyamconsignment.controller.report.BuyerLedgerController">
+            fx:controller="openconsignment.controller.report.BuyerLedgerController">
     <children>
         <RadioButton fx:id="buyer_ledger_radio" layoutX="35.0" layoutY="194.0" selected="true" text="Buyer Ledger">
             <font>

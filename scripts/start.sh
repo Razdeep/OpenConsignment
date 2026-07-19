@@ -11,4 +11,4 @@ java --module-path "$JAVAFX_MODULE_PATH" \
 	--add-exports javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED \
 	--add-exports javafx.base/com.sun.javafx.binding=ALL-UNNAMED \
 	--add-exports javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED \
-	-jar SatyamConsignment.jar
+	-jar OpenConsignment.jar

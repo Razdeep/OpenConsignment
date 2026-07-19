@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<Group fx:id="root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="satyamconsignment.controller.report.ReportController">
+<Group fx:id="root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.report.ReportController">
     <children>
         <Rectangle arcHeight="5.0" arcWidth="5.0" height="263.0" layoutX="5.0" layoutY="161.0" stroke="BLACK" strokeType="INSIDE" width="800.0">
             <fill>
