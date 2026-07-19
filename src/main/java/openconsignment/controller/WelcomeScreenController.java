@@ -1,24 +1,38 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package openconsignment.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.text.Text;
+import openconsignment.common.Constants;
+import openconsignment.common.Utils;
 
-/**
- * FXML Controller class
- *
- * @author ADMIN
- */
 public class WelcomeScreenController implements Initializable {
 
-    /** Initializes the controller class. */
+    @FXML
+    private Text organization_name;
+
+    @FXML
+    private void handleOpenGithub(ActionEvent event) {
+        Hyperlink link = (Hyperlink) event.getSource();
+        String url = link.getText();
+
+        try {
+            Utils.launchBrowser(url);
+        } catch (IOException ex) {
+            Utils.showAlert(ex.toString());
+            Logger.getLogger(WelcomeScreenController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        organization_name.setText(Constants.ORGANIZATION_NAME);
     }
 }
