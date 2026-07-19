@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="satyamconsignment.controller.entry.bill.ViewDeleteBillController"
+            fx:controller="openconsignment.controller.entry.bill.ViewDeleteBillController"
             minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
     <Text layoutX="108.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0"
           text="Enter Bill No. to get details" wrappingWidth="208.849609375">

@@ -15,7 +15,7 @@
 
 <AnchorPane prefHeight="554.0" prefWidth="972.0" style="-fx-background-color: #f1ff59;"
             xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="satyamconsignment.controller.entry.collection.AddCollectionController">
+            fx:controller="openconsignment.controller.entry.collection.AddCollectionController">
     <Text layoutX="58.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Buyer"
           wrappingWidth="99.90430307388306">
         <font>

@@ -8,7 +8,7 @@
 <?import javafx.scene.control.DatePicker?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/8.0.111"
-            fx:controller="satyamconsignment.controller.report.TransportLedgerController">
+            fx:controller="openconsignment.controller.report.TransportLedgerController">
     <children>
         <ComboBox fx:id="transport_name_combo" layoutX="237.0" layoutY="106.0" prefHeight="25.0" prefWidth="254.0"/>
         <DatePicker fx:id="from_date" layoutX="116.0" layoutY="216.0" prefHeight="28.0" prefWidth="137.0"/>

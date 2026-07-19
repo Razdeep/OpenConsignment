@@ -7,7 +7,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="satyamconsignment.controller.entry.collection.ViewDeleteCollectionController"
+            fx:controller="openconsignment.controller.entry.collection.ViewDeleteCollectionController"
             prefHeight="180.0" prefWidth="200.0">
     <Text layoutX="23.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0"
           text="Buyer Name" wrappingWidth="99.90430307388306">

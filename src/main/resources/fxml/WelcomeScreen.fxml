@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<Group xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="satyamconsignment.controller.WelcomeScreenController">
+<Group xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.WelcomeScreenController">
     <children>
         <AnchorPane id="AnchorPane" prefHeight="490.0" prefWidth="757.0">
             <stylesheets>
@@ -19,14 +19,14 @@
                     <fill>
                         <LinearGradient endX="1.0" endY="1.0">
                             <stops>
-                                <Stop color="#00ffba" />
-                                <Stop color="#00ffba" offset="0.007662835249042145" />
-                                <Stop color="#0062ff" offset="1.0" />
+                                <Stop color="#0062ff" offset="0.0000001" />
+                                <Stop color="#00ffba" offset="0.5" />
+                                <Stop color="#00ffba" offset="1.0" />
                             </stops>
                         </LinearGradient>
                     </fill>
                 </Rectangle>
-                <Text layoutX="60.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Satyam Consignment" textAlignment="CENTER" wrappingWidth="658.658203125">
+                <Text layoutX="60.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OpenConsignment" textAlignment="CENTER" wrappingWidth="658.658203125">
                     <font>
                         <Font name="System Bold Italic" size="40.0" />
                     </font>
@@ -39,17 +39,12 @@
                         </LinearGradient>
                     </fill>
                 </Text>
-                <Text layoutX="110.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Developed &amp; maintained by Rajdeep Roy Chowdhury" textAlignment="CENTER" wrappingWidth="558.658203125">
-                    <font>
-                        <Font name="System Italic" size="20.0" />
-                    </font>
-                </Text>
                 <ImageView fitHeight="236.0" fitWidth="255.0" layoutX="268.0" layoutY="145.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../icons/Icon.png" />
+                        <Image url="@../icons/transparent_logo.png" />
                     </image>
                 </ImageView>
-                <Text layoutX="182.0" layoutY="423.0" strokeType="OUTSIDE" strokeWidth="0.0" text="https://github.com/Razdeep/SatyamConsignment" textAlignment="CENTER" wrappingWidth="414.658203125">
+                <Text layoutX="182.0" layoutY="423.0" strokeType="OUTSIDE" strokeWidth="0.0" text="https://github.com/Razdeep/OpenConsignment" textAlignment="CENTER" wrappingWidth="414.658203125">
                     <font>
                         <Font size="17.0" />
                     </font>

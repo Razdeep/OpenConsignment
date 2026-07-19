@@ -1,4 +1,4 @@
-rootProject.name = "SatyamConsignment"
+rootProject.name = "OpenConsignment"
 
 pluginManagement {
     repositories {
