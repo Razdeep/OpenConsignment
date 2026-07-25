@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SupplierLedger" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2b5461f1-4580-477e-9d69-6885b2c7bb67">
+	<parameter name="organizationName"/>
 	<parameter name="supplierName"/>
 	<field name="billNo"/>
 	<field name="billDate"/>
@@ -29,7 +30,7 @@
 	</background>
 	<title>
 		<band height="41" splitType="Stretch">
-			<staticText>
+			<textField>
 				<reportElement x="1" y="6" width="210" height="30" uuid="28592f8c-7d39-4d94-ae26-3f6ae5dbe0cb">
 					<property name="fontSize" value="20"/>
 				</reportElement>
@@ -39,8 +40,8 @@
 				<textElement textAlignment="Center">
 					<font size="19"/>
 				</textElement>
-				<text><![CDATA[SATYAM AGENCIES]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{organizationName}]]></textFieldExpression>
+			</textField>
 			<textField>
 				<reportElement x="209" y="0" width="411" height="30" uuid="e11f7e9c-526b-4807-9cae-6aada8ebde23"/>
 				<textElement textAlignment="Center">

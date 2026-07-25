@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.jasperreports.engine.*;
+import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.model.SupplierLedgerAgeRow;
 import openconsignment.model.SupplierLedgerRow;
@@ -41,6 +42,7 @@ public class SupplierService {
     public void generatePdf(String supplierName, boolean isAgewise) throws SQLException, JRException {
 
         Map<String, Object> payload = new HashMap<>();
+        payload.put(Constants.ORGANIZATION_NAME_KEY, Constants.ORGANIZATION_NAME);
         payload.put("supplierName", supplierName);
 
         if (isAgewise) {

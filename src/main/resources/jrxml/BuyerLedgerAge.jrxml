@@ -4,6 +4,7 @@
               xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
               name="BuyerLedgerAge" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20"
               topMargin="20" bottomMargin="20" uuid="f86cb926-fbcc-4cdf-8db2-487e31f42b8a">
+    <parameter name="organizationName"/>
     <parameter name="buyerName"/>
     <field name="supplierName"/>
     <field name="billNo"/>
@@ -15,7 +16,7 @@
     </background>
     <title>
         <band height="47" splitType="Stretch">
-            <staticText>
+            <textField>
                 <reportElement x="0" y="8" width="180" height="30" uuid="63fe7772-b0d0-45e8-974e-ec50c4f7451d">
                     <property name="fontSize" value="20"/>
                 </reportElement>
@@ -25,8 +26,8 @@
                 <textElement textAlignment="Center">
                     <font size="18"/>
                 </textElement>
-                <text><![CDATA[SATYAM AGENCIES]]></text>
-            </staticText>
+                <textFieldExpression><![CDATA[$P{organizationName}]]></textFieldExpression>
+            </textField>
             <textField pattern="dd-MM-yyyy">
                 <reportElement x="450" y="14" width="100" height="19" uuid="ad9b4073-2ddb-497f-9aa5-cf76f1c28800"/>
                 <textElement textAlignment="Center">
