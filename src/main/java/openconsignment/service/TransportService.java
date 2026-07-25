@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.jasperreports.engine.*;
+import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.model.TransportLedgerRow;
 import openconsignment.repository.TransportRepository;
@@ -38,6 +39,7 @@ public class TransportService {
                 transportRepository.getTransportReportFor(transportName, fromDate, toDate);
 
         Map<String, Object> payload = new HashMap<>();
+        payload.put(Constants.ORGANIZATION_NAME_KEY, Constants.ORGANIZATION_NAME);
         payload.put("transportName", transportName);
         payload.put("fromDate", fromDate);
         payload.put("toDate", toDate);
