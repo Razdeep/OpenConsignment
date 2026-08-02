@@ -13,6 +13,7 @@ monocle = "17.0.10"
 hamcrest = "2.2"
 #junit = "5.10.1"
 junitbom = "5.10.2"
+mockito = "5.14.2"
 
 spotless = "7.0.2"
 shadow = "7.1.2"
@@ -46,6 +47,9 @@ hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junitbom" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
 [plugins]
 javafx = { id = "org.openjfx.javafxplugin", version.ref = "javafxPlugin" }
