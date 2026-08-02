@@ -3,6 +3,7 @@ import org.gradle.api.tasks.Copy
 plugins {
     application
     java
+    jacoco
     alias(libs.plugins.javafx)
     alias(libs.plugins.spotless)
     alias(libs.plugins.shadow)
@@ -39,6 +40,9 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(libs.testfx.core)
+
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit.jupiter)
 }
 
 javafx {
@@ -48,6 +52,7 @@ javafx {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 
     if (System.getenv("CI") == "true") {
         jvmArgs(
@@ -57,6 +62,18 @@ tasks.test {
             "-Dprism.text=t2k",
             "-Djava.awt.headless=true"
         )
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
 

@@ -30,6 +30,7 @@ import openconsignment.controller.report.SupplierLedgerController;
 import openconsignment.controller.report.TransportLedgerController;
 
 @Module
+@SuppressWarnings("unused")
 public interface ControllerModule {
 
     @Binds

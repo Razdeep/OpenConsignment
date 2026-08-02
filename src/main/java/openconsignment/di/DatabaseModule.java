@@ -16,6 +16,7 @@ import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 
 @Module
+@SuppressWarnings("unused")
 public class DatabaseModule {
 
     @Provides
