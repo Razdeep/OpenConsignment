@@ -8,14 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import openconsignment.common.DatabaseHandler;
+import javax.inject.Inject;
 
 public class SupplierRepository {
+
+    private final Connection conn;
+
+    @Inject
+    public SupplierRepository(Connection conn) {
+        this.conn = conn;
+    }
 
     public void saveSupplier(String supplierName) throws SQLException {
         try {
             String sql = "INSERT INTO `Supplier_Master_Table`(`Name`) VALUES (?);";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, supplierName);
             ps.execute();
@@ -28,7 +34,6 @@ public class SupplierRepository {
     public void deleteSupplier(String supplierName) throws SQLException {
         try {
             String sql = "DELETE FROM `Supplier_Master_Table` WHERE name=?";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, supplierName);
             ps.execute();
@@ -41,7 +46,6 @@ public class SupplierRepository {
     public void renameSupplier(String oldName, String newName) throws SQLException {
         try {
             String sql = "UPDATE `Supplier_Master_Table` SET Name=? WHERE Name=?";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, newName);
             ps.setString(2, oldName);
@@ -55,9 +59,8 @@ public class SupplierRepository {
     public List<String> getAllSuppliers() throws SQLException {
         try {
             List<String> supplierList = new ArrayList<>();
-            Connection connection = DatabaseHandler.getInstance().getConnection();
-            ResultSet supplierResultSet = connection
-                    .prepareStatement("select * from Supplier_Master_Table order by name collate nocase")
+            ResultSet supplierResultSet = conn.prepareStatement(
+                            "select * from Supplier_Master_Table order by name collate nocase")
                     .executeQuery();
             while (supplierResultSet.next()) {
                 supplierList.add(supplierResultSet.getString("name"));

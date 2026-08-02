@@ -8,14 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import openconsignment.common.DatabaseHandler;
+import javax.inject.Inject;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
 
 public class BillRepository {
 
+    private final Connection conn;
+
+    @Inject
+    public BillRepository(Connection conn) {
+        this.conn = conn;
+    }
+
     public void save(BillEntity billEntity) throws SQLException {
-        Connection connection = DatabaseHandler.getInstance().getConnection();
         try {
             // language=sql
             String sql =
@@ -25,9 +31,9 @@ public class BillRepository {
                             + "`Transport`=excluded.`Transport`, `LR Date`=excluded.`LR Date`, `Bill Amount`=excluded.`Bill Amount`, "
                             + "`Collection Due`=excluded.`Collection Due`, `Due`=excluded.`Due`;";
 
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billEntity.getSupplierName());
             preparedStatement.setString(2, billEntity.getBuyerName());
             preparedStatement.setString(3, billEntity.getBillNo());
@@ -42,16 +48,16 @@ public class BillRepository {
             if (null != billEntity.getLrEntities()) {
                 for (LREntity lr : billEntity.getLrEntities()) {
                     sql = "INSERT INTO `LR_Table`(`Bill No.`,`LR No.`,`PM`) VALUES (?,?,?)";
-                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement = conn.prepareStatement(sql);
                     preparedStatement.setString(1, billEntity.getBillNo());
                     preparedStatement.setString(2, lr.getLrNo());
                     preparedStatement.setString(3, lr.getPm());
                     preparedStatement.execute();
                 }
             }
-            connection.commit();
+            conn.commit();
         } catch (SQLException ex) {
-            connection.rollback();
+            conn.rollback();
             Logger.getLogger(BillRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
             throw ex;
         }
@@ -59,9 +65,8 @@ public class BillRepository {
 
     public BillEntity getBill(String billNo) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             String sql = "select * from `Bill_Entry_Table` where `Bill No.`=? collate nocase";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet billResultSet = preparedStatement.executeQuery();
 
@@ -80,7 +85,7 @@ public class BillRepository {
                     .build();
 
             sql = "select * from `LR_Table` where `Bill No.`=? collate nocase";
-            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet lrPmResultSet = preparedStatement.executeQuery();
 
@@ -101,24 +106,21 @@ public class BillRepository {
     }
 
     public void deleteBill(String billNo) throws SQLException {
-
-        Connection connection = DatabaseHandler.getInstance().getConnection();
-
         try {
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
             String sql = "DELETE FROM `Bill_Entry_Table` where `Bill No.`=? collate nocase";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             preparedStatement.execute();
 
             String sql2 = "DELETE FROM `LR_Table` where `Bill No.`=? collate nocase";
-            preparedStatement = connection.prepareStatement(sql2);
+            preparedStatement = conn.prepareStatement(sql2);
             preparedStatement.setString(1, billNo);
             preparedStatement.execute();
 
-            connection.commit();
+            conn.commit();
         } catch (SQLException ex) {
-            connection.rollback();
+            conn.rollback();
             Logger.getLogger(BillRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
             throw ex;
         }
@@ -128,7 +130,6 @@ public class BillRepository {
         List<BillEntity> res = new ArrayList<>();
         try {
             String sql = "SELECT * FROM `Bill_Entry_Table`;";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

@@ -15,15 +15,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javax.inject.Inject;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
 import openconsignment.entity.PaymentItemEntity;
 import openconsignment.model.PaymentItem;
-import openconsignment.repository.BillRepository;
-import openconsignment.repository.PaymentRepository;
-import openconsignment.repository.SupplierRepository;
 import openconsignment.service.BillService;
 import openconsignment.service.PaymentService;
 import openconsignment.service.SupplierService;
@@ -124,16 +122,20 @@ public class AddPaymentController implements Initializable {
     @FXML
     private Text last_voucher_field;
 
-    private BillService billService;
-    private PaymentService paymentService;
-    private SupplierService supplierService;
+    private final BillService billService;
+    private final PaymentService paymentService;
+    private final SupplierService supplierService;
+
+    @Inject
+    public AddPaymentController(
+            BillService billService, PaymentService paymentService, SupplierService supplierService) {
+        this.billService = billService;
+        this.paymentService = paymentService;
+        this.supplierService = supplierService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        billService = new BillService(new BillRepository());
-        paymentService = new PaymentService(new PaymentRepository());
-        supplierService = new SupplierService(new SupplierRepository(), new PaymentService(new PaymentRepository()));
-
         paymentItems = new ArrayList<>();
         supplierNameComboList = new ArrayList<>();
         billNoComboList = new ArrayList<>();

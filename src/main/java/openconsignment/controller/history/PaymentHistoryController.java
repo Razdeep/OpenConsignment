@@ -13,9 +13,9 @@ import javafx.scene.Group;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.PaymentEntity;
-import openconsignment.repository.PaymentRepository;
 import openconsignment.service.PaymentService;
 
 public class PaymentHistoryController implements Initializable {
@@ -38,10 +38,15 @@ public class PaymentHistoryController implements Initializable {
     @FXML
     private TableColumn<PaymentEntity, String> total_amount_col;
 
+    private final PaymentService paymentService;
+
+    @Inject
+    public PaymentHistoryController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        PaymentService paymentService = new PaymentService(new PaymentRepository());
-
         voucher_no_col.setCellValueFactory(new PropertyValueFactory<>("voucherNo"));
         voucher_date_col.setCellValueFactory(new PropertyValueFactory<>("voucherDate"));
         supplier_name_col.setCellValueFactory(new PropertyValueFactory<>("supplierName"));

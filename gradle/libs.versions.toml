@@ -6,6 +6,7 @@ sqlite = "3.34.0"
 olap4j = "1.2.0"
 #itext = "2.1.7"
 lombok = "1.18.20"
+dagger = "2.52"
 testfx = "4.0.18"
 testfxCore = "4.0.17"
 monocle = "17.0.10"
@@ -30,6 +31,9 @@ javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javaf
 javafx-fxml = { module = "org.openjfx:javafx-fxml", version.ref = "javafx" }
 
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 
 testfx-junit5 = { module = "org.testfx:testfx-junit5", version.ref = "testfx" }
 testfx-core = { module = "org.testfx:testfx-core", version.ref = "testfxCore" }

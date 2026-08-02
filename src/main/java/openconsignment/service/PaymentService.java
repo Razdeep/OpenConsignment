@@ -4,16 +4,20 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.sf.jasperreports.engine.JRException;
 import openconsignment.common.Utils;
 import openconsignment.entity.*;
 import openconsignment.model.SupplierLedgerRow;
 import openconsignment.repository.PaymentRepository;
 
+@Singleton
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
+    @Inject
     public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }

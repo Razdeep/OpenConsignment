@@ -13,9 +13,9 @@ import javafx.scene.Group;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
-import openconsignment.repository.BillRepository;
 import openconsignment.service.BillService;
 
 public class BillHistoryController implements Initializable {
@@ -47,10 +47,15 @@ public class BillHistoryController implements Initializable {
     @FXML
     private TableView<BillEntity> tableView;
 
+    private final BillService billService;
+
+    @Inject
+    public BillHistoryController(BillService billService) {
+        this.billService = billService;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        BillService billService = new BillService(new BillRepository());
-
         supplier_name_col.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
         buyer_name_col.setCellValueFactory(new PropertyValueFactory<>("buyerName"));
         bill_no_col.setCellValueFactory(new PropertyValueFactory<>("billNo"));

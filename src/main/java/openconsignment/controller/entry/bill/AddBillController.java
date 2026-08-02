@@ -14,11 +14,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
 import openconsignment.model.LR;
-import openconsignment.repository.*;
 import openconsignment.service.*;
 import org.controlsfx.control.textfield.TextFields;
 
@@ -77,18 +77,26 @@ public class AddBillController implements Initializable {
 
     final ObservableList<LR> lrList = FXCollections.observableArrayList();
 
-    private BillService billService;
+    private final BillService billService;
+    private final SupplierService supplierService;
+    private final BuyerService buyerService;
+    private final TransportService transportService;
+
+    @Inject
+    public AddBillController(
+            BillService billService,
+            SupplierService supplierService,
+            BuyerService buyerService,
+            TransportService transportService) {
+        this.billService = billService;
+        this.supplierService = supplierService;
+        this.buyerService = buyerService;
+        this.transportService = transportService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            billService = new BillService(new BillRepository());
-            SupplierService supplierService =
-                    new SupplierService(new SupplierRepository(), new PaymentService(new PaymentRepository()));
-            BuyerService buyerService =
-                    new BuyerService(new BuyerRepository(), new CollectionService(new CollectionRepository()));
-            TransportService transportService = new TransportService(new TransportRepository());
-
             TextFields.bindAutoCompletion(supplier_field, supplierService.getAllSuppliers());
             TextFields.bindAutoCompletion(buyer_name_field, buyerService.getAllBuyers());
             TextFields.bindAutoCompletion(transport_field, transportService.getAllTransports());

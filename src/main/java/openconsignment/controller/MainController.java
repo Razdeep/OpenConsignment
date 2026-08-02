@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
+import javax.inject.Inject;
 import openconsignment.common.ViewLoader;
 
 public class MainController implements Initializable {
@@ -27,11 +28,15 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem welcome_screen;
 
-    private ViewLoader viewLoader;
+    private final ViewLoader viewLoader;
+
+    @Inject
+    public MainController(ViewLoader viewLoader) {
+        this.viewLoader = viewLoader;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        viewLoader = new ViewLoader();
         viewLoader.loadCenter("/fxml/WelcomeScreen.fxml", root);
     }
 

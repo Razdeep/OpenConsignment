@@ -13,12 +13,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.CollectionEntity;
 import openconsignment.model.CollectionItem;
-import openconsignment.repository.CollectionRepository;
 import openconsignment.service.CollectionService;
 
 public class ViewDeleteCollectionController implements Initializable {
@@ -75,12 +75,15 @@ public class ViewDeleteCollectionController implements Initializable {
     @FXML
     private Button print_btn;
 
-    private CollectionService collectionService;
+    private final CollectionService collectionService;
+
+    @Inject
+    public ViewDeleteCollectionController(CollectionService collectionService) {
+        this.collectionService = collectionService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        collectionService = new CollectionService(new CollectionRepository());
-
         collectionItemList = FXCollections.observableArrayList();
 
         bill_no_col.setCellValueFactory(new PropertyValueFactory<>("billNo"));

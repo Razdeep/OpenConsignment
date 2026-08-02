@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import openconsignment.common.DatabaseHandler;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.CollectionEntity;
@@ -17,9 +17,15 @@ import openconsignment.model.BuyerLedgerRow;
 
 public class CollectionRepository {
 
+    private final Connection conn;
+
+    @Inject
+    public CollectionRepository(Connection conn) {
+        this.conn = conn;
+    }
+
     public List<BillEntity> fetchPendingBillsForBuyer(String buyerName) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql =
                     """
@@ -83,7 +89,7 @@ public class CollectionRepository {
                         from
                             cte_final;
                     """;
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, buyerName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -105,7 +111,6 @@ public class CollectionRepository {
 
     public int fetchPendingAmountForBillNo(String billNo) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql =
                     """
@@ -154,7 +159,7 @@ public class CollectionRepository {
                         from
                             cte_final;
                     """;
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -170,12 +175,11 @@ public class CollectionRepository {
     }
 
     public void saveCollection(CollectionEntity collectionEntity) throws SQLException {
-        Connection connection = DatabaseHandler.getInstance().getConnection();
         try {
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
             String sql =
                     "INSERT INTO `Collection_Entry_Table`(`Voucher No.`,`Voucher Date`,`Buyer Name`,`Total Amount`) VALUES (?,?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, collectionEntity.getVoucherNo());
             preparedStatement.setString(2, collectionEntity.getVoucherDate());
             preparedStatement.setString(3, collectionEntity.getBuyerName());
@@ -212,7 +216,7 @@ public class CollectionRepository {
             if (null != collectionEntity.getItems()) {
                 for (CollectionItemEntity collectionItem : collectionEntity.getItems()) {
 
-                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement = conn.prepareStatement(sql);
                     preparedStatement.setString(1, collectionEntity.getVoucherNo());
                     preparedStatement.setString(2, collectionItem.getSupplierName());
                     preparedStatement.setString(3, collectionItem.getBillNo());
@@ -228,10 +232,10 @@ public class CollectionRepository {
                 }
             }
 
-            connection.commit();
+            conn.commit();
 
         } catch (SQLException ex) {
-            connection.rollback();
+            conn.rollback();
             Logger.getLogger(CollectionRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
             throw ex;
         }
@@ -239,10 +243,9 @@ public class CollectionRepository {
 
     public String getLastVoucher() throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql = "SELECT MAX(`Voucher No.`) from `COLLECTION_ENTRY_TABLE`;";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
         } catch (SQLException ex) {
@@ -254,10 +257,8 @@ public class CollectionRepository {
     public CollectionEntity getCollection(String voucherNo) throws SQLException {
 
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
-
             String sql = "select * from `Collection_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             ResultSet collectionResultSet = preparedStatement.executeQuery();
 
@@ -277,7 +278,7 @@ public class CollectionRepository {
             }
 
             sql = "select * from `Collection_Entry_Table` where `Voucher No.`=? collate nocase";
-            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             collectionResultSet = preparedStatement.executeQuery();
             if (collectionResultSet.isClosed()) {
@@ -298,27 +299,25 @@ public class CollectionRepository {
     }
 
     public void deleteCollection(String voucherNo) throws SQLException {
-        Connection connection = DatabaseHandler.getInstance().getConnection();
-
         try {
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
             String sql = "DELETE FROM `Collection_Entry_Table` where `Voucher No.`=? collate nocase";
 
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
 
             sql = "DELETE FROM `Collection_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
 
-            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
-            connection.commit();
+            conn.commit();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             Logger.getLogger(CollectionRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
-            connection.rollback();
+            conn.rollback();
         }
     }
 
@@ -326,7 +325,6 @@ public class CollectionRepository {
         try {
             List<CollectionEntity> res = new ArrayList<>();
             String sql = "SELECT * FROM `Collection_Entry_Table`;";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -347,7 +345,6 @@ public class CollectionRepository {
 
     public List<BuyerLedgerRow> getCollectionDetailsForBuyer(String buyerName) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql =
                     """
@@ -356,7 +353,7 @@ public class CollectionRepository {
                         join `Collection_Entry_Table` using ("Voucher No."))
                         using("Bill No.") where `Bill_Entry_Table`.`Buyer Name`=?
                     """;
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, buyerName);
             ResultSet resultSet = preparedStatement.executeQuery();
 

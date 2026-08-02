@@ -19,6 +19,9 @@ dependencies {
     implementation(libs.olap4j)
 //    implementation(libs.itext)
 
+    implementation(libs.dagger)
+    annotationProcessor(libs.dagger.compiler)
+
     implementation(libs.javafx.controls)
     implementation(libs.javafx.base)
     implementation(libs.javafx.graphics)

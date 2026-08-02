@@ -12,11 +12,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
-import openconsignment.repository.BuyerRepository;
-import openconsignment.repository.CollectionRepository;
 import openconsignment.service.BuyerService;
-import openconsignment.service.CollectionService;
 
 public class BuyerController implements Initializable {
 
@@ -41,11 +39,15 @@ public class BuyerController implements Initializable {
     @FXML
     private TextField rename_field;
 
-    private BuyerService buyerService;
+    private final BuyerService buyerService;
+
+    @Inject
+    public BuyerController(BuyerService buyerService) {
+        this.buyerService = buyerService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        buyerService = new BuyerService(new BuyerRepository(), new CollectionService(new CollectionRepository()));
         refreshList();
     }
 

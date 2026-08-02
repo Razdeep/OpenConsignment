@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import openconsignment.common.DatabaseHandler;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
@@ -17,13 +17,19 @@ import openconsignment.model.SupplierLedgerRow;
 
 public class PaymentRepository {
 
+    private final Connection conn;
+
+    @Inject
+    public PaymentRepository(Connection conn) {
+        this.conn = conn;
+    }
+
     public void savePayment(PaymentEntity paymentEntity) throws SQLException {
-        Connection connection = DatabaseHandler.getInstance().getConnection();
         try {
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
             String sql =
                     "INSERT INTO `Payment_Entry_Table`(`Voucher No.`,`Voucher Date`,`Supplier Name`,`Total Amount`) VALUES (?,?,?,?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, paymentEntity.getVoucherNo());
             preparedStatement.setString(2, paymentEntity.getVoucherDate());
             preparedStatement.setString(3, paymentEntity.getSupplierName());
@@ -36,7 +42,7 @@ public class PaymentRepository {
             if (null != paymentEntity.getItems()) {
                 for (PaymentItemEntity paymentItem : paymentEntity.getItems()) {
 
-                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement = conn.prepareStatement(sql);
                     preparedStatement.setString(1, paymentEntity.getVoucherNo());
                     preparedStatement.setString(2, paymentItem.getBuyerName());
                     preparedStatement.setString(3, paymentItem.getBillNo());
@@ -51,16 +57,15 @@ public class PaymentRepository {
                     preparedStatement.execute();
                 }
             }
-            connection.commit();
+            conn.commit();
         } catch (SQLException ex) {
-            connection.rollback();
+            conn.rollback();
             Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
         }
     }
 
     public List<BillEntity> fetchPendingBillsForSupplier(String supplierName) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql =
                     """
@@ -124,7 +129,7 @@ public class PaymentRepository {
                         from
                             cte_final;
                     """;
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, supplierName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -146,7 +151,6 @@ public class PaymentRepository {
 
     public int fetchPendingAmountForBillNo(String billNo) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql =
                     """
@@ -195,7 +199,7 @@ public class PaymentRepository {
                         from
                             cte_final;
                     """;
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -212,10 +216,9 @@ public class PaymentRepository {
 
     public String getLastVoucher() throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql = "SELECT MAX(`Voucher No.`) from `PAYMENT_ENTRY_TABLE`;";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
         } catch (SQLException ex) {
@@ -226,8 +229,6 @@ public class PaymentRepository {
 
     public PaymentEntity getPayment(String voucherNo) throws SQLException {
         try {
-            Connection conn = DatabaseHandler.getInstance().getConnection();
-
             String sql = "select * from `Payment_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, voucherNo);
@@ -276,27 +277,25 @@ public class PaymentRepository {
     }
 
     public void deletePayment(String voucherNo) throws SQLException {
-        Connection connection = DatabaseHandler.getInstance().getConnection();
-
         try {
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
             String sql = "DELETE FROM `Payment_Entry_Table` where `Voucher No.`=? collate nocase";
 
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
 
             sql = "DELETE FROM `Payment_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
 
-            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
-            connection.commit();
+            conn.commit();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
-            connection.rollback();
+            conn.rollback();
         }
     }
 
@@ -304,7 +303,6 @@ public class PaymentRepository {
         try {
             List<PaymentEntity> res = new ArrayList<>();
             String sql = "SELECT * FROM `Payment_Entry_Table`;";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -325,7 +323,6 @@ public class PaymentRepository {
 
     public List<SupplierLedgerRow> getPaymentDetailsForSupplier(String supplierName) throws SQLException {
         try {
-            Connection connection = DatabaseHandler.getInstance().getConnection();
             // language=sql
             String sql =
                     """
@@ -335,7 +332,7 @@ public class PaymentRepository {
                         using("Bill No.") where `Bill_Entry_Table`.`Supplier Name`=?
                         order by `Bill_Entry_Table`.`Bill No.`
                     """;
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, supplierName);
             ResultSet resultSet = preparedStatement.executeQuery();
 

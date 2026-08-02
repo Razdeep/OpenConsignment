@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
@@ -12,10 +14,12 @@ import openconsignment.entity.CollectionItemEntity;
 import openconsignment.model.BuyerLedgerRow;
 import openconsignment.repository.CollectionRepository;
 
+@Singleton
 public class CollectionService {
 
     private final CollectionRepository collectionRepository;
 
+    @Inject
     public CollectionService(CollectionRepository collectionRepository) {
         this.collectionRepository = collectionRepository;
     }

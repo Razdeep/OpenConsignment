@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
+import javax.inject.Inject;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 
@@ -17,6 +18,9 @@ public class WelcomeScreenController implements Initializable {
 
     @FXML
     private Text organization_name;
+
+    @Inject
+    public WelcomeScreenController() {}
 
     @FXML
     private void handleOpenGithub(ActionEvent event) {
