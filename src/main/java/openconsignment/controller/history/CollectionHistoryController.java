@@ -13,9 +13,9 @@ import javafx.scene.Group;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.CollectionEntity;
-import openconsignment.repository.CollectionRepository;
 import openconsignment.service.CollectionService;
 
 public class CollectionHistoryController implements Initializable {
@@ -38,10 +38,15 @@ public class CollectionHistoryController implements Initializable {
     @FXML
     private TableColumn<CollectionEntity, String> total_amount_col;
 
+    private final CollectionService collectionService;
+
+    @Inject
+    public CollectionHistoryController(CollectionService collectionService) {
+        this.collectionService = collectionService;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        CollectionService collectionService = new CollectionService(new CollectionRepository());
-
         voucher_no_col.setCellValueFactory(new PropertyValueFactory<>("voucherNo"));
         voucher_date_col.setCellValueFactory(new PropertyValueFactory<>("voucherDate"));
         buyer_name_col.setCellValueFactory(new PropertyValueFactory<>("buyerName"));

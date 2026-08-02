@@ -14,10 +14,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javax.inject.Inject;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
-import openconsignment.repository.TransportRepository;
 import openconsignment.service.TransportService;
 
 public class TransportLedgerController implements Initializable {
@@ -40,11 +40,15 @@ public class TransportLedgerController implements Initializable {
     @FXML
     private Button launch_report_btn;
 
-    private TransportService transportService;
+    private final TransportService transportService;
+
+    @Inject
+    public TransportLedgerController(TransportService transportService) {
+        this.transportService = transportService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        transportService = new TransportService(new TransportRepository());
         try {
             List<String> transportList = transportService.getAllTransports();
             transport_name_combo.setItems(FXCollections.observableArrayList(transportList));

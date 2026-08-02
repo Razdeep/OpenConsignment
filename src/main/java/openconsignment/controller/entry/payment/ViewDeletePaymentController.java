@@ -13,13 +13,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
-import openconsignment.common.DatabaseHandler;
 import openconsignment.common.Utils;
 import openconsignment.entity.PaymentEntity;
 import openconsignment.model.PaymentItem;
-import openconsignment.repository.PaymentRepository;
 import openconsignment.service.PaymentService;
 
 public class ViewDeletePaymentController implements Initializable {
@@ -78,13 +77,17 @@ public class ViewDeletePaymentController implements Initializable {
     @FXML
     private Button print_payment_btn;
 
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
+    private final Connection conn;
+
+    @Inject
+    public ViewDeletePaymentController(PaymentService paymentService, Connection conn) {
+        this.paymentService = paymentService;
+        this.conn = conn;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        paymentService = new PaymentService(new PaymentRepository());
-
         bill_no_col.setCellValueFactory(new PropertyValueFactory<>("billNo"));
         bill_amt_col.setCellValueFactory(new PropertyValueFactory<>("billAmount"));
         buyer_col.setCellValueFactory(new PropertyValueFactory<>("buyerName"));
@@ -151,8 +154,6 @@ public class ViewDeletePaymentController implements Initializable {
         if (alert.getResult() != ButtonType.YES) {
             return;
         }
-
-        Connection conn = DatabaseHandler.getInstance().getConnection();
 
         try {
             paymentService.deletePayment(voucher_no_field.getText());

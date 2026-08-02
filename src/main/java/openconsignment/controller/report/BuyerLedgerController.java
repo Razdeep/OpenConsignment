@@ -15,13 +15,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javax.inject.Inject;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
-import openconsignment.repository.BuyerRepository;
-import openconsignment.repository.CollectionRepository;
 import openconsignment.service.BuyerService;
-import openconsignment.service.CollectionService;
 
 public class BuyerLedgerController implements Initializable {
 
@@ -43,11 +41,15 @@ public class BuyerLedgerController implements Initializable {
     @FXML
     private Button launch_pdf_btn;
 
-    private BuyerService buyerService;
+    private final BuyerService buyerService;
+
+    @Inject
+    public BuyerLedgerController(BuyerService buyerService) {
+        this.buyerService = buyerService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        buyerService = new BuyerService(new BuyerRepository(), new CollectionService(new CollectionRepository()));
         try {
             List<String> buyerNames = buyerService.getAllBuyers();
             buyer_name_combo.setItems(FXCollections.observableArrayList(buyerNames));

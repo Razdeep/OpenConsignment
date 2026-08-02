@@ -15,12 +15,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javax.inject.Inject;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
-import openconsignment.repository.PaymentRepository;
-import openconsignment.repository.SupplierRepository;
-import openconsignment.service.PaymentService;
 import openconsignment.service.SupplierService;
 
 public class SupplierLedgerController implements Initializable {
@@ -43,11 +41,15 @@ public class SupplierLedgerController implements Initializable {
     @FXML
     private Button launch_pdf_btn;
 
-    private SupplierService supplierService;
+    private final SupplierService supplierService;
+
+    @Inject
+    public SupplierLedgerController(SupplierService supplierService) {
+        this.supplierService = supplierService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        supplierService = new SupplierService(new SupplierRepository(), new PaymentService(new PaymentRepository()));
         try {
             List<String> supplierList = supplierService.getAllSuppliers();
             supplier_name_combo.setItems(FXCollections.observableArrayList(supplierList));

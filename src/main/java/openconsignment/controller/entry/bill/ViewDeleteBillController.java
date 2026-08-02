@@ -11,10 +11,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
-import openconsignment.repository.BillRepository;
 import openconsignment.service.BillService;
 
 public class ViewDeleteBillController implements Initializable {
@@ -57,14 +57,17 @@ public class ViewDeleteBillController implements Initializable {
     @FXML
     private TextField bill_no_field;
 
-    private BillService billService;
+    private final BillService billService;
+
+    @Inject
+    public ViewDeleteBillController(BillService billService) {
+        this.billService = billService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lr_no_col.setCellValueFactory(new PropertyValueFactory<>("lrNo"));
         pm_col.setCellValueFactory(new PropertyValueFactory<>("pm"));
-
-        billService = new BillService(new BillRepository());
     }
 
     @FXML

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javax.inject.Inject;
 import openconsignment.common.ViewLoader;
 
 public class ReportController implements Initializable {
@@ -23,12 +24,15 @@ public class ReportController implements Initializable {
     @FXML
     private Group root;
 
-    private ViewLoader viewLoader;
+    private final ViewLoader viewLoader;
+
+    @Inject
+    public ReportController(ViewLoader viewLoader) {
+        this.viewLoader = viewLoader;
+    }
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        viewLoader = new ViewLoader();
-    }
+    public void initialize(URL url, ResourceBundle rb) {}
 
     @FXML
     private void showSupplierLedger(ActionEvent event) {

@@ -6,6 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
@@ -13,11 +15,13 @@ import openconsignment.model.SupplierLedgerAgeRow;
 import openconsignment.model.SupplierLedgerRow;
 import openconsignment.repository.SupplierRepository;
 
+@Singleton
 public class SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final PaymentService paymentService;
 
+    @Inject
     public SupplierService(SupplierRepository supplierRepository, PaymentService paymentService) {
         this.supplierRepository = supplierRepository;
         this.paymentService = paymentService;

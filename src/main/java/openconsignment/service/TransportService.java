@@ -4,16 +4,20 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.model.TransportLedgerRow;
 import openconsignment.repository.TransportRepository;
 
+@Singleton
 public class TransportService {
 
     private final TransportRepository transportRepository;
 
+    @Inject
     public TransportService(TransportRepository transportRepository) {
         this.transportRepository = transportRepository;
     }

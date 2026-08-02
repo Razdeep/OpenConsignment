@@ -8,15 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import openconsignment.common.DatabaseHandler;
+import javax.inject.Inject;
 import openconsignment.model.TransportLedgerRow;
 
 public class TransportRepository {
 
+    private final Connection conn;
+
+    @Inject
+    public TransportRepository(Connection conn) {
+        this.conn = conn;
+    }
+
     public void saveTransport(String tranportName) throws SQLException {
         try {
             String sql = "INSERT INTO `Transport_Master_Table`(`Name`) VALUES (?);";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, tranportName);
             ps.execute();
@@ -29,7 +35,6 @@ public class TransportRepository {
     public void deleteTransport(String transportName) throws SQLException {
         try {
             String sql = "DELETE FROM `Transport_Master_Table` WHERE name=?";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, transportName);
             ps.execute();
@@ -42,7 +47,6 @@ public class TransportRepository {
     public void renameTransport(String oldName, String newName) throws SQLException {
         try {
             String sql = "UPDATE `Transport_Master_Table` SET Name=? WHERE Name=?";
-            Connection conn = DatabaseHandler.getInstance().getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, newName);
             ps.setString(2, oldName);
@@ -56,9 +60,8 @@ public class TransportRepository {
     public List<String> getAllTransports() throws SQLException {
         try {
             List<String> transportList = new ArrayList<>();
-            Connection connection = DatabaseHandler.getInstance().getConnection();
-            ResultSet transportResultSet = connection
-                    .prepareStatement("select * from Transport_Master_Table order by name collate nocase")
+            ResultSet transportResultSet = conn.prepareStatement(
+                            "select * from Transport_Master_Table order by name collate nocase")
                     .executeQuery();
             while (transportResultSet.next()) {
                 transportList.add(transportResultSet.getString("name"));
@@ -74,7 +77,6 @@ public class TransportRepository {
             throws SQLException {
         try {
             List<TransportLedgerRow> result = new ArrayList<>();
-            Connection connection = DatabaseHandler.getInstance().getConnection();
 
             // language=sql
             String sql =
@@ -91,7 +93,7 @@ public class TransportRepository {
             order by datetime(substr(`LR Date`, 7, 4)||'-'||substr(`LR Date`, 4, 2)||'-'||substr(`LR Date`, 1, 2))
 """;
 
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, transportName);
             ps.setString(2, fromDate);
             ps.setString(3, fromDate);

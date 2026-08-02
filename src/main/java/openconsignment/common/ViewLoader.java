@@ -8,13 +8,25 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
+import javax.inject.Inject;
 import openconsignment.controller.MainController;
 import openconsignment.controller.entry.EntryController;
 
 public class ViewLoader {
+
+    private final Callback<Class<?>, Object> controllerFactory;
+
+    @Inject
+    public ViewLoader(Callback<Class<?>, Object> controllerFactory) {
+        this.controllerFactory = controllerFactory;
+    }
+
     public void loadRoot(String resourcePath, Group root) {
         try {
-            Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(resourcePath)));
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(resourcePath)));
+            loader.setControllerFactory(controllerFactory);
+            Parent parent = loader.load();
             root.getChildren().setAll(parent);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
@@ -24,7 +36,9 @@ public class ViewLoader {
 
     public void loadCenter(String resourcePath, BorderPane center) {
         try {
-            Parent parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(resourcePath)));
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(resourcePath)));
+            loader.setControllerFactory(controllerFactory);
+            Parent parent = loader.load();
             center.setCenter(parent);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());

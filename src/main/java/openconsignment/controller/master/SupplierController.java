@@ -12,10 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
-import openconsignment.repository.PaymentRepository;
-import openconsignment.repository.SupplierRepository;
-import openconsignment.service.PaymentService;
 import openconsignment.service.SupplierService;
 
 public class SupplierController implements Initializable {
@@ -41,11 +39,15 @@ public class SupplierController implements Initializable {
     @FXML
     private ListView<String> listView;
 
-    private SupplierService supplierService;
+    private final SupplierService supplierService;
+
+    @Inject
+    public SupplierController(SupplierService supplierService) {
+        this.supplierService = supplierService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        supplierService = new SupplierService(new SupplierRepository(), new PaymentService(new PaymentRepository()));
         refreshList();
     }
 

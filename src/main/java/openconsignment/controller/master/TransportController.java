@@ -12,8 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javax.inject.Inject;
 import openconsignment.common.Utils;
-import openconsignment.repository.TransportRepository;
 import openconsignment.service.TransportService;
 
 public class TransportController implements Initializable {
@@ -39,11 +39,15 @@ public class TransportController implements Initializable {
     @FXML
     private TextField rename_field;
 
-    private TransportService transportService;
+    private final TransportService transportService;
+
+    @Inject
+    public TransportController(TransportService transportService) {
+        this.transportService = transportService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        transportService = new TransportService(new TransportRepository());
         refreshList();
     }
 

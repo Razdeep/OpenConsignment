@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import openconsignment.di.AppComponent;
+import openconsignment.di.DaggerAppComponent;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -13,7 +15,9 @@ public class BillEntryTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
+        AppComponent component = DaggerAppComponent.create();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
+        loader.setControllerFactory(component.controllerFactory());
 
         Parent root = loader.load();
         stage.setScene(new Scene(root));

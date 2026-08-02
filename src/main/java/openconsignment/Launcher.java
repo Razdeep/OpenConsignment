@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import openconsignment.common.Utils;
+import openconsignment.di.AppComponent;
+import openconsignment.di.DaggerAppComponent;
 
 public class Launcher extends Application {
 
@@ -26,7 +28,10 @@ public class Launcher extends Application {
             if (resource == null) {
                 throw new RuntimeException("Resource not found");
             }
-            Parent root = FXMLLoader.load(resource);
+            AppComponent component = DaggerAppComponent.create();
+            FXMLLoader loader = new FXMLLoader(resource);
+            loader.setControllerFactory(component.controllerFactory());
+            Parent root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setMaximized(true);

@@ -2,13 +2,17 @@ package openconsignment.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import openconsignment.entity.BillEntity;
 import openconsignment.repository.BillRepository;
 
+@Singleton
 public class BillService {
 
     private final BillRepository billRepository;
 
+    @Inject
     public BillService(BillRepository billRepository) {
         this.billRepository = billRepository;
     }
