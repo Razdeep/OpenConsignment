@@ -27,8 +27,16 @@ public class PaymentRepository {
     public void savePayment(PaymentEntity paymentEntity) throws SQLException {
         try {
             conn.setAutoCommit(false);
+            deletePayment(paymentEntity.getVoucherNo());
+            // language=sql
             String sql =
-                    "INSERT INTO `Payment_Entry_Table`(`Voucher No.`,`Voucher Date`,`Supplier Name`,`Total Amount`) VALUES (?,?,?,?)";
+                    """
+                    INSERT INTO `Payment_Entry_Table`(`Voucher No.`,`Voucher Date`,`Supplier Name`,`Total Amount`) VALUES (?,?,?,?)
+                    on conflict(`Voucher No.`) do update set
+                      `Voucher Date` = excluded.`Voucher Date`,
+                      `Supplier Name` = excluded.`Supplier Name`,
+                      `Total Amount` = excluded.`Total Amount`;
+""";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, paymentEntity.getVoucherNo());
             preparedStatement.setString(2, paymentEntity.getVoucherDate());

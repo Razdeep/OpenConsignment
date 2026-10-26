@@ -1,9 +1,11 @@
 package openconsignment.service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.sf.jasperreports.engine.JRException;
@@ -25,7 +27,7 @@ public class PaymentService {
     public List<String> fetchPendingBillNosForSupplier(String supplierName) throws SQLException {
         return paymentRepository.fetchPendingBillsForSupplier(supplierName).stream()
                 .map(BillEntity::getBillNo)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public List<BillEntity> fetchPendingBillsForSupplier(String supplierName) throws SQLException {

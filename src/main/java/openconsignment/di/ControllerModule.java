@@ -14,9 +14,7 @@ import openconsignment.controller.entry.bill.ViewDeleteBillController;
 import openconsignment.controller.entry.collection.AddCollectionController;
 import openconsignment.controller.entry.collection.CollectionEntryController;
 import openconsignment.controller.entry.collection.ViewDeleteCollectionController;
-import openconsignment.controller.entry.payment.AddPaymentController;
 import openconsignment.controller.entry.payment.PaymentEntryController;
-import openconsignment.controller.entry.payment.ViewDeletePaymentController;
 import openconsignment.controller.history.BillHistoryController;
 import openconsignment.controller.history.CollectionHistoryController;
 import openconsignment.controller.history.PaymentHistoryController;
@@ -135,16 +133,6 @@ public interface ControllerModule {
     @IntoMap
     @ClassKey(ViewDeleteBillController.class)
     Object bindViewDeleteBillController(ViewDeleteBillController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(AddPaymentController.class)
-    Object bindAddPaymentController(AddPaymentController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(ViewDeletePaymentController.class)
-    Object bindViewDeletePaymentController(ViewDeletePaymentController controller);
 
     @Binds
     @IntoMap

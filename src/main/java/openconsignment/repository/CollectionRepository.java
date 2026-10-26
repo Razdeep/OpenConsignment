@@ -177,8 +177,17 @@ public class CollectionRepository {
     public void saveCollection(CollectionEntity collectionEntity) throws SQLException {
         try {
             conn.setAutoCommit(false);
+            deleteCollection(collectionEntity.getVoucherNo());
+            // language=sql
             String sql =
-                    "INSERT INTO `Collection_Entry_Table`(`Voucher No.`,`Voucher Date`,`Buyer Name`,`Total Amount`) VALUES (?,?,?,?)";
+                    """
+                        INSERT INTO `Collection_Entry_Table`(`Voucher No.`,`Voucher Date`,`Buyer Name`,`Total Amount`)
+                        VALUES (?,?,?,?)
+                        on conflict(`Voucher No.`) do update set
+                      `Voucher Date` = excluded.`Voucher Date`,
+                      `Buyer Name` = excluded.`Buyer Name`,
+                      `Total Amount` = excluded.`Total Amount`;
+""";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, collectionEntity.getVoucherNo());
             preparedStatement.setString(2, collectionEntity.getVoucherDate());
