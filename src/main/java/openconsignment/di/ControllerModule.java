@@ -8,9 +8,7 @@ import javafx.util.Callback;
 import openconsignment.controller.MainController;
 import openconsignment.controller.WelcomeScreenController;
 import openconsignment.controller.entry.EntryController;
-import openconsignment.controller.entry.bill.AddBillController;
 import openconsignment.controller.entry.bill.BillEntryController;
-import openconsignment.controller.entry.bill.ViewDeleteBillController;
 import openconsignment.controller.entry.collection.CollectionEntryController;
 import openconsignment.controller.entry.payment.PaymentEntryController;
 import openconsignment.controller.history.BillHistoryController;
@@ -111,16 +109,6 @@ public interface ControllerModule {
     @IntoMap
     @ClassKey(BillEntryController.class)
     Object bindBillEntryController(BillEntryController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(AddBillController.class)
-    Object bindAddBillController(AddBillController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(ViewDeleteBillController.class)
-    Object bindViewDeleteBillController(ViewDeleteBillController controller);
 
     @Binds
     @IntoMap

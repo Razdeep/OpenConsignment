@@ -32,11 +32,7 @@
 
                 <Text layoutX="628.0" layoutY="70.0" styleClass="payment-field-label" text="Supplier" />
                 <ComboBox fx:id="supplier_name_combo" layoutX="628.0" layoutY="79.0" onAction="#fillBillNoCombo" prefHeight="36.0" prefWidth="303.0" promptText="Select supplier" />
-                <Text layoutX="467.0" layoutY="150.0" styleClass="payment-field-label" text="Buyer" />
-                <TextField fx:id="buyer_name_field" editable="false" layoutX="467.0" layoutY="159.0" prefHeight="36.0" prefWidth="464.0" promptText="Filled from selected bill">
-               <font>
-                  <Font size="16.0" />
-               </font></TextField>
+
                 <Text layoutX="24.0" layoutY="150.0" styleClass="payment-field-label" text="Bill number" />
                 <ComboBox fx:id="bill_no_combo" layoutX="24.0" layoutY="159.0" onAction="#fetchBillNos" prefHeight="36.0" prefWidth="185.0" promptText="Select bill" />
 
@@ -45,6 +41,11 @@
                <font>
                   <Font size="16.0" />
                </font></TextField>
+                <Text layoutX="467.0" layoutY="150.0" styleClass="payment-field-label" text="Buyer" />
+                <TextField fx:id="buyer_name_field" editable="false" layoutX="467.0" layoutY="159.0" prefHeight="36.0" prefWidth="464.0" promptText="Filled from selected bill">
+                <font>
+                    <Font size="16.0" />
+                </font></TextField>
                 <Text layoutX="24.0" layoutY="219.0" styleClass="payment-field-label" text="Bill amount" />
                 <TextField fx:id="bill_amount_field" alignment="CENTER_RIGHT" editable="false" layoutX="24.0" layoutY="228.0" prefHeight="34.0" prefWidth="185.0" promptText="0.00">
                <font>

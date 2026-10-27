@@ -1,0 +1,141 @@
+.bill-entry {
+    -fx-background-color: #f8fbff;
+    -fx-background-radius: 8;
+}
+
+.bill-entry .bill-title {
+    -fx-text-fill: #17324f;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+}
+
+.bill-entry .bill-muted {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+}
+
+.bill-entry .bill-field-label {
+    -fx-text-fill: #49647f;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.bill-entry .bill-section-title {
+    -fx-text-fill: #17324f;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.bill-entry .text-field,
+.bill-entry .date-picker {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #cbd9e7;
+    -fx-border-radius: 5;
+    -fx-pref-height: 36;
+    -fx-font-size: 13px;
+}
+
+.bill-entry .text-field {
+    -fx-padding: 5 9;
+    -fx-text-fill: #17324f;
+    -fx-prompt-text-fill: #748397;
+}
+
+.bill-entry .date-picker,
+.bill-entry .date-picker > .text-field {
+    -fx-font-size: 16px;
+}
+
+.bill-entry .date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.bill-entry .text-field:focused,
+.bill-entry .date-picker:focused {
+    -fx-border-color: #4f91c8;
+}
+
+.bill-entry .bill-primary-button,
+.bill-entry .bill-secondary-button,
+.bill-entry .bill-danger-button {
+    -fx-background-radius: 5;
+    -fx-pref-height: 36;
+    -fx-min-width: 78;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.bill-entry .bill-primary-button {
+    -fx-background-color: #3478b8;
+    -fx-text-fill: white;
+}
+
+.bill-entry .bill-primary-button:hover {
+    -fx-background-color: #28649d;
+}
+
+.bill-entry .bill-secondary-button {
+    -fx-background-color: #e7eff8;
+    -fx-text-fill: #35536f;
+}
+
+.bill-entry .bill-secondary-button:hover {
+    -fx-background-color: #d7e5f3;
+}
+
+.bill-entry .bill-danger-button {
+    -fx-background-color: #fff1f2;
+    -fx-text-fill: #b42340;
+}
+
+.bill-entry .bill-danger-button:hover {
+    -fx-background-color: #ffe1e5;
+}
+
+.bill-entry .bill-primary-button:focused,
+.bill-entry .bill-secondary-button:focused,
+.bill-entry .bill-danger-button:focused {
+    -fx-border-color: #4f91c8;
+    -fx-border-radius: 5;
+    -fx-border-insets: -2;
+}
+
+.bill-entry .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #d5e3f0;
+    -fx-border-radius: 5;
+    -fx-padding: 1;
+}
+
+.bill-entry .table-view .column-header-background,
+.bill-entry .table-view .column-header,
+.bill-entry .table-view .filler {
+    -fx-background-color: #edf3fa;
+}
+
+.bill-entry .table-view .column-header {
+    -fx-size: 32;
+    -fx-border-color: transparent #dce6f1 #dce6f1 transparent;
+}
+
+.bill-entry .table-view .column-header .label {
+    -fx-text-fill: #49647f;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.bill-entry .bill-footer {
+    -fx-padding: 14 0 0 0;
+    -fx-border-color: #dce6f1 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.bill-entry .bill-amount-field {
+    -fx-background-color: #eaf2fa;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
