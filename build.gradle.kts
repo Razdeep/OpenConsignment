@@ -54,7 +54,10 @@ tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
 
-    if (System.getenv("CI") == "true") {
+    // Keep UI tests independent of desktop focus and native mouse permissions.
+    // Use -PheadlessTests=false when debugging tests with visible windows.
+    val headlessTests = providers.gradleProperty("headlessTests").map { it.toBoolean() }.getOrElse(true)
+    if (headlessTests) {
         jvmArgs(
             "-Dtestfx.robot=glass",
             "-Dtestfx.headless=true",

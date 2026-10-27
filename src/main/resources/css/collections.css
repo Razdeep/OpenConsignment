@@ -1,0 +1,149 @@
+.collection-page-title {
+    -fx-fill: #343c46;
+    -fx-font-size: 27px;
+    -fx-font-weight: bold;
+}
+
+.collection-entry {
+    -fx-background-color: #fffdf5;
+    -fx-background-radius: 8;
+}
+
+.collection-field-label {
+    -fx-fill: #5e594a;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.collection-muted {
+    -fx-text-fill: #77715f;
+    -fx-font-size: 12px;
+}
+
+.collection-summary,
+.collection-total-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.collection-summary {
+    -fx-text-fill: #343c46;
+}
+
+.collection-total-label {
+    -fx-fill: #343c46;
+}
+
+.collection-entry .text-field,
+.collection-entry .combo-box,
+.collection-entry .date-picker {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #dcd5c1;
+    -fx-border-radius: 5;
+    -fx-font-size: 13px;
+}
+
+.collection-entry .text-field {
+    -fx-padding: 5 8;
+    -fx-text-fill: #343c46;
+    -fx-prompt-text-fill: #817d70;
+}
+
+.collection-entry .text-field:readonly {
+    -fx-background-color: #f7f5ec;
+}
+
+.collection-entry .date-picker > .text-field {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
+
+.collection-entry .text-field:focused,
+.collection-entry .combo-box:focused,
+.collection-entry .date-picker:focused {
+    -fx-border-color: #a8791d;
+}
+
+.collection-entry .collection-total-field:readonly {
+    -fx-background-color: #f4edda;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.collection-primary-button,
+.collection-secondary-button,
+.collection-danger-button {
+    -fx-background-radius: 5;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.collection-primary-button {
+    -fx-background-color: #896219;
+    -fx-text-fill: white;
+}
+
+.collection-primary-button:hover {
+    -fx-background-color: #704e12;
+}
+
+.collection-secondary-button {
+    -fx-background-color: #eee8d7;
+    -fx-text-fill: #5e512f;
+}
+
+.collection-secondary-button:hover {
+    -fx-background-color: #e4dcc6;
+}
+
+.collection-danger-button {
+    -fx-background-color: #fff0ef;
+    -fx-text-fill: #ab3440;
+}
+
+.collection-danger-button:hover {
+    -fx-background-color: #fbe0df;
+}
+
+.collection-primary-button:focused,
+.collection-secondary-button:focused,
+.collection-danger-button:focused {
+    -fx-border-color: #a8791d;
+    -fx-border-radius: 5;
+    -fx-border-insets: -2;
+}
+
+.collection-entry .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #e1dac6;
+    -fx-border-radius: 5;
+    -fx-padding: 1;
+    -fx-selection-bar: #eee3bf;
+    -fx-selection-bar-non-focused: #f3edda;
+    -fx-selection-bar-text: #343c46;
+}
+
+.collection-entry .table-view .column-header-background,
+.collection-entry .table-view .column-header,
+.collection-entry .table-view .filler {
+    -fx-background-color: #f5f0df;
+}
+
+.collection-entry .table-view .column-header {
+    -fx-size: 32;
+    -fx-border-color: transparent #e9e1cc #e9e1cc transparent;
+}
+
+.collection-entry .table-view .column-header .label {
+    -fx-text-fill: #5e594a;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.collection-entry .table-view .placeholder .label {
+    -fx-text-fill: #77715f;
+    -fx-font-size: 12px;
+}
