@@ -112,7 +112,8 @@ class CollectionEntryTest extends ApplicationTest {
         interact(() -> {
             assertTrue(
                     lookup("#collection_tableview").queryTableView().getItems().isEmpty());
-            assertEquals("", lookup("#voucher_no_field").queryTextInputControl().getText());
+            assertEquals(
+                    "0", lookup("#voucher_no_field").queryTextInputControl().getText());
         });
     }
 

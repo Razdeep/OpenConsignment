@@ -345,8 +345,10 @@ public class PaymentEntryController implements Initializable {
 
     private void updateLastVoucher() {
         try {
-            String answer = paymentService.getLastVoucher();
-            last_voucher_field.setText("Last Voucher No. : " + answer);
+            String lastVoucher = paymentService.getLastVoucher();
+            last_voucher_field.setText("Last Voucher No. : " + lastVoucher);
+            String upcomingVoucherNo = Utils.nextVoucherNumber(lastVoucher);
+            voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             logger.log(Level.SEVERE, ex.toString(), ex);

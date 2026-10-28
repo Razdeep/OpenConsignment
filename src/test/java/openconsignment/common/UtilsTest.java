@@ -19,9 +19,37 @@ import net.sf.jasperreports.engine.JRException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 
 class UtilsTest {
+
+    @ParameterizedTest
+    @CsvSource({
+        "0, 1",
+        "1, 2",
+        "123, 124",
+        "0000, 0001",
+        "0009, 0010",
+        "0099, 0100",
+        "0999, 1000",
+        "9, 10",
+        "9999, 10000",
+        "2147483646, 2147483647"
+    })
+    void nextVoucherNumberIncrementsAndPreservesMinimumWidth(String lastVoucher, String expected) {
+        assertEquals(expected, Utils.nextVoucherNumber(lastVoucher));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", " 123", "123 ", "abc", "V-001", "12.5", "1,000", "2147483648"})
+    void nextVoucherNumberReturnsZeroForMissingOrInvalidInput(String lastVoucher) {
+        assertEquals("0", Utils.nextVoucherNumber(lastVoucher));
+    }
 
     @AfterEach
     void cleanUpGeneratedReport() throws IOException {
