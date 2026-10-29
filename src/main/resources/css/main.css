@@ -1,0 +1,18 @@
+
+
+.tab-pane .tab-header-background {
+    -fx-background-color: #e0f7fa; /* light sky blue */
+}
+
+.tab-pane .tab {
+    -fx-background-insets: 0;
+    -fx-padding: 10 15 10 15;
+    -fx-background-radius: 8 8 0 0;
+    -fx-font-weight: bold;
+    -fx-background-color: #b3e5fc;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #4fc3f7;
+    -fx-text-fill: white;
+}

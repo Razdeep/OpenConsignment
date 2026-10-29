@@ -122,4 +122,18 @@ public class Utils {
             throw ex;
         }
     }
+
+    public static String nextVoucherNumber(String lastVoucher) {
+        if (null == lastVoucher) {
+            return "0";
+        }
+        int paddingLength = lastVoucher.length();
+        String format = "%0" + paddingLength + "d";
+        try {
+            int number = Integer.parseInt(lastVoucher);
+            return String.format(format, number + 1);
+        } catch (NumberFormatException ex) {
+            return "0";
+        }
+    }
 }

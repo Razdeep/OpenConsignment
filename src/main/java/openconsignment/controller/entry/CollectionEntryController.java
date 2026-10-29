@@ -1,11 +1,14 @@
-package openconsignment.controller.entry.collection;
+package openconsignment.controller.entry;
 
 import static openconsignment.common.Utils.formatDate;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -15,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
+import net.sf.jasperreports.engine.JRException;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
@@ -25,13 +29,14 @@ import openconsignment.service.BillService;
 import openconsignment.service.BuyerService;
 import openconsignment.service.CollectionService;
 
-public class AddCollectionController implements Initializable {
+public class CollectionEntryController implements Initializable {
+
     private List<CollectionItem> collectionItemList;
     private List<String> buyerNameComboList;
     private List<String> billNoComboList;
     private int previouslyDue;
 
-    private static final Logger logger = Logger.getLogger(AddCollectionController.class.getName());
+    private static final Logger logger = Logger.getLogger(CollectionEntryController.class.getName());
 
     @FXML
     private TextField dd_no_field;
@@ -53,6 +58,12 @@ public class AddCollectionController implements Initializable {
 
     @FXML
     private TableColumn<CollectionItem, String> bill_amt_col;
+
+    @FXML
+    private TableColumn<CollectionItem, String> bill_date_col;
+
+    @FXML
+    private TableColumn<CollectionItem, String> due_col;
 
     @FXML
     private TableColumn<CollectionItem, String> supplier_col;
@@ -104,7 +115,7 @@ public class AddCollectionController implements Initializable {
     private final CollectionService collectionService;
 
     @Inject
-    public AddCollectionController(
+    public CollectionEntryController(
             BillService billService, BuyerService buyerService, CollectionService collectionService) {
         this.billService = billService;
         this.buyerService = buyerService;
@@ -118,6 +129,8 @@ public class AddCollectionController implements Initializable {
         billNoComboList = new ArrayList<>();
         bill_no_col.setCellValueFactory(new PropertyValueFactory<>("billNo"));
         bill_amt_col.setCellValueFactory(new PropertyValueFactory<>("billAmount"));
+        bill_date_col.setCellValueFactory(new PropertyValueFactory<>("billDate"));
+        due_col.setCellValueFactory(new PropertyValueFactory<>("due"));
         supplier_col.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
         amount_collection_col.setCellValueFactory(new PropertyValueFactory<>("amountCollected"));
         dd_no_col.setCellValueFactory(new PropertyValueFactory<>("ddNo"));
@@ -144,6 +157,9 @@ public class AddCollectionController implements Initializable {
 
     @FXML
     private void fillBillNoCombo() {
+        if (buyer_name.getValue() == null) {
+            return;
+        }
         try {
             billNoComboList = collectionService.fetchPendingBillNosForBuyer(buyer_name.getValue());
             bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
@@ -284,12 +300,109 @@ public class AddCollectionController implements Initializable {
     @FXML
     private void clearAllFields() {
         clearRepeatingFields();
+        previouslyDue = 0;
+        collectionItemList.clear();
+        refreshCollectionTableView();
+        updateTotalAmount();
         voucher_no_field.setText("");
         voucher_date_field.setValue(null);
         buyer_name.setDisable(false);
         buyer_name.getSelectionModel().clearSelection();
-        billNoComboList.clear();
+        billNoComboList = new ArrayList<>();
         bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
+    }
+
+    @FXML
+    private void fetchCollectionVoucher() {
+        String voucherNo = voucher_no_field.getText().trim();
+        if (voucherNo.isEmpty()) {
+            Utils.showAlert("Please enter a voucher number.", 2);
+            return;
+        }
+        try {
+            CollectionEntity voucher = collectionService.getCollection(voucherNo);
+            if (voucher == null) {
+                Utils.showAlert("Collection voucher not found", 2);
+                return;
+            }
+            List<CollectionItem> items = new ArrayList<>();
+            for (CollectionItemEntity item : voucher.getItems()) {
+                items.add(CollectionItem.builder()
+                        .billNo(item.getBillNo())
+                        .billDate(item.getBillDate())
+                        .billAmount(item.getBillAmount())
+                        .supplierName(item.getSupplierName())
+                        .due(item.getDue())
+                        .amountCollected(item.getAmountCollected())
+                        .bank(item.getBank())
+                        .ddNo(item.getDdNo())
+                        .ddDate(item.getDdDate())
+                        .build());
+            }
+            clearRepeatingFields();
+            previouslyDue = 0;
+            bill_no_combo.getSelectionModel().clearSelection();
+            voucher_no_field.setText(voucherNo);
+            voucher_date_field.setValue(Utils.parseDate(voucher.getVoucherDate()));
+            buyer_name.setValue(voucher.getBuyerName());
+            collectionItemList = items;
+            refreshCollectionTableView();
+            total_amount_field.setText(voucher.getTotalAmount());
+        } catch (SQLException ex) {
+            Utils.showAlert(ex.toString());
+            logger.log(Level.SEVERE, "Failed to fetch collection voucher", ex);
+        }
+    }
+
+    @FXML
+    private void printCollectionVoucher() {
+        String voucherNo = voucher_no_field.getText().trim();
+        if (voucherNo.isEmpty()) {
+            Utils.showAlert("Please enter a voucher number.", 2);
+            return;
+        }
+        try {
+            if (collectionService.getCollection(voucherNo) == null) {
+                Utils.showAlert("Collection voucher not found", 2);
+                return;
+            }
+            collectionService.generatePdf(voucherNo);
+            Utils.launchPdf(Constants.REPORT_FILE_NAME);
+            Utils.showAlert("Report Successfully Generated", 1);
+        } catch (IOException | JRException | SQLException ex) {
+            Utils.showAlert(ex.toString());
+            logger.log(Level.SEVERE, "Failed to print collection voucher", ex);
+        }
+    }
+
+    @FXML
+    private void deleteCollectionVoucher() {
+        String voucherNo = voucher_no_field.getText().trim();
+        if (voucherNo.isEmpty()) {
+            Utils.showAlert("Please enter a voucher number.", 2);
+            return;
+        }
+        try {
+            if (collectionService.getCollection(voucherNo) == null) {
+                Utils.showAlert("Collection voucher not found", 2);
+                return;
+            }
+            Alert alert = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Are you sure that you want to delete collection voucher " + voucherNo + "?",
+                    ButtonType.YES,
+                    ButtonType.NO);
+            if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+                return;
+            }
+            collectionService.deleteCollection(voucherNo);
+            clearAllFields();
+            updateLastVoucher();
+            Utils.showAlert(voucherNo + " was successfully deleted.", 1);
+        } catch (SQLException ex) {
+            Utils.showAlert(ex.toString());
+            logger.log(Level.SEVERE, "Failed to delete collection voucher", ex);
+        }
     }
 
     @FXML
@@ -339,18 +452,19 @@ public class AddCollectionController implements Initializable {
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             logger.log(Level.SEVERE, ex.toString(), ex);
+            return;
         }
 
         clearAllFields();
-        collectionItemList.clear();
-        refreshCollectionTableView();
         updateLastVoucher();
     }
 
     private void updateLastVoucher() {
         try {
-            String answer = collectionService.getLastVoucher();
-            last_voucher_field.setText("Last Voucher No. : " + answer);
+            String lastVoucher = collectionService.getLastVoucher();
+            last_voucher_field.setText("Last Voucher No. : " + lastVoucher);
+            String upcomingVoucherNo = Utils.nextVoucherNumber(lastVoucher);
+            voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             logger.log(Level.SEVERE, ex.toString(), ex);

@@ -1,13 +1,15 @@
-package openconsignment.controller.entry.payment;
+package openconsignment.controller.entry;
 
 import static openconsignment.common.Utils.formatDate;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
+import net.sf.jasperreports.engine.JRException;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
@@ -26,14 +29,15 @@ import openconsignment.service.BillService;
 import openconsignment.service.PaymentService;
 import openconsignment.service.SupplierService;
 
-public class AddPaymentController implements Initializable {
+@SuppressWarnings("unused")
+public class PaymentEntryController implements Initializable {
 
     private List<PaymentItem> paymentItems;
     private List<String> supplierNameComboList;
     private List<String> billNoComboList;
     private int previouslyDue;
 
-    private static final Logger logger = Logger.getLogger(AddPaymentController.class.getName());
+    private static final Logger logger = Logger.getLogger(PaymentEntryController.class.getName());
 
     @FXML
     private TextField dd_no_field;
@@ -127,7 +131,7 @@ public class AddPaymentController implements Initializable {
     private final SupplierService supplierService;
 
     @Inject
-    public AddPaymentController(
+    public PaymentEntryController(
             BillService billService, PaymentService paymentService, SupplierService supplierService) {
         this.billService = billService;
         this.paymentService = paymentService;
@@ -277,6 +281,7 @@ public class AddPaymentController implements Initializable {
         supplier_name_combo.getSelectionModel().clearSelection();
         billNoComboList.clear();
         bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
+        total_amount_paid_field.setText("");
     }
 
     @FXML
@@ -307,7 +312,7 @@ public class AddPaymentController implements Initializable {
                         .billNo(it.getBillNo())
                         .billDate(formatDate(it.getBillDate()))
                         .billAmount(it.getBillAmount())
-                        .dueAmount(it.getDue())
+                        .dueAmount(null == it.getDue() ? "0" : it.getDue())
                         .amountPaid(it.getAmountPaid())
                         .bank(it.getBank())
                         .ddNo(it.getDdNo())
@@ -340,8 +345,10 @@ public class AddPaymentController implements Initializable {
 
     private void updateLastVoucher() {
         try {
-            String answer = paymentService.getLastVoucher();
-            last_voucher_field.setText("Last Voucher No. : " + answer);
+            String lastVoucher = paymentService.getLastVoucher();
+            last_voucher_field.setText("Last Voucher No. : " + lastVoucher);
+            String upcomingVoucherNo = Utils.nextVoucherNumber(lastVoucher);
+            voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             logger.log(Level.SEVERE, ex.toString(), ex);
@@ -370,7 +377,7 @@ public class AddPaymentController implements Initializable {
     }
 
     @FXML
-    private void fetchData(ActionEvent ignoredEvent) {
+    private void fetchBillNos(ActionEvent ignoredEvent) {
         if (null == bill_no_combo.getValue()) {
             return;
         }
@@ -396,5 +403,79 @@ public class AddPaymentController implements Initializable {
             logger.log(Level.WARNING, "cannot be converted to integer");
         }
         due_amount_field.setText(Integer.toString(previouslyDue - amountPaid));
+    }
+
+    public void fetchPaymentVoucher() {
+        if (voucher_no_field.getText().isEmpty()) {
+            Utils.showAlert("Voucher No. Field is kept empty. Please fill the voucher no.");
+            return;
+        }
+
+        try {
+            PaymentEntity paymentEntity = paymentService.getPayment(voucher_no_field.getText());
+
+            if (null == paymentEntity) {
+                Utils.showAlert("Payment voucher not found");
+                return;
+            }
+
+            paymentItems = paymentEntity.getItems().stream()
+                    .map(it -> PaymentItem.builder()
+                            .billNo(it.getBillNo())
+                            .billAmount(it.getBillAmount())
+                            .billDate(it.getBillDate())
+                            .buyerName(it.getBuyerName())
+                            .amountPaid(it.getAmountPaid())
+                            .bank(it.getBank())
+                            .ddNo(it.getDdNo())
+                            .ddDate(it.getDdDate())
+                            .build())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            voucher_date_field.setValue(Utils.parseDate(paymentEntity.getVoucherDate()));
+            supplier_name_combo.setValue(paymentEntity.getSupplierName());
+            total_amount_paid_field.setText(paymentEntity.getTotalAmount());
+            //            display_board_label.setText(paymentEntity.getSupplierName());
+
+            payment_tableview.setItems(FXCollections.observableArrayList(paymentItems));
+            //            delete_entry_btn.setDisable(false);
+        } catch (SQLException ex) {
+            Utils.showAlert(ex.toString());
+            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+        }
+    }
+
+    public void printPaymentVoucher() {
+        try {
+            paymentService.generatePdf(voucher_no_field.getText());
+            Utils.launchPdf(Constants.REPORT_FILE_NAME);
+            Utils.showAlert("Report Successfully Generated", 1);
+        } catch (IOException | JRException | SQLException ex) {
+            Utils.showAlert(ex.toString());
+            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+        }
+    }
+
+    public void deletePaymentVoucher() {
+        Alert alert = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "Are you sure that you want delete " + voucher_no_field.getText() + " ?",
+                ButtonType.YES,
+                ButtonType.NO,
+                ButtonType.CANCEL);
+        alert.showAndWait();
+
+        if (alert.getResult() != ButtonType.YES) {
+            return;
+        }
+
+        try {
+            paymentService.deletePayment(voucher_no_field.getText());
+
+            Utils.showAlert(voucher_no_field.getText().toUpperCase() + " Entry was successfully deleted.", 1);
+        } catch (SQLException ex) {
+            Utils.showAlert(ex.toString());
+            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+        }
     }
 }

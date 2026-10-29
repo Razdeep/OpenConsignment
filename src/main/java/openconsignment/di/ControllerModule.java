@@ -7,16 +7,10 @@ import dagger.multibindings.IntoMap;
 import javafx.util.Callback;
 import openconsignment.controller.MainController;
 import openconsignment.controller.WelcomeScreenController;
+import openconsignment.controller.entry.BillEntryController;
+import openconsignment.controller.entry.CollectionEntryController;
 import openconsignment.controller.entry.EntryController;
-import openconsignment.controller.entry.bill.AddBillController;
-import openconsignment.controller.entry.bill.BillEntryController;
-import openconsignment.controller.entry.bill.ViewDeleteBillController;
-import openconsignment.controller.entry.collection.AddCollectionController;
-import openconsignment.controller.entry.collection.CollectionEntryController;
-import openconsignment.controller.entry.collection.ViewDeleteCollectionController;
-import openconsignment.controller.entry.payment.AddPaymentController;
-import openconsignment.controller.entry.payment.PaymentEntryController;
-import openconsignment.controller.entry.payment.ViewDeletePaymentController;
+import openconsignment.controller.entry.PaymentEntryController;
 import openconsignment.controller.history.BillHistoryController;
 import openconsignment.controller.history.CollectionHistoryController;
 import openconsignment.controller.history.PaymentHistoryController;
@@ -108,16 +102,6 @@ public interface ControllerModule {
 
     @Binds
     @IntoMap
-    @ClassKey(AddCollectionController.class)
-    Object bindAddCollectionController(AddCollectionController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(ViewDeleteCollectionController.class)
-    Object bindViewDeleteCollectionController(ViewDeleteCollectionController controller);
-
-    @Binds
-    @IntoMap
     @ClassKey(CollectionEntryController.class)
     Object bindCollectionEntryController(CollectionEntryController controller);
 
@@ -125,26 +109,6 @@ public interface ControllerModule {
     @IntoMap
     @ClassKey(BillEntryController.class)
     Object bindBillEntryController(BillEntryController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(AddBillController.class)
-    Object bindAddBillController(AddBillController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(ViewDeleteBillController.class)
-    Object bindViewDeleteBillController(ViewDeleteBillController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(AddPaymentController.class)
-    Object bindAddPaymentController(AddPaymentController controller);
-
-    @Binds
-    @IntoMap
-    @ClassKey(ViewDeletePaymentController.class)
-    Object bindViewDeletePaymentController(ViewDeletePaymentController controller);
 
     @Binds
     @IntoMap

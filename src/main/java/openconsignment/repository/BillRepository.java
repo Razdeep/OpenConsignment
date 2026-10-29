@@ -33,6 +33,8 @@ public class BillRepository {
 
             conn.setAutoCommit(false);
 
+            deleteBill(billEntity.getBillNo());
+
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billEntity.getSupplierName());
             preparedStatement.setString(2, billEntity.getBuyerName());

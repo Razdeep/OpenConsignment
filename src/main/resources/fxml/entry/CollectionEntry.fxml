@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+
+<Group fx:id="root2" xmlns="http://javafx.com/javafx/17.0.18" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@/css/collections.css" fx:controller="openconsignment.controller.entry.CollectionEntryController">
+    <AnchorPane layoutY="14.0" prefHeight="630.0" prefWidth="967.0" styleClass="collection-entry" xmlns="http://javafx.com/javafx/17.0.18" xmlns:fx="http://javafx.com/fxml/1">
+        <Text layoutX="24.0" layoutY="40.0" styleClass="collection-page-title" text="Collections" />
+        <Text layoutX="24.0" layoutY="70.0" styleClass="collection-field-label" text="Voucher No." />
+        <TextField fx:id="voucher_no_field" layoutX="24.0" layoutY="79.0" prefHeight="36.0" prefWidth="185.0" promptText="Enter voucher number" />
+        <Label fx:id="last_voucher_field" layoutX="235.0" layoutY="54.0" prefWidth="220.0" styleClass="collection-muted" text="&lt;Last Voucher&gt;" />
+
+        <Text layoutX="467.0" layoutY="70.0" styleClass="collection-field-label" text="Voucher date" />
+        <DatePicker fx:id="voucher_date_field" editable="false" layoutX="467.0" layoutY="79.0" prefHeight="36.0" prefWidth="139.0" promptText="Choose date" />
+        <Text layoutX="628.0" layoutY="70.0" styleClass="collection-field-label" text="Buyer" />
+        <ComboBox fx:id="buyer_name" layoutX="628.0" layoutY="79.0" onAction="#fillBillNoCombo" prefHeight="36.0" prefWidth="303.0" promptText="Select buyer" />
+
+        <Text layoutX="24.0" layoutY="150.0" styleClass="collection-field-label" text="Bill number" />
+        <ComboBox fx:id="bill_no_combo" layoutX="24.0" layoutY="159.0" onAction="#fetchData" prefHeight="36.0" prefWidth="185.0" promptText="Select bill" />
+        <Text layoutX="236.0" layoutY="150.0" styleClass="collection-field-label" text="Bill date" />
+        <TextField fx:id="bill_date" editable="false" layoutX="236.0" layoutY="159.0" prefHeight="36.0" prefWidth="202.0" promptText="—" />
+        <Text layoutX="467.0" layoutY="150.0" styleClass="collection-field-label" text="Supplier" />
+        <TextField fx:id="supplier_name" editable="false" layoutX="467.0" layoutY="159.0" prefHeight="36.0" prefWidth="464.0" promptText="Filled from selected bill" />
+
+        <Text layoutX="24.0" layoutY="219.0" styleClass="collection-field-label" text="Bill amount" />
+        <TextField fx:id="bill_amount" alignment="CENTER_RIGHT" editable="false" layoutX="24.0" layoutY="228.0" prefHeight="34.0" prefWidth="185.0" promptText="0.00" />
+        <Text layoutX="235.0" layoutY="219.0" styleClass="collection-field-label" text="Due after collection" />
+        <TextField fx:id="collection_due_field" alignment="CENTER_RIGHT" editable="false" layoutX="235.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" text="0" />
+        <Text layoutX="467.0" layoutY="219.0" styleClass="collection-field-label" text="Amount collected" />
+        <TextField fx:id="amount_collected_field" alignment="CENTER_RIGHT" layoutX="467.0" layoutY="228.0" onKeyReleased="#updateCollectionDue" prefHeight="34.0" prefWidth="219.0" text="0" />
+        <Text layoutX="726.0" layoutY="219.0" styleClass="collection-field-label" text="Bank" />
+        <TextField fx:id="bank_field" layoutX="728.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" promptText="Bank name" />
+
+        <Text layoutX="467.0" layoutY="282.0" styleClass="collection-field-label" text="DD number" />
+        <TextField fx:id="dd_no_field" layoutX="467.0" layoutY="288.0" prefHeight="34.0" prefWidth="219.0" promptText="DD number" />
+        <Text layoutX="725.0" layoutY="282.0" styleClass="collection-field-label" text="DD date" />
+        <DatePicker fx:id="dd_date_field" layoutX="728.0" layoutY="288.0" prefHeight="34.0" prefWidth="202.0" promptText="Choose date" />
+
+        <Button fx:id="add_collection_btn" layoutX="298.0" layoutY="288.0" mnemonicParsing="false" onAction="#addCollection" prefHeight="34.0" prefWidth="139.0" styleClass="collection-primary-button" text="Add to voucher" />
+        <Button fx:id="replace_collection_btn" layoutX="27.0" layoutY="288.0" mnemonicParsing="false" onAction="#replaceCollection" prefHeight="34.0" prefWidth="119.0" styleClass="collection-secondary-button" text="Replace" />
+        <Button fx:id="delete_collection_btn" layoutX="166.0" layoutY="288.0" mnemonicParsing="false" onAction="#deleteCollection" prefHeight="34.0" prefWidth="112.0" styleClass="collection-danger-button" text="Remove" />
+
+        <TableView fx:id="collection_tableview" layoutX="20.0" layoutY="342.0" prefHeight="215.0" prefWidth="922.0">
+            <placeholder>
+                <Label text="Collections added to this voucher will appear here" />
+            </placeholder>
+            <columns>
+                <TableColumn fx:id="bill_no_col" prefWidth="82.0" text="Bill No." />
+                <TableColumn fx:id="bill_amt_col" prefWidth="96.0" style="-fx-alignment: CENTER-RIGHT;" text="Bill amount" />
+                <TableColumn fx:id="bill_date_col" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Bill date" />
+                <TableColumn fx:id="supplier_col" prefWidth="170.0" text="Supplier" />
+                <TableColumn fx:id="due_col" prefWidth="88.0" style="-fx-alignment: CENTER-RIGHT;" text="Due" />
+                <TableColumn fx:id="amount_collection_col" prefWidth="105.0" style="-fx-alignment: CENTER-RIGHT;" text="Collected" />
+                <TableColumn fx:id="bank_col" prefWidth="94.0" text="Bank" />
+                <TableColumn fx:id="dd_no_col" prefWidth="90.0" text="DD no." />
+                <TableColumn fx:id="dd_date_col" prefWidth="92.0" style="-fx-alignment: CENTER;" text="DD date" />
+            </columns>
+        </TableView>
+
+        <Text layoutX="502.0" layoutY="596.0" styleClass="collection-total-label" text="Voucher total" />
+        <TextField fx:id="total_amount_field" alignment="CENTER_RIGHT" editable="false" layoutX="605.0" layoutY="572.0" prefHeight="38.0" prefWidth="125.0" styleClass="collection-total-field" text="0" />
+
+        <Button fx:id="fetch_collection_voucher_btn" layoutX="235.0" layoutY="80.0" mnemonicParsing="false" onAction="#fetchCollectionVoucher" prefHeight="34.0" prefWidth="60.0" styleClass="collection-secondary-button" text="Fetch" />
+        <Button fx:id="print_collection_voucher_btn" layoutX="299.0" layoutY="80.0" mnemonicParsing="false" onAction="#printCollectionVoucher" prefHeight="34.0" prefWidth="68.0" styleClass="collection-secondary-button" text="Print" />
+        <Button fx:id="delete_collection_voucher_btn" layoutX="370.0" layoutY="80.0" mnemonicParsing="false" onAction="#deleteCollectionVoucher" prefHeight="34.0" prefWidth="68.0" styleClass="collection-danger-button" text="Delete" />
+
+        <Button fx:id="clear_btn" layoutX="748.0" layoutY="572.0" mnemonicParsing="false" onAction="#clearAllFields" prefHeight="38.0" prefWidth="88.0" styleClass="collection-secondary-button" text="Clear" />
+        <Button fx:id="save_btn" layoutX="844.0" layoutY="572.0" mnemonicParsing="false" onAction="#saveData" prefHeight="38.0" prefWidth="98.0" styleClass="collection-primary-button" text="Save voucher" />
+    </AnchorPane>
+</Group>
