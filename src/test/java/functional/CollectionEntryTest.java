@@ -16,7 +16,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import openconsignment.controller.entry.collection.CollectionEntryController;
+import openconsignment.controller.entry.CollectionEntryController;
 import openconsignment.entity.CollectionEntity;
 import openconsignment.entity.CollectionItemEntity;
 import openconsignment.model.CollectionItem;
@@ -55,7 +55,7 @@ class CollectionEntryTest extends ApplicationTest {
                                 .build()))
                         .build());
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/entry/collection/CollectionEntry.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/entry/CollectionEntry.fxml"));
         loader.setControllerFactory(
                 type -> new CollectionEntryController(mock(BillService.class), buyerService, collectionService));
         Parent root = loader.load();

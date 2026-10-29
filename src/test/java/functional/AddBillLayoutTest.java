@@ -13,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import openconsignment.controller.entry.bill.BillEntryController;
+import openconsignment.controller.entry.BillEntryController;
 import openconsignment.model.LR;
 import openconsignment.service.BillService;
 import openconsignment.service.BuyerService;
@@ -32,7 +32,7 @@ class AddBillLayoutTest extends ApplicationTest {
         when(buyers.getAllBuyers()).thenReturn(List.of());
         when(transports.getAllTransports()).thenReturn(List.of());
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/entry/bill/BillEntry.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/entry/BillEntry.fxml"));
         loader.setControllerFactory(
                 type -> new BillEntryController(mock(BillService.class), suppliers, buyers, transports));
         Parent root = loader.load();

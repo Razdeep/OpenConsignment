@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 <Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="openconsignment.controller.entry.bill.BillEntryController" stylesheets="@/css/bills.css">
+       fx:controller="openconsignment.controller.entry.BillEntryController" stylesheets="@/css/bills.css">
     <children>
         <AnchorPane minHeight="560.0" minWidth="660.0" prefHeight="600.0" prefWidth="717.0" styleClass="bill-entry" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
             <VBox spacing="16.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="20.0">
@@ -83,9 +83,9 @@
                                     <Font size="16.0" />
                                 </font></TextField>
                         </VBox>
+                        <Button fx:id="add_btn" mnemonicParsing="false" onAction="#addToList" prefWidth="88.0" styleClass="bill-primary-button" text="Add LR" />
                         <Button fx:id="replace_btn" mnemonicParsing="false" onAction="#replaceInList" prefWidth="82.0" styleClass="bill-secondary-button" text="Replace" />
                         <Button fx:id="delete_btn" mnemonicParsing="false" onAction="#deleteFromList" prefWidth="82.0" styleClass="bill-danger-button" text="Remove" />
-                        <Button fx:id="add_btn" mnemonicParsing="false" onAction="#addToList" prefWidth="88.0" styleClass="bill-primary-button" text="Add LR" />
                     </HBox>
                     <TableView fx:id="lrTable" minHeight="100.0" prefHeight="170.0" VBox.vgrow="ALWAYS">
                         <columnResizePolicy>

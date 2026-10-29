@@ -1,4 +1,4 @@
-package openconsignment.controller.entry.payment;
+package openconsignment.controller.entry;
 
 import static openconsignment.common.Utils.formatDate;
 
