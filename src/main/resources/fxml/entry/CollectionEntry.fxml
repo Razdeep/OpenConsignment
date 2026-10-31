@@ -9,14 +9,17 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<Group fx:id="root2" xmlns="http://javafx.com/javafx/17.0.18" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@/css/collections.css" fx:controller="openconsignment.controller.entry.CollectionEntryController">
+<Group fx:id="root2" stylesheets="@/css/collections.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.entry.CollectionEntryController">
     <AnchorPane layoutY="14.0" prefHeight="630.0" prefWidth="967.0" styleClass="collection-entry" xmlns="http://javafx.com/javafx/17.0.18" xmlns:fx="http://javafx.com/fxml/1">
         <Text layoutX="24.0" layoutY="40.0" styleClass="collection-page-title" text="Collections" />
         <Text layoutX="24.0" layoutY="70.0" styleClass="collection-field-label" text="Voucher No." />
-        <TextField fx:id="voucher_no_field" layoutX="24.0" layoutY="79.0" prefHeight="36.0" prefWidth="185.0" promptText="Enter voucher number" />
+        <TextField fx:id="voucher_no_field" layoutX="24.0" layoutY="79.0" prefHeight="36.0" prefWidth="185.0" promptText="Enter voucher number">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
         <Label fx:id="last_voucher_field" layoutX="235.0" layoutY="54.0" prefWidth="220.0" styleClass="collection-muted" text="&lt;Last Voucher&gt;" />
 
         <Text layoutX="467.0" layoutY="70.0" styleClass="collection-field-label" text="Voucher date" />
@@ -27,21 +30,42 @@
         <Text layoutX="24.0" layoutY="150.0" styleClass="collection-field-label" text="Bill number" />
         <ComboBox fx:id="bill_no_combo" layoutX="24.0" layoutY="159.0" onAction="#fetchData" prefHeight="36.0" prefWidth="185.0" promptText="Select bill" />
         <Text layoutX="236.0" layoutY="150.0" styleClass="collection-field-label" text="Bill date" />
-        <TextField fx:id="bill_date" editable="false" layoutX="236.0" layoutY="159.0" prefHeight="36.0" prefWidth="202.0" promptText="—" />
+        <TextField fx:id="bill_date" editable="false" layoutX="236.0" layoutY="159.0" prefHeight="36.0" prefWidth="202.0" promptText="—">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
         <Text layoutX="467.0" layoutY="150.0" styleClass="collection-field-label" text="Supplier" />
-        <TextField fx:id="supplier_name" editable="false" layoutX="467.0" layoutY="159.0" prefHeight="36.0" prefWidth="464.0" promptText="Filled from selected bill" />
+        <TextField fx:id="supplier_name" editable="false" layoutX="467.0" layoutY="159.0" prefHeight="36.0" prefWidth="464.0" promptText="Filled from selected bill">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
 
         <Text layoutX="24.0" layoutY="219.0" styleClass="collection-field-label" text="Bill amount" />
-        <TextField fx:id="bill_amount" alignment="CENTER_RIGHT" editable="false" layoutX="24.0" layoutY="228.0" prefHeight="34.0" prefWidth="185.0" promptText="0.00" />
+        <TextField fx:id="bill_amount" alignment="CENTER_RIGHT" editable="false" layoutX="24.0" layoutY="228.0" prefHeight="34.0" prefWidth="185.0" promptText="0.00">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
         <Text layoutX="235.0" layoutY="219.0" styleClass="collection-field-label" text="Due after collection" />
-        <TextField fx:id="collection_due_field" alignment="CENTER_RIGHT" editable="false" layoutX="235.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" text="0" />
+        <TextField fx:id="collection_due_field" alignment="CENTER_RIGHT" editable="false" layoutX="235.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" text="0">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
         <Text layoutX="467.0" layoutY="219.0" styleClass="collection-field-label" text="Amount collected" />
-        <TextField fx:id="amount_collected_field" alignment="CENTER_RIGHT" layoutX="467.0" layoutY="228.0" onKeyReleased="#updateCollectionDue" prefHeight="34.0" prefWidth="219.0" text="0" />
+        <TextField fx:id="amount_collected_field" alignment="CENTER_RIGHT" layoutX="467.0" layoutY="228.0" onKeyReleased="#updateCollectionDue" prefHeight="34.0" prefWidth="219.0" text="0">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
         <Text layoutX="726.0" layoutY="219.0" styleClass="collection-field-label" text="Bank" />
-        <TextField fx:id="bank_field" layoutX="728.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" promptText="Bank name" />
+        <TextField fx:id="bank_field" layoutX="728.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" promptText="Bank name">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
 
         <Text layoutX="467.0" layoutY="282.0" styleClass="collection-field-label" text="DD number" />
-        <TextField fx:id="dd_no_field" layoutX="467.0" layoutY="288.0" prefHeight="34.0" prefWidth="219.0" promptText="DD number" />
+        <TextField fx:id="dd_no_field" layoutX="467.0" layoutY="288.0" prefHeight="34.0" prefWidth="219.0" promptText="DD number">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
         <Text layoutX="725.0" layoutY="282.0" styleClass="collection-field-label" text="DD date" />
         <DatePicker fx:id="dd_date_field" layoutX="728.0" layoutY="288.0" prefHeight="34.0" prefWidth="202.0" promptText="Choose date" />
 
@@ -67,7 +91,10 @@
         </TableView>
 
         <Text layoutX="502.0" layoutY="596.0" styleClass="collection-total-label" text="Voucher total" />
-        <TextField fx:id="total_amount_field" alignment="CENTER_RIGHT" editable="false" layoutX="605.0" layoutY="572.0" prefHeight="38.0" prefWidth="125.0" styleClass="collection-total-field" text="0" />
+        <TextField fx:id="total_amount_field" alignment="CENTER_RIGHT" editable="false" layoutX="605.0" layoutY="572.0" prefHeight="38.0" prefWidth="125.0" styleClass="collection-total-field" text="0">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></TextField>
 
         <Button fx:id="fetch_collection_voucher_btn" layoutX="235.0" layoutY="80.0" mnemonicParsing="false" onAction="#fetchCollectionVoucher" prefHeight="34.0" prefWidth="60.0" styleClass="collection-secondary-button" text="Fetch" />
         <Button fx:id="print_collection_voucher_btn" layoutX="299.0" layoutY="80.0" mnemonicParsing="false" onAction="#printCollectionVoucher" prefHeight="34.0" prefWidth="68.0" styleClass="collection-secondary-button" text="Print" />

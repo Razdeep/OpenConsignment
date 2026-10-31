@@ -1,0 +1,1 @@
+SELECT * FROM Buyer_Master_Table ORDER BY name COLLATE NOCASE

@@ -1,0 +1,1 @@
+SELECT * FROM Supplier_Master_Table ORDER BY name COLLATE NOCASE

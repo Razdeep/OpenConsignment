@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import openconsignment.common.SqlLoader;
+import openconsignment.common.SqlQuery;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.CollectionEntity;
@@ -26,69 +28,7 @@ public class CollectionRepository {
 
     public List<BillEntity> fetchPendingBillsForBuyer(String buyerName) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    """
-                        with cte_collected as (
-                        select
-                            `Bill No.`,
-                            sum(`Amount Collected`) as amount_collected
-                        from
-                            Collection_Entry_Extended_Table
-                        group by
-                            `Bill No.`
-                        ),
-                        cte_bill as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Supplier Name`
-                        from
-                            Bill_Entry_Table
-                        WHERE
-                            `Buyer Name` = ?
-                        ),
-                        cte_bill_collected as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Supplier Name`,
-                            coalesce(`amount_collected`, 0) as amount_collected
-                        from
-                            cte_bill
-                        left join cte_collected
-                            using(`Bill No.`)
-                        ),
-                        cte_pending as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Supplier Name`,
-                            `Bill Amount` - amount_collected as pending_amount
-                        from
-                            cte_bill_collected
-                        ),
-                        cte_final as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Supplier Name`
-                        from
-                            cte_pending
-                        where
-                            pending_amount > 0
-                        order by
-                            1
-                        )
-                        select
-                            *
-                        from
-                            cte_final;
-                    """;
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_PENDING_BILLS_FOR_BUYER);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, buyerName);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -111,54 +51,7 @@ public class CollectionRepository {
 
     public int fetchPendingAmountForBillNo(String billNo) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    """
-                        with cte_collected as (
-                        select
-                            `Bill No.`,
-                            sum(`Amount Collected`) as amount_collected
-                        from
-                            Collection_Entry_Extended_Table
-                        group by
-                            `Bill No.`
-                        ),
-                        cte_bill as (
-                        select
-                            *
-                        from
-                            Bill_Entry_Table
-                        WHERE
-                            `Bill No.` = ?
-                        ),
-                        cte_bill_collected as (
-                        select
-                            `Bill No.`,
-                            `Bill Amount`,
-                            coalesce(`amount_collected`, 0) as amount_collected
-                        from
-                            cte_bill
-                        left join cte_collected
-                                using(`Bill No.`)
-                        ),
-                        cte_pending as (
-                        select
-                            `Bill No.`,
-                            `Bill Amount` - amount_collected as pending_amount
-                        from
-                            cte_bill_collected
-                        ),
-                        cte_final as (
-                        select
-                            pending_amount
-                        from
-                            cte_pending
-                        )
-                        select
-                            *
-                        from
-                            cte_final;
-                    """;
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_PENDING_AMOUNT_FOR_BILL);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -178,16 +71,7 @@ public class CollectionRepository {
         try {
             conn.setAutoCommit(false);
             deleteCollection(collectionEntity.getVoucherNo());
-            // language=sql
-            String sql =
-                    """
-                        INSERT INTO `Collection_Entry_Table`(`Voucher No.`,`Voucher Date`,`Buyer Name`,`Total Amount`)
-                        VALUES (?,?,?,?)
-                        on conflict(`Voucher No.`) do update set
-                      `Voucher Date` = excluded.`Voucher Date`,
-                      `Buyer Name` = excluded.`Buyer Name`,
-                      `Total Amount` = excluded.`Total Amount`;
-""";
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_SAVE);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, collectionEntity.getVoucherNo());
             preparedStatement.setString(2, collectionEntity.getVoucherDate());
@@ -195,32 +79,7 @@ public class CollectionRepository {
             preparedStatement.setString(4, collectionEntity.getTotalAmount());
             preparedStatement.execute();
 
-            // language=sql
-            sql =
-                    """
-                    INSERT
-                        INTO
-                        `Collection_Entry_Extended_Table`(`Voucher No.`,
-                        `Supplier Name`,
-                        `Bill No.`,
-                        `Bill Date`,
-                        `Bill Amount`,
-                        `Collection Due`,
-                        `Amount Collected`,
-                        `Bank`,
-                        `DD No.`,
-                        `DD Date`)
-                    VALUES (?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?);
-""";
+            sql = SqlLoader.load(SqlQuery.COLLECTION_SAVE_ITEM);
 
             if (null != collectionEntity.getItems()) {
                 for (CollectionItemEntity collectionItem : collectionEntity.getItems()) {
@@ -252,8 +111,7 @@ public class CollectionRepository {
 
     public String getLastVoucher() throws SQLException {
         try {
-            // language=sql
-            String sql = "SELECT MAX(`Voucher No.`) from `COLLECTION_ENTRY_TABLE`;";
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_LAST_VOUCHER);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
@@ -266,7 +124,7 @@ public class CollectionRepository {
     public CollectionEntity getCollection(String voucherNo) throws SQLException {
 
         try {
-            String sql = "select * from `Collection_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_GET_ITEMS);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             ResultSet collectionResultSet = preparedStatement.executeQuery();
@@ -286,7 +144,7 @@ public class CollectionRepository {
                         collectionResultSet.getString("DD Date")));
             }
 
-            sql = "select * from `Collection_Entry_Table` where `Voucher No.`=? collate nocase";
+            sql = SqlLoader.load(SqlQuery.COLLECTION_GET);
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             collectionResultSet = preparedStatement.executeQuery();
@@ -311,13 +169,13 @@ public class CollectionRepository {
         try {
             conn.setAutoCommit(false);
 
-            String sql = "DELETE FROM `Collection_Entry_Table` where `Voucher No.`=? collate nocase";
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_DELETE);
 
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
 
-            sql = "DELETE FROM `Collection_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
+            sql = SqlLoader.load(SqlQuery.COLLECTION_DELETE_ITEMS);
 
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
@@ -333,7 +191,7 @@ public class CollectionRepository {
     public List<CollectionEntity> getCollections() throws SQLException {
         try {
             List<CollectionEntity> res = new ArrayList<>();
-            String sql = "SELECT * FROM `Collection_Entry_Table`;";
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_GET_ALL);
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -354,14 +212,7 @@ public class CollectionRepository {
 
     public List<BuyerLedgerRow> getCollectionDetailsForBuyer(String buyerName) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    """
-                        select * from `Bill_Entry_Table` left join
-                        (`Collection_Entry_Extended_Table`
-                        join `Collection_Entry_Table` using ("Voucher No."))
-                        using("Bill No.") where `Bill_Entry_Table`.`Buyer Name`=?
-                    """;
+            String sql = SqlLoader.load(SqlQuery.COLLECTION_DETAILS_FOR_BUYER);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, buyerName);
             ResultSet resultSet = preparedStatement.executeQuery();
