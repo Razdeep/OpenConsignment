@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import openconsignment.common.SqlLoader;
+import openconsignment.common.SqlQuery;
 import openconsignment.model.TransportLedgerRow;
 
 public class TransportRepository {
@@ -22,7 +24,7 @@ public class TransportRepository {
 
     public void saveTransport(String tranportName) throws SQLException {
         try {
-            String sql = "INSERT INTO `Transport_Master_Table`(`Name`) VALUES (?);";
+            String sql = SqlLoader.load(SqlQuery.TRANSPORT_SAVE);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, tranportName);
             ps.execute();
@@ -34,7 +36,7 @@ public class TransportRepository {
 
     public void deleteTransport(String transportName) throws SQLException {
         try {
-            String sql = "DELETE FROM `Transport_Master_Table` WHERE name=?";
+            String sql = SqlLoader.load(SqlQuery.TRANSPORT_DELETE);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, transportName);
             ps.execute();
@@ -46,7 +48,7 @@ public class TransportRepository {
 
     public void renameTransport(String oldName, String newName) throws SQLException {
         try {
-            String sql = "UPDATE `Transport_Master_Table` SET Name=? WHERE Name=?";
+            String sql = SqlLoader.load(SqlQuery.TRANSPORT_RENAME);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, newName);
             ps.setString(2, oldName);
@@ -60,8 +62,7 @@ public class TransportRepository {
     public List<String> getAllTransports() throws SQLException {
         try {
             List<String> transportList = new ArrayList<>();
-            ResultSet transportResultSet = conn.prepareStatement(
-                            "select * from Transport_Master_Table order by name collate nocase")
+            ResultSet transportResultSet = conn.prepareStatement(SqlLoader.load(SqlQuery.TRANSPORT_GET_ALL))
                     .executeQuery();
             while (transportResultSet.next()) {
                 transportList.add(transportResultSet.getString("name"));
@@ -78,20 +79,7 @@ public class TransportRepository {
         try {
             List<TransportLedgerRow> result = new ArrayList<>();
 
-            // language=sql
-            String sql =
-                    """
-            select `LR No.`,`PM`,`Bill No.`,`Supplier Name`,`Buyer Name`,`LR Date`
-            from `LR_Table` join `Bill_Entry_Table` using (`Bill No.`)
-            where `Transport`=?
-            and
-            substr(`LR Date`, 7, 4)||substr(`LR Date`, 4, 2)||substr(`LR Date`, 1, 2)
-            between
-            substr(?, 7, 4)||substr(?, 4, 2)||substr(?, 1, 2)
-            and
-            substr(?, 7, 4)||substr(?, 4, 2)||substr(?, 1, 2)
-            order by datetime(substr(`LR Date`, 7, 4)||'-'||substr(`LR Date`, 4, 2)||'-'||substr(`LR Date`, 1, 2))
-""";
+            String sql = SqlLoader.load(SqlQuery.TRANSPORT_REPORT);
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, transportName);

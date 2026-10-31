@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Group fx:id="root2" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@/css/payments.css" fx:controller="openconsignment.controller.entry.PaymentEntryController">
+<Group fx:id="root2" stylesheets="@/css/payments.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.entry.PaymentEntryController">
     <children>
         <AnchorPane id="AnchorPane" layoutY="14.0" prefHeight="630.0" prefWidth="967.0" styleClass="payment-entry">
             <children>
@@ -24,7 +24,7 @@
                 <Text layoutX="24.0" layoutY="70.0" styleClass="payment-field-label" text="Voucher No." />
                 <TextField fx:id="voucher_no_field" layoutX="24.0" layoutY="79.0" prefHeight="36.0" prefWidth="185.0" promptText="Enter voucher number">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
                 <Text fx:id="last_voucher_field" layoutX="235.0" layoutY="70.0" styleClass="payment-muted" text="&lt;Last Voucher&gt;" />
                 <Text layoutX="467.0" layoutY="70.0" styleClass="payment-field-label" text="Voucher date" />
@@ -39,37 +39,37 @@
                 <Text layoutX="236.0" layoutY="150.0" styleClass="payment-field-label" text="Bill date" />
                 <TextField fx:id="bill_date_field" editable="false" layoutX="236.0" layoutY="159.0" prefHeight="36.0" prefWidth="202.0" promptText="—">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
                 <Text layoutX="467.0" layoutY="150.0" styleClass="payment-field-label" text="Buyer" />
                 <TextField fx:id="buyer_name_field" editable="false" layoutX="467.0" layoutY="159.0" prefHeight="36.0" prefWidth="464.0" promptText="Filled from selected bill">
                 <font>
-                    <Font size="16.0" />
+                    <Font name="System Bold" size="16.0" />
                 </font></TextField>
                 <Text layoutX="24.0" layoutY="219.0" styleClass="payment-field-label" text="Bill amount" />
                 <TextField fx:id="bill_amount_field" alignment="CENTER_RIGHT" editable="false" layoutX="24.0" layoutY="228.0" prefHeight="34.0" prefWidth="185.0" promptText="0.00">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
                 <Text layoutX="235.0" layoutY="219.0" styleClass="payment-field-label" text="Due after payment" />
                 <TextField fx:id="due_amount_field" alignment="CENTER_RIGHT" editable="false" layoutX="235.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" promptText="0.00">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
                 <Text layoutX="467.0" layoutY="219.0" styleClass="payment-field-label" text="Amount paid" />
                 <TextField fx:id="amount_paid_field" alignment="CENTER_RIGHT" layoutX="467.0" layoutY="228.0" onKeyReleased="#updateDueAmount" prefHeight="34.0" prefWidth="219.0" promptText="0.00">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
                 <Text layoutX="726.0" layoutY="219.0" styleClass="payment-field-label" text="Bank" />
                 <TextField fx:id="bank_field" layoutX="728.0" layoutY="228.0" prefHeight="34.0" prefWidth="202.0" promptText="Bank name">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
                 <Text layoutX="467.0" layoutY="282.0" styleClass="payment-field-label" text="DD number" />
                 <TextField fx:id="dd_no_field" layoutX="467.0" layoutY="288.0" prefHeight="34.0" prefWidth="219.0" promptText="DD number">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font></TextField>
 
                 <Text layoutX="725.0" layoutY="282.0" styleClass="payment-field-label" text="DD date" />
@@ -98,7 +98,7 @@
 
                 <Text layoutX="518.0" layoutY="596.0" styleClass="payment-total-label" text="Voucher total" />
                 <TextField fx:id="total_amount_paid_field" alignment="CENTER_RIGHT" editable="false" layoutX="605.0" layoutY="572.0" prefHeight="38.0" prefWidth="125.0" promptText="0.00">
-                    <font><Font size="16.0" /></font>
+                    <font><Font name="System Bold" size="16.0" /></font>
                 </TextField>
                 <Button fx:id="clear_btn" layoutX="748.0" layoutY="572.0" mnemonicParsing="false" onAction="#clearAllFields" prefHeight="38.0" prefWidth="88.0" styleClass="payment-secondary-button" text="Clear" />
                 <Button fx:id="save_btn" layoutX="844.0" layoutY="572.0" onAction="#saveData" prefHeight="38.0" prefWidth="98.0" styleClass="payment-primary-button" text="Save voucher" />

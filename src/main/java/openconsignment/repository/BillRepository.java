@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import openconsignment.common.SqlLoader;
+import openconsignment.common.SqlQuery;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
 
@@ -23,13 +25,7 @@ public class BillRepository {
 
     public void save(BillEntity billEntity) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    "INSERT INTO `Bill_Entry_Table`(`Supplier Name`,`Buyer Name`,`Bill No.`,`Bill Date`,`Transport`,`LR Date`,`Bill Amount`,`Collection Due`,`Due`) "
-                            + "VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT(`Bill No.`) DO UPDATE SET "
-                            + "`Supplier Name`=excluded.`Supplier Name`, `Buyer Name`=excluded.`Buyer Name`, `Bill Date`=excluded.`Bill Date`, "
-                            + "`Transport`=excluded.`Transport`, `LR Date`=excluded.`LR Date`, `Bill Amount`=excluded.`Bill Amount`, "
-                            + "`Collection Due`=excluded.`Collection Due`, `Due`=excluded.`Due`;";
+            String sql = SqlLoader.load(SqlQuery.BILL_SAVE);
 
             conn.setAutoCommit(false);
 
@@ -49,7 +45,7 @@ public class BillRepository {
 
             if (null != billEntity.getLrEntities()) {
                 for (LREntity lr : billEntity.getLrEntities()) {
-                    sql = "INSERT INTO `LR_Table`(`Bill No.`,`LR No.`,`PM`) VALUES (?,?,?)";
+                    sql = SqlLoader.load(SqlQuery.BILL_SAVE_LR);
                     preparedStatement = conn.prepareStatement(sql);
                     preparedStatement.setString(1, billEntity.getBillNo());
                     preparedStatement.setString(2, lr.getLrNo());
@@ -67,7 +63,7 @@ public class BillRepository {
 
     public BillEntity getBill(String billNo) throws SQLException {
         try {
-            String sql = "select * from `Bill_Entry_Table` where `Bill No.`=? collate nocase";
+            String sql = SqlLoader.load(SqlQuery.BILL_GET);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet billResultSet = preparedStatement.executeQuery();
@@ -86,7 +82,7 @@ public class BillRepository {
                     .billAmount(billResultSet.getString("Bill Amount"))
                     .build();
 
-            sql = "select * from `LR_Table` where `Bill No.`=? collate nocase";
+            sql = SqlLoader.load(SqlQuery.BILL_GET_LRS);
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet lrPmResultSet = preparedStatement.executeQuery();
@@ -110,12 +106,12 @@ public class BillRepository {
     public void deleteBill(String billNo) throws SQLException {
         try {
             conn.setAutoCommit(false);
-            String sql = "DELETE FROM `Bill_Entry_Table` where `Bill No.`=? collate nocase";
+            String sql = SqlLoader.load(SqlQuery.BILL_DELETE);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             preparedStatement.execute();
 
-            String sql2 = "DELETE FROM `LR_Table` where `Bill No.`=? collate nocase";
+            String sql2 = SqlLoader.load(SqlQuery.BILL_DELETE_LRS);
             preparedStatement = conn.prepareStatement(sql2);
             preparedStatement.setString(1, billNo);
             preparedStatement.execute();
@@ -131,7 +127,7 @@ public class BillRepository {
     public List<BillEntity> getBills() throws SQLException {
         List<BillEntity> res = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM `Bill_Entry_Table`;";
+            String sql = SqlLoader.load(SqlQuery.BILL_GET_ALL);
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

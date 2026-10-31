@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import openconsignment.common.SqlLoader;
+import openconsignment.common.SqlQuery;
 
 public class BuyerRepository {
 
@@ -21,7 +23,7 @@ public class BuyerRepository {
 
     public void saveBuyer(String buyerName) throws SQLException {
         try {
-            String sql = "INSERT INTO `Buyer_Master_Table`(`Name`) VALUES (?);";
+            String sql = SqlLoader.load(SqlQuery.BUYER_SAVE);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, buyerName);
             ps.execute();
@@ -33,7 +35,7 @@ public class BuyerRepository {
 
     public void deleteBuyer(String buyerName) throws SQLException {
         try {
-            String sql = "DELETE FROM `Buyer_Master_Table` WHERE name=?";
+            String sql = SqlLoader.load(SqlQuery.BUYER_DELETE);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, buyerName);
             ps.execute();
@@ -45,7 +47,7 @@ public class BuyerRepository {
 
     public void renameBuyer(String oldName, String newName) throws SQLException {
         try {
-            String sql = "UPDATE `Buyer_Master_Table` SET Name=? WHERE Name=?";
+            String sql = SqlLoader.load(SqlQuery.BUYER_RENAME);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, newName);
             ps.setString(2, oldName);
@@ -59,8 +61,7 @@ public class BuyerRepository {
     public List<String> getAllBuyers() throws SQLException {
         try {
             List<String> buyerList = new ArrayList<>();
-            ResultSet buyerResultSet = conn.prepareStatement(
-                            "select * from Buyer_Master_Table order by name collate nocase")
+            ResultSet buyerResultSet = conn.prepareStatement(SqlLoader.load(SqlQuery.BUYER_GET_ALL))
                     .executeQuery();
             while (buyerResultSet.next()) {
                 buyerList.add(buyerResultSet.getString("name"));

@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="openconsignment.controller.entry.BillEntryController" stylesheets="@/css/bills.css">
+<Group fx:id="root" stylesheets="@/css/bills.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.entry.BillEntryController">
     <children>
         <AnchorPane minHeight="560.0" minWidth="660.0" prefHeight="600.0" prefWidth="717.0" styleClass="bill-entry" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
             <VBox spacing="16.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="20.0">
@@ -24,12 +34,12 @@
                             <Label styleClass="bill-field-label" text="Bill number" />
                             <TextField fx:id="bill_no_field" prefWidth="180.0" promptText="Enter bill number">
                                 <font>
-                                    <Font size="16.0" />
+                                    <Font name="System Bold" size="16.0" />
                                 </font></TextField>
                         </VBox>
-                        <Button mnemonicParsing="false" prefWidth="78.0" styleClass="bill-secondary-button" text="Fetch" onAction="#fetchBill" />
+                        <Button mnemonicParsing="false" onAction="#fetchBill" prefWidth="78.0" styleClass="bill-secondary-button" text="Fetch" />
                         <Button mnemonicParsing="false" prefWidth="78.0" styleClass="bill-secondary-button" text="Print" />
-                        <Button mnemonicParsing="false" prefWidth="78.0" styleClass="bill-danger-button" text="Delete" onAction="#deleteEntry"/>
+                        <Button mnemonicParsing="false" onAction="#deleteEntry" prefWidth="78.0" styleClass="bill-danger-button" text="Delete" />
                         <VBox minWidth="150.0" prefWidth="180.0" spacing="6.0">
                             <Label styleClass="bill-field-label" text="Bill date" />
                             <DatePicker fx:id="date_field" maxWidth="Infinity" promptText="Choose date" />
@@ -39,21 +49,21 @@
                         <Label styleClass="bill-field-label" text="Supplier" />
                         <TextField fx:id="supplier_field" promptText="Start typing a supplier name">
                             <font>
-                                <Font size="16.0" />
+                                <Font name="System Bold" size="16.0" />
                             </font></TextField>
                     </VBox>
                     <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <Label styleClass="bill-field-label" text="Buyer" />
                         <TextField fx:id="buyer_name_field" promptText="Start typing a buyer name">
                             <font>
-                                <Font size="16.0" />
+                                <Font name="System Bold" size="16.0" />
                             </font></TextField>
                     </VBox>
                     <VBox spacing="6.0" GridPane.rowIndex="2">
                         <Label styleClass="bill-field-label" text="Transport" />
                         <TextField fx:id="transport_field" promptText="Start typing a transport name">
                             <font>
-                                <Font size="16.0" />
+                                <Font name="System Bold" size="16.0" />
                             </font></TextField>
                     </VBox>
                     <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -73,14 +83,14 @@
                             <Label styleClass="bill-field-label" text="LR number" />
                             <TextField fx:id="lr_field" prefWidth="180.0" promptText="Enter LR number">
                                 <font>
-                                    <Font size="16.0" />
+                                    <Font name="System Bold" size="16.0" />
                                 </font></TextField>
                         </VBox>
                         <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                             <Label styleClass="bill-field-label" text="PM" />
                             <TextField fx:id="pm_field" prefWidth="110.0" promptText="Enter PM">
                                 <font>
-                                    <Font size="16.0" />
+                                    <Font name="System Bold" size="16.0" />
                                 </font></TextField>
                         </VBox>
                         <Button fx:id="add_btn" mnemonicParsing="false" onAction="#addToList" prefWidth="88.0" styleClass="bill-primary-button" text="Add LR" />
@@ -106,7 +116,7 @@
                         <Label styleClass="bill-field-label" text="Bill amount" />
                         <TextField fx:id="bill_amount_field" alignment="CENTER_RIGHT" prefWidth="180.0" promptText="0.00" styleClass="bill-amount-field">
                             <font>
-                                <Font size="16.0" />
+                                <Font name="System Bold" size="16.0" />
                             </font></TextField>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS" />
