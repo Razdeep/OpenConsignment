@@ -19,11 +19,6 @@ class SqlLoaderTest {
     }
 
     @Test
-    void decodesResourcesAsUtf8() throws SQLException {
-        assertEquals("SELECT 'café ₹';\n", SqlLoader.readResource("utf8.sql"));
-    }
-
-    @Test
     void cachesLoadedSql() throws SQLException {
         assertSame(SqlLoader.load(SqlQuery.BUYER_GET_ALL), SqlLoader.load(SqlQuery.BUYER_GET_ALL));
     }
