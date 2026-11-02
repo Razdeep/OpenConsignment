@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import openconsignment.common.SqlLoader;
+import openconsignment.common.SqlQuery;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
@@ -28,15 +30,7 @@ public class PaymentRepository {
         try {
             conn.setAutoCommit(false);
             deletePayment(paymentEntity.getVoucherNo());
-            // language=sql
-            String sql =
-                    """
-                    INSERT INTO `Payment_Entry_Table`(`Voucher No.`,`Voucher Date`,`Supplier Name`,`Total Amount`) VALUES (?,?,?,?)
-                    on conflict(`Voucher No.`) do update set
-                      `Voucher Date` = excluded.`Voucher Date`,
-                      `Supplier Name` = excluded.`Supplier Name`,
-                      `Total Amount` = excluded.`Total Amount`;
-""";
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_SAVE);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, paymentEntity.getVoucherNo());
             preparedStatement.setString(2, paymentEntity.getVoucherDate());
@@ -44,8 +38,7 @@ public class PaymentRepository {
             preparedStatement.setString(4, paymentEntity.getTotalAmount());
             preparedStatement.execute();
 
-            sql =
-                    "INSERT INTO `Payment_Entry_Extended_Table`(`Voucher No.`,`Buyer Name`,`Bill No.`,`Bill Date`,`Bill Amount`,`Due Amount`,`Amount Paid`,`Bank`,`DD No.`,`DD Date`) VALUES (?,?,?,?,?,?,?,?,?,?)";
+            sql = SqlLoader.load(SqlQuery.PAYMENT_SAVE_ITEM);
 
             if (null != paymentEntity.getItems()) {
                 for (PaymentItemEntity paymentItem : paymentEntity.getItems()) {
@@ -74,69 +67,7 @@ public class PaymentRepository {
 
     public List<BillEntity> fetchPendingBillsForSupplier(String supplierName) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    """
-                        with cte_paid as (
-                        select
-                            `Bill No.`,
-                            sum(`Amount Paid`) as amount_paid
-                        from
-                            Payment_Entry_Extended_Table
-                        group by
-                            `Bill No.`
-                        ),
-                        cte_bill as (
-                        select
-                             `Bill No.`,
-                             `Bill Date`,
-                             `Bill Amount`,
-                             `Buyer Name`
-                        from
-                            Bill_Entry_Table
-                        WHERE
-                            `Supplier Name` = ?
-                        ),
-                        cte_bill_paid as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Buyer Name`,
-                            coalesce(`amount_paid`, 0) as amount_paid
-                        from
-                            cte_bill
-                        left join cte_paid
-                            using(`Bill No.`)
-                        ),
-                        cte_pending as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Buyer Name`,
-                            `Bill Amount` - amount_paid as pending_amount
-                        from
-                            cte_bill_paid
-                        ),
-                        cte_final as (
-                        select
-                            `Bill No.`,
-                            `Bill Date`,
-                            `Bill Amount`,
-                            `Buyer Name`
-                        from
-                            cte_pending
-                        where
-                            pending_amount > 0
-                        order by
-                            1
-                        )
-                        select
-                            *
-                        from
-                            cte_final;
-                    """;
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_PENDING_BILLS_FOR_SUPPLIER);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, supplierName);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -159,54 +90,7 @@ public class PaymentRepository {
 
     public int fetchPendingAmountForBillNo(String billNo) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    """
-                        with cte_paid as (
-                        select
-                            `Bill No.`,
-                            sum(`Amount Paid`) as amount_paid
-                        from
-                            Payment_Entry_Extended_Table
-                        group by
-                            `Bill No.`
-                        ),
-                        cte_bill as (
-                        select
-                            *
-                        from
-                            Bill_Entry_Table
-                        WHERE
-                            `Bill No.` = ?
-                        ),
-                        cte_bill_paid as (
-                        select
-                            `Bill No.`,
-                            `Bill Amount`,
-                            coalesce(`amount_paid`, 0) as amount_paid
-                        from
-                            cte_bill
-                        left join cte_paid
-                            using(`Bill No.`)
-                        ),
-                        cte_pending as (
-                        select
-                            `Bill No.`,
-                            `Bill Amount` - amount_paid as pending_amount
-                        from
-                            cte_bill_paid
-                        ),
-                        cte_final as (
-                        select
-                            pending_amount
-                        from
-                            cte_pending
-                        )
-                        select
-                            *
-                        from
-                            cte_final;
-                    """;
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_PENDING_AMOUNT_FOR_BILL);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -224,8 +108,7 @@ public class PaymentRepository {
 
     public String getLastVoucher() throws SQLException {
         try {
-            // language=sql
-            String sql = "SELECT MAX(`Voucher No.`) from `PAYMENT_ENTRY_TABLE`;";
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_LAST_VOUCHER);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
@@ -237,7 +120,7 @@ public class PaymentRepository {
 
     public PaymentEntity getPayment(String voucherNo) throws SQLException {
         try {
-            String sql = "select * from `Payment_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_GET_ITEMS);
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, voucherNo);
             ResultSet rs = ps.executeQuery();
@@ -259,7 +142,7 @@ public class PaymentRepository {
                 list.add(paymentItem);
             }
 
-            sql = "select * from `Payment_Entry_Table` where `Voucher No.`=? collate nocase";
+            sql = SqlLoader.load(SqlQuery.PAYMENT_GET);
 
             ps = conn.prepareStatement(sql);
             ps.setString(1, voucherNo);
@@ -288,13 +171,13 @@ public class PaymentRepository {
         try {
             conn.setAutoCommit(false);
 
-            String sql = "DELETE FROM `Payment_Entry_Table` where `Voucher No.`=? collate nocase";
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_DELETE);
 
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
 
-            sql = "DELETE FROM `Payment_Entry_Extended_Table` where `Voucher No.`=? collate nocase";
+            sql = SqlLoader.load(SqlQuery.PAYMENT_DELETE_ITEMS);
 
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
@@ -310,7 +193,7 @@ public class PaymentRepository {
     public List<PaymentEntity> getPayments() throws SQLException {
         try {
             List<PaymentEntity> res = new ArrayList<>();
-            String sql = "SELECT * FROM `Payment_Entry_Table`;";
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_GET_ALL);
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -331,15 +214,7 @@ public class PaymentRepository {
 
     public List<SupplierLedgerRow> getPaymentDetailsForSupplier(String supplierName) throws SQLException {
         try {
-            // language=sql
-            String sql =
-                    """
-                        select * from `Bill_Entry_Table` left join
-                        (`Payment_Entry_Extended_Table`
-                        join `Payment_Entry_Table` using ("Voucher No."))
-                        using("Bill No.") where `Bill_Entry_Table`.`Supplier Name`=?
-                        order by `Bill_Entry_Table`.`Bill No.`
-                    """;
+            String sql = SqlLoader.load(SqlQuery.PAYMENT_DETAILS_FOR_SUPPLIER);
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, supplierName);
             ResultSet resultSet = preparedStatement.executeQuery();

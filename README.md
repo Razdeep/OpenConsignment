@@ -95,6 +95,11 @@ Keep the JAR and launch script together when moving the application.
 
 - The application creates and initializes `database.db` in its working
   directory using `src/main/resources/sql/init.sql`.
+- Repository queries live in domain-specific folders under
+  `src/main/resources/sql` (for example, `bill/get.sql`). Paths are registered
+  in the `SqlQuery` enum and loaded with `SqlLoader.load(SqlQuery.BILL_GET)`,
+  using UTF-8 decoding and caching. When adding a query, add its SQL file and
+  enum entry; tests verify that every entry has a non-empty resource.
 - Running `./gradlew run` uses the repository root; the packaged launch
   commands above use `build/libs/`. Each location has its own database.
 - Reports are written to `report.pdf` in the working directory, replacing

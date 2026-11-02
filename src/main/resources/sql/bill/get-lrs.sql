@@ -1,0 +1,1 @@
+SELECT * FROM `LR_Table` WHERE `Bill No.`=? COLLATE NOCASE
