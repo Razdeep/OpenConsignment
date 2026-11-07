@@ -14,6 +14,8 @@ hamcrest = "2.2"
 #junit = "5.10.1"
 junitbom = "5.10.2"
 mockito = "5.14.2"
+slf4j = "2.0.17"
+log4j = "2.24.3"
 
 spotless = "7.0.2"
 shadow = "7.1.2"
@@ -24,6 +26,9 @@ controlsfx = { module = "org.controlsfx:controlsfx", version.ref = "controlsfx" 
 jasperreports = { module = "net.sf.jasperreports:jasperreports", version.ref = "jasperreports" }
 sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 olap4j = { module = "org.olap4j:olap4j", version.ref = "olap4j" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 #itext = { module = "com.lowagie:itext", version.ref = "itext" }
 
 javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javafx" }

@@ -2,18 +2,17 @@ package openconsignment.common;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javax.inject.Inject;
-import openconsignment.controller.MainController;
-import openconsignment.controller.entry.EntryController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ViewLoader {
+    private static final Logger logger = LoggerFactory.getLogger(ViewLoader.class);
 
     private final Callback<Class<?>, Object> controllerFactory;
 
@@ -30,7 +29,7 @@ public class ViewLoader {
             root.getChildren().setAll(parent);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(EntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -42,7 +41,7 @@ public class ViewLoader {
             center.setCenter(parent);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

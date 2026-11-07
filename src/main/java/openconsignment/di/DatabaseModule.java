@@ -9,15 +9,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Singleton;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Module
 @SuppressWarnings("unused")
 public class DatabaseModule {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseModule.class);
 
     @Provides
     @Singleton
@@ -29,7 +30,7 @@ public class DatabaseModule {
             return conn;
         } catch (ClassNotFoundException | SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(DatabaseModule.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -55,7 +56,7 @@ public class DatabaseModule {
                 conn.setAutoCommit(true);
             }
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseModule.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 

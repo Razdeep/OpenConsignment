@@ -18,6 +18,9 @@ dependencies {
     implementation(libs.jasperreports)
     implementation(libs.sqlite)
     implementation(libs.olap4j)
+    implementation(libs.slf4j.api)
+    runtimeOnly(libs.log4j.slf4j2.impl)
+    runtimeOnly(libs.log4j.core)
 //    implementation(libs.itext)
 
     implementation(libs.dagger)
@@ -53,6 +56,8 @@ javafx {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+    systemProperty("logging.test.classpath", sourceSets.test.get().runtimeClasspath.asPath)
+    providers.gradleProperty("loggingTestJar").orNull?.let { systemProperty("logging.test.jar", file(it).absolutePath) }
 
     // Keep UI tests independent of desktop focus and native mouse permissions.
     // Use -PheadlessTests=false when debugging tests with visible windows.
@@ -108,6 +113,7 @@ tasks.named<JavaExec>("run") {
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveClassifier.set("")
+    mergeServiceFiles()
 }
 
 tasks.named("distZip") { enabled = false }

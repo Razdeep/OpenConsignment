@@ -6,14 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
 import openconsignment.model.TransportLedgerRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransportRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TransportRepository.class);
 
     private final Connection conn;
 
@@ -22,14 +23,14 @@ public class TransportRepository {
         this.conn = conn;
     }
 
-    public void saveTransport(String tranportName) throws SQLException {
+    public void saveTransport(String transportName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.TRANSPORT_SAVE);
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, tranportName);
+            ps.setString(1, transportName);
             ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(TransportRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -41,7 +42,7 @@ public class TransportRepository {
             ps.setString(1, transportName);
             ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(TransportRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -54,7 +55,7 @@ public class TransportRepository {
             ps.setString(2, oldName);
             ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(TransportRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -69,7 +70,7 @@ public class TransportRepository {
             }
             return transportList;
         } catch (SQLException ex) {
-            Logger.getLogger(TransportRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -104,7 +105,7 @@ public class TransportRepository {
             }
             return result;
         } catch (SQLException ex) {
-            Logger.getLogger(TransportRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }

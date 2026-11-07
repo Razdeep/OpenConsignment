@@ -7,14 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
 import openconsignment.common.Utils;
@@ -26,9 +25,12 @@ import openconsignment.service.BuyerService;
 import openconsignment.service.SupplierService;
 import openconsignment.service.TransportService;
 import org.controlsfx.control.textfield.TextFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 public class BillEntryController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(BillEntryController.class);
 
     @FXML
     private TextField supplier_field;
@@ -114,7 +116,7 @@ public class BillEntryController implements Initializable {
 
         } catch (Exception ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(BillEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -123,7 +125,8 @@ public class BillEntryController implements Initializable {
         if (bill_no_field.getText().isEmpty()
                 || lr_field.getText().isEmpty()
                 || pm_field.getText().isEmpty()) {
-            Utils.showAlert("Please ensure that the Bill No., LR No. and PM fields are filled up properly.", 2);
+            Utils.showAlert(
+                    "Please ensure that the Bill No., LR No. and PM fields are filled up properly.", AlertType.WARNING);
             return;
         }
         lrList.add(new LR(bill_no_field.getText(), lr_field.getText(), pm_field.getText()));
@@ -163,10 +166,10 @@ public class BillEntryController implements Initializable {
         try {
             billService.saveBill(billEntity);
             clearAllFields();
-            Utils.showAlert("Saved Successfully", 1);
+            Utils.showAlert("Saved Successfully", AlertType.INFORMATION);
         } catch (Exception ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(BillEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -188,13 +191,14 @@ public class BillEntryController implements Initializable {
     @FXML
     private void replaceInList(ActionEvent event) {
         if (lrTable.getSelectionModel().getSelectedIndex() == -1) {
-            Utils.showAlert("Please select an item from the LR Table", 2);
+            Utils.showAlert("Please select an item from the LR Table", AlertType.WARNING);
             return;
         }
         if (bill_no_field.getText().isEmpty()
                 || lr_field.getText().isEmpty()
                 || pm_field.getText().isEmpty()) {
-            Utils.showAlert("Please ensure that the Bill No., LR No. and PM fields are filled up properly.", 2);
+            Utils.showAlert(
+                    "Please ensure that the Bill No., LR No. and PM fields are filled up properly.", AlertType.WARNING);
             return;
         }
         lrList.set(
@@ -208,7 +212,7 @@ public class BillEntryController implements Initializable {
     @FXML
     private void deleteFromList(ActionEvent event) {
         if (lrTable.getSelectionModel().getSelectedIndex() == -1) {
-            Utils.showAlert("Please select an item from the LR Table", 2);
+            Utils.showAlert("Please select an item from the LR Table", AlertType.WARNING);
             return;
         }
         lrList.remove(lrTable.getSelectionModel().getSelectedIndex());
@@ -221,7 +225,7 @@ public class BillEntryController implements Initializable {
             BillEntity billEntity = billService.getBill(bill_no_field.getText());
 
             if (null == billEntity) {
-                Utils.showAlert("Record not found. Please try again later.", 2);
+                Utils.showAlert("Record not found. Please try again later.", AlertType.WARNING);
                 return;
             }
 
@@ -241,7 +245,7 @@ public class BillEntryController implements Initializable {
 
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(BillEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -270,10 +274,11 @@ public class BillEntryController implements Initializable {
             bill_amount_field.setText("");
             lrTable.setItems(FXCollections.observableArrayList());
 
-            Utils.showAlert(bill_no_field.getText().toUpperCase() + " Entry was successfully deleted.", 1);
+            Utils.showAlert(
+                    bill_no_field.getText().toUpperCase() + " Entry was successfully deleted.", AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(BillEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

@@ -2,8 +2,6 @@ package openconsignment;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,8 +11,11 @@ import javafx.stage.Stage;
 import openconsignment.common.Utils;
 import openconsignment.di.AppComponent;
 import openconsignment.di.DaggerAppComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Launcher extends Application {
+    private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
     public static void main(String[] args) {
         launch(args);
@@ -41,9 +42,10 @@ public class Launcher extends Application {
                 stage.getIcons().add(new Image(resourceAsStream));
             }
             stage.setTitle("OpenConsignment");
+            logger.info("OpenConsignment started at {}", java.time.LocalDateTime.now());
         } catch (Exception ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

@@ -32,6 +32,7 @@ SQLite storage and PDF ledger reports.
   `src/main/java/openconsignment/di`)
 - SQLite (via `sqlite-jdbc`) for storage
 - JasperReports for PDF report generation
+- SLF4J with Log4j 2 for asynchronous rolling-file logging
 - Gradle (Kotlin DSL) with the Shadow plugin for a single runnable JAR
 - JUnit 5, Mockito, and TestFX for testing; Spotless (`palantir-java-format`)
   for formatting; JaCoCo for coverage
@@ -106,6 +107,34 @@ Keep the JAR and launch script together when moving the application.
   the previous report, and opened with the system's default PDF viewer.
 - The report organization name is configured in
   `src/main/java/openconsignment/common/Constants.java`.
+
+## Logging
+
+The application writes INFO and higher messages to stderr and to
+`logs/openconsignment.log` in its working directory. Application logging uses
+SLF4J directly with Log4j 2 as its backend, including exception stack traces.
+Use SLF4J's `LoggerFactory` and parameterized messages in application code.
+
+The file is rolled at startup, daily, or when it reaches 10 MB. Archives are
+compressed; during rollover, archives older than 30 days or beyond 100 MB total
+are deleted. The active file is separate from that archive limit. File writes use
+a bounded asynchronous queue; if it fills, callers wait rather than dropping
+messages. The queue is drained on normal JVM shutdown. An abrupt termination
+may lose queued messages. Log4j reports file setup problems to stderr, where
+console logging remains available.
+
+The working directory is the repository root when using `./gradlew run` and
+`build/libs` when using the supplied launch scripts. To use a different
+directory or file size, pass JVM properties, for example:
+
+```shell
+java -Dopenconsignment.logDir=/path/to/logs -Dopenconsignment.logSize="20 MB" ...
+```
+
+Configure these options in the launch script when running the packaged JAR.
+Use a separate log directory for each simultaneous application instance;
+the rolling files are not coordinated across processes. Log files can contain
+exception details, so restrict access and review them before sharing.
 
 ## Testing
 

@@ -6,13 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BuyerRepository {
+    private static final Logger logger = LoggerFactory.getLogger(BuyerRepository.class);
 
     private final Connection conn;
 
@@ -28,7 +29,7 @@ public class BuyerRepository {
             ps.setString(1, buyerName);
             ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(BuyerRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -40,7 +41,7 @@ public class BuyerRepository {
             ps.setString(1, buyerName);
             ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(BuyerRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -53,7 +54,7 @@ public class BuyerRepository {
             ps.setString(2, oldName);
             ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(BuyerRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -68,7 +69,7 @@ public class BuyerRepository {
             }
             return buyerList;
         } catch (SQLException ex) {
-            Logger.getLogger(BuyerRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }

@@ -9,13 +9,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
 import net.sf.jasperreports.engine.JRException;
@@ -28,6 +27,8 @@ import openconsignment.model.CollectionItem;
 import openconsignment.service.BillService;
 import openconsignment.service.BuyerService;
 import openconsignment.service.CollectionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CollectionEntryController implements Initializable {
 
@@ -36,7 +37,7 @@ public class CollectionEntryController implements Initializable {
     private List<String> billNoComboList;
     private int previouslyDue;
 
-    private static final Logger logger = Logger.getLogger(CollectionEntryController.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CollectionEntryController.class);
 
     @FXML
     private TextField dd_no_field;
@@ -151,7 +152,7 @@ public class CollectionEntryController implements Initializable {
             buyer_name.setItems(FXCollections.observableArrayList(buyerNameComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -165,7 +166,7 @@ public class CollectionEntryController implements Initializable {
             bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -183,7 +184,7 @@ public class CollectionEntryController implements Initializable {
             updateCollectionDue();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -198,7 +199,7 @@ public class CollectionEntryController implements Initializable {
                 || amount_collected_field.getText().isEmpty()
                 || dd_no_field.getText().isEmpty()
                 || dd_date_field.getValue().toString().isEmpty()) {
-            Utils.showAlert("Please check whether the fields are properly filled or not.", 2);
+            Utils.showAlert("Please check whether the fields are properly filled or not.", AlertType.WARNING);
             return;
         }
 
@@ -226,7 +227,7 @@ public class CollectionEntryController implements Initializable {
         try {
             amountCollected = Integer.parseInt(amount_collected_field.getText());
         } catch (Exception ex) {
-            logger.log(Level.WARNING, "cannot be converted to integer");
+            logger.warn("cannot be converted to integer");
         }
         collection_due_field.setText(Integer.toString(previouslyDue - amountCollected));
     }
@@ -254,7 +255,7 @@ public class CollectionEntryController implements Initializable {
     @FXML
     private void replaceCollection(ActionEvent ignoredEvent) {
         if (collection_tableview.getSelectionModel().getSelectedIndex() == -1) {
-            Utils.showAlert("Please select an item from the Collection Table", 2);
+            Utils.showAlert("Please select an item from the Collection Table", AlertType.WARNING);
             return;
         }
         if (bill_no_combo.getValue().isEmpty()
@@ -266,7 +267,7 @@ public class CollectionEntryController implements Initializable {
                 || amount_collected_field.getText().isEmpty()
                 || dd_no_field.getText().isEmpty()
                 || dd_date_field.getValue().toString().isEmpty()) {
-            Utils.showAlert("Please check whether the fields are properly filled or not.", 2);
+            Utils.showAlert("Please check whether the fields are properly filled or not.", AlertType.WARNING);
             return;
         }
         collectionItemList.set(
@@ -289,7 +290,7 @@ public class CollectionEntryController implements Initializable {
     @FXML
     private void deleteCollection(ActionEvent ignoredEvent) {
         if (collection_tableview.getSelectionModel().getSelectedIndex() == -1) {
-            Utils.showAlert("Please select an item from the LR Table", 2);
+            Utils.showAlert("Please select an item from the LR Table", AlertType.WARNING);
             return;
         }
         collectionItemList.remove(collection_tableview.getSelectionModel().getSelectedIndex());
@@ -316,13 +317,13 @@ public class CollectionEntryController implements Initializable {
     private void fetchCollectionVoucher() {
         String voucherNo = voucher_no_field.getText().trim();
         if (voucherNo.isEmpty()) {
-            Utils.showAlert("Please enter a voucher number.", 2);
+            Utils.showAlert("Please enter a voucher number.", AlertType.WARNING);
             return;
         }
         try {
             CollectionEntity voucher = collectionService.getCollection(voucherNo);
             if (voucher == null) {
-                Utils.showAlert("Collection voucher not found", 2);
+                Utils.showAlert("Collection voucher not found", AlertType.WARNING);
                 return;
             }
             List<CollectionItem> items = new ArrayList<>();
@@ -350,7 +351,7 @@ public class CollectionEntryController implements Initializable {
             total_amount_field.setText(voucher.getTotalAmount());
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, "Failed to fetch collection voucher", ex);
+            logger.error("Failed to fetch collection voucher", ex);
         }
     }
 
@@ -358,20 +359,20 @@ public class CollectionEntryController implements Initializable {
     private void printCollectionVoucher() {
         String voucherNo = voucher_no_field.getText().trim();
         if (voucherNo.isEmpty()) {
-            Utils.showAlert("Please enter a voucher number.", 2);
+            Utils.showAlert("Please enter a voucher number.", AlertType.WARNING);
             return;
         }
         try {
             if (collectionService.getCollection(voucherNo) == null) {
-                Utils.showAlert("Collection voucher not found", 2);
+                Utils.showAlert("Collection voucher not found", AlertType.WARNING);
                 return;
             }
             collectionService.generatePdf(voucherNo);
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
-            Utils.showAlert("Report Successfully Generated", 1);
+            Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (IOException | JRException | SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, "Failed to print collection voucher", ex);
+            logger.error("Failed to print collection voucher", ex);
         }
     }
 
@@ -379,12 +380,12 @@ public class CollectionEntryController implements Initializable {
     private void deleteCollectionVoucher() {
         String voucherNo = voucher_no_field.getText().trim();
         if (voucherNo.isEmpty()) {
-            Utils.showAlert("Please enter a voucher number.", 2);
+            Utils.showAlert("Please enter a voucher number.", AlertType.WARNING);
             return;
         }
         try {
             if (collectionService.getCollection(voucherNo) == null) {
-                Utils.showAlert("Collection voucher not found", 2);
+                Utils.showAlert("Collection voucher not found", AlertType.WARNING);
                 return;
             }
             Alert alert = new Alert(
@@ -398,10 +399,10 @@ public class CollectionEntryController implements Initializable {
             collectionService.deleteCollection(voucherNo);
             clearAllFields();
             updateLastVoucher();
-            Utils.showAlert(voucherNo + " was successfully deleted.", 1);
+            Utils.showAlert(voucherNo + " was successfully deleted.", AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, "Failed to delete collection voucher", ex);
+            logger.error("Failed to delete collection voucher", ex);
         }
     }
 
@@ -421,7 +422,7 @@ public class CollectionEntryController implements Initializable {
         if (voucher_no_field.getText().isEmpty()
                 || voucher_date_field.getValue() == null
                 || voucher_date_field.getValue().toString().isEmpty()) {
-            Utils.showAlert("Check whether the Voucher No. and the Voucher Date is properly filled", 2);
+            Utils.showAlert("Check whether the Voucher No. and the Voucher Date is properly filled", AlertType.WARNING);
             return;
         }
 
@@ -448,10 +449,10 @@ public class CollectionEntryController implements Initializable {
                 .build();
         try {
             collectionService.saveCollection(collectionEntity);
-            Utils.showAlert("Saved Successfully", 1);
+            Utils.showAlert("Saved Successfully", AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             return;
         }
 
@@ -467,7 +468,7 @@ public class CollectionEntryController implements Initializable {
             voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

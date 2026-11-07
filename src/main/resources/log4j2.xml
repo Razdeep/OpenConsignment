@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" shutdownHook="enable">
+    <Properties>
+        <Property name="logDir">${sys:openconsignment.logDir:-logs}</Property>
+        <Property name="logSize">${sys:openconsignment.logSize:-10 MB}</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c - %msg%n%throwable"/>
+        </Console>
+        <RollingFile name="File" fileName="${logDir}/openconsignment.log"
+                     filePattern="${logDir}/openconsignment-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %c - %msg%n%throwable"/>
+            <Policies>
+<!--                <OnStartupTriggeringPolicy/>-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="${logSize}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="1000">
+                <Delete basePath="${logDir}" maxDepth="1">
+                    <IfFileName glob="openconsignment-*.log.gz">
+                        <IfAny>
+                            <IfLastModified age="30d"/>
+                            <IfAccumulatedFileSize exceeds="100 MB"/>
+                        </IfAny>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <Async name="AsyncFile" bufferSize="8192" blocking="true" shutdownTimeout="0">
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="Fallback"/>
+        </Async>
+        <Null name="Fallback"/>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

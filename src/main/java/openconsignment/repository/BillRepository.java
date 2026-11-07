@@ -6,15 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BillRepository {
+    private static final Logger logger = LoggerFactory.getLogger(BillRepository.class);
 
     private final Connection conn;
 
@@ -56,7 +57,7 @@ public class BillRepository {
             conn.commit();
         } catch (SQLException ex) {
             conn.rollback();
-            Logger.getLogger(BillRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -98,7 +99,7 @@ public class BillRepository {
             billEntity.setLrEntities(lrpmList);
             return billEntity;
         } catch (SQLException ex) {
-            Logger.getLogger(BillRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -119,7 +120,7 @@ public class BillRepository {
             conn.commit();
         } catch (SQLException ex) {
             conn.rollback();
-            Logger.getLogger(BillRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -144,7 +145,7 @@ public class BillRepository {
             }
             return res;
         } catch (SQLException ex) {
-            Logger.getLogger(BillRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }

@@ -5,12 +5,11 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -20,8 +19,11 @@ import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.service.SupplierService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SupplierLedgerController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(SupplierLedgerController.class);
 
     @FXML
     private ComboBox<String> supplier_name_combo;
@@ -55,7 +57,7 @@ public class SupplierLedgerController implements Initializable {
             supplier_name_combo.setItems(FXCollections.observableArrayList(supplierList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(SupplierLedgerController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -65,10 +67,10 @@ public class SupplierLedgerController implements Initializable {
             supplierService.generatePdf(
                     supplier_name_combo.getSelectionModel().getSelectedItem(), agewise_outstanding_radio.isSelected());
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
-            Utils.showAlert("Report Successfully Generated", 1);
+            Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (IOException | SQLException | JRException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(SupplierLedgerController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -76,10 +78,10 @@ public class SupplierLedgerController implements Initializable {
     private void launchPdf(ActionEvent event) {
         try {
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
-            Utils.showAlert("PDF opened successfully.", 1);
+            Utils.showAlert("PDF opened successfully.", AlertType.INFORMATION);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(SupplierLedgerController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

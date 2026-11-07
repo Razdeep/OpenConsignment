@@ -7,14 +7,13 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
@@ -28,6 +27,8 @@ import openconsignment.model.PaymentItem;
 import openconsignment.service.BillService;
 import openconsignment.service.PaymentService;
 import openconsignment.service.SupplierService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 public class PaymentEntryController implements Initializable {
@@ -37,7 +38,7 @@ public class PaymentEntryController implements Initializable {
     private List<String> billNoComboList;
     private int previouslyDue;
 
-    private static final Logger logger = Logger.getLogger(PaymentEntryController.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(PaymentEntryController.class);
 
     @FXML
     private TextField dd_no_field;
@@ -176,7 +177,7 @@ public class PaymentEntryController implements Initializable {
                 || amount_paid_field.getText().isEmpty()
                 || dd_no_field.getText().isEmpty()
                 || dd_date_field.getValue().toString().isEmpty()) {
-            Utils.showAlert("Please check whether the fields are properly filled or not.", 2);
+            Utils.showAlert("Please check whether the fields are properly filled or not.", AlertType.WARNING);
             return;
         }
 
@@ -203,7 +204,7 @@ public class PaymentEntryController implements Initializable {
     private void replacePayment(ActionEvent ignoredEvent) {
 
         if (payment_tableview.getSelectionModel().getSelectedIndex() == -1) {
-            Utils.showAlert("Please select an item from the Payment Table", 2);
+            Utils.showAlert("Please select an item from the Payment Table", AlertType.WARNING);
             return;
         }
 
@@ -217,7 +218,7 @@ public class PaymentEntryController implements Initializable {
                 || amount_paid_field.getText().isEmpty()
                 || dd_no_field.getText().isEmpty()
                 || dd_date_field.getValue().toString().isEmpty()) {
-            Utils.showAlert("Please check whether the fields are properly filled or not.", 2);
+            Utils.showAlert("Please check whether the fields are properly filled or not.", AlertType.WARNING);
             return;
         }
 
@@ -245,7 +246,7 @@ public class PaymentEntryController implements Initializable {
     @FXML
     private void deletePayment(ActionEvent ignoredEvent) {
         if (payment_tableview.getSelectionModel().getSelectedIndex() == -1) {
-            Utils.showAlert("Please select an item from the Payment Table", 2);
+            Utils.showAlert("Please select an item from the Payment Table", AlertType.WARNING);
             return;
         }
         paymentItems.remove(payment_tableview.getSelectionModel().getSelectedIndex());
@@ -301,7 +302,7 @@ public class PaymentEntryController implements Initializable {
         if (voucher_no_field.getText().isEmpty()
                 || voucher_date_field.getValue() == null
                 || voucher_date_field.getValue().toString().isEmpty()) {
-            Utils.showAlert("Check whether the Voucher No. and the Voucher Date is properly filled", 2);
+            Utils.showAlert("Check whether the Voucher No. and the Voucher Date is properly filled", AlertType.WARNING);
             return;
         }
 
@@ -330,11 +331,11 @@ public class PaymentEntryController implements Initializable {
 
         try {
             paymentService.savePayment(paymentEntity);
-            Utils.showAlert("Saved Successfully", 1);
+            Utils.showAlert("Saved Successfully", AlertType.INFORMATION);
             clearAllFields();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
 
         clearAllFields();
@@ -351,7 +352,7 @@ public class PaymentEntryController implements Initializable {
             voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -361,7 +362,7 @@ public class PaymentEntryController implements Initializable {
             supplier_name_combo.setItems(FXCollections.observableArrayList(supplierNameComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, "Failed to populate the supplier combo", ex);
+            logger.error("Failed to populate the supplier combo", ex);
         }
     }
 
@@ -372,7 +373,7 @@ public class PaymentEntryController implements Initializable {
             bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, "Failed to populate bill number combo", ex);
+            logger.error("Failed to populate bill number combo", ex);
         }
     }
 
@@ -390,7 +391,7 @@ public class PaymentEntryController implements Initializable {
             updateDueAmount();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -400,7 +401,7 @@ public class PaymentEntryController implements Initializable {
         try {
             amountPaid = Integer.parseInt(amount_paid_field.getText());
         } catch (Exception ex) {
-            logger.log(Level.WARNING, "cannot be converted to integer");
+            logger.warn("cannot be converted to integer");
         }
         due_amount_field.setText(Integer.toString(previouslyDue - amountPaid));
     }
@@ -441,7 +442,7 @@ public class PaymentEntryController implements Initializable {
             //            delete_entry_btn.setDisable(false);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -449,10 +450,10 @@ public class PaymentEntryController implements Initializable {
         try {
             paymentService.generatePdf(voucher_no_field.getText());
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
-            Utils.showAlert("Report Successfully Generated", 1);
+            Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (IOException | JRException | SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -472,10 +473,12 @@ public class PaymentEntryController implements Initializable {
         try {
             paymentService.deletePayment(voucher_no_field.getText());
 
-            Utils.showAlert(voucher_no_field.getText().toUpperCase() + " Entry was successfully deleted.", 1);
+            Utils.showAlert(
+                    voucher_no_field.getText().toUpperCase() + " Entry was successfully deleted.",
+                    AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(PaymentEntryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }
