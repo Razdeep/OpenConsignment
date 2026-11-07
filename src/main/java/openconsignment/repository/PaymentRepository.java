@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
@@ -16,8 +14,11 @@ import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
 import openconsignment.entity.PaymentItemEntity;
 import openconsignment.model.SupplierLedgerRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PaymentRepository {
+    private static final Logger logger = LoggerFactory.getLogger(PaymentRepository.class);
 
     private final Connection conn;
 
@@ -61,7 +62,7 @@ public class PaymentRepository {
             conn.commit();
         } catch (SQLException ex) {
             conn.rollback();
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -83,7 +84,7 @@ public class PaymentRepository {
             }
             return res;
         } catch (SQLException ex) {
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -101,7 +102,7 @@ public class PaymentRepository {
 
             return resultSet.getInt("pending_amount");
         } catch (SQLException ex) {
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -113,7 +114,7 @@ public class PaymentRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
         } catch (SQLException ex) {
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -162,7 +163,7 @@ public class PaymentRepository {
 
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -185,7 +186,7 @@ public class PaymentRepository {
             conn.commit();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             conn.rollback();
         }
     }
@@ -207,7 +208,7 @@ public class PaymentRepository {
             }
             return res;
         } catch (SQLException ex) {
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -236,7 +237,7 @@ public class PaymentRepository {
             }
             return res;
         } catch (SQLException ex) {
-            Logger.getLogger(PaymentRepository.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
             throw ex;
         }
     }

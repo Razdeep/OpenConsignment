@@ -3,8 +3,6 @@ package openconsignment.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,8 +11,11 @@ import javafx.scene.text.Text;
 import javax.inject.Inject;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WelcomeScreenController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(WelcomeScreenController.class);
 
     @FXML
     private Text organization_name;
@@ -31,7 +32,7 @@ public class WelcomeScreenController implements Initializable {
             Utils.launchBrowser(url);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(WelcomeScreenController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 

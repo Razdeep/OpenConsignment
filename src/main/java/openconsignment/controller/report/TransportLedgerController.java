@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -19,8 +18,11 @@ import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.service.TransportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransportLedgerController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(TransportLedgerController.class);
 
     @FXML
     private CheckBox all_time_checkbox;
@@ -54,7 +56,7 @@ public class TransportLedgerController implements Initializable {
             transport_name_combo.setItems(FXCollections.observableArrayList(transportList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportLedgerController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -73,10 +75,10 @@ public class TransportLedgerController implements Initializable {
             transportService.generatePdf(
                     transport_name_combo.getSelectionModel().getSelectedItem(), fromDate, toDate);
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
-            Utils.showAlert("Report Successfully Generated", 1);
+            Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (JRException | SQLException | IOException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportLedgerController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -84,10 +86,10 @@ public class TransportLedgerController implements Initializable {
     private void launchPdf(ActionEvent event) {
         try {
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
-            Utils.showAlert("PDF opened successfully.", 1);
+            Utils.showAlert("PDF opened successfully.", AlertType.INFORMATION);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportLedgerController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

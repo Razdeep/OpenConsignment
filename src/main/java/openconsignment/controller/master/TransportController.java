@@ -4,19 +4,21 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.service.TransportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransportController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(TransportController.class);
 
     @FXML
     private Button add_btn;
@@ -62,7 +64,7 @@ public class TransportController implements Initializable {
             refreshList();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -77,7 +79,7 @@ public class TransportController implements Initializable {
             refreshList();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -88,7 +90,7 @@ public class TransportController implements Initializable {
             listView.getItems().setAll(transportList);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 
@@ -100,11 +102,11 @@ public class TransportController implements Initializable {
         }
         try {
             transportService.renameTransport(listView.getSelectionModel().getSelectedItem(), rename_field.getText());
-            Utils.showAlert("Success", 1);
+            Utils.showAlert("Success", AlertType.INFORMATION);
             refreshList();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(TransportController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }

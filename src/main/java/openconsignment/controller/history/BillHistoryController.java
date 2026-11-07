@@ -4,8 +4,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,8 +15,11 @@ import javax.inject.Inject;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.service.BillService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BillHistoryController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(BillHistoryController.class);
 
     @FXML
     private Group root;
@@ -69,7 +70,7 @@ public class BillHistoryController implements Initializable {
             tableView.setItems(FXCollections.observableArrayList(billList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            Logger.getLogger(BillHistoryController.class.getName()).log(Level.SEVERE, ex.toString(), ex);
+            logger.error(ex.toString(), ex);
         }
     }
 }
