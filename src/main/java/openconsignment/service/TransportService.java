@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.sf.jasperreports.engine.*;
+import openconsignment.common.AppConfig;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.model.TransportLedgerRow;
@@ -16,10 +17,12 @@ import openconsignment.repository.TransportRepository;
 public class TransportService {
 
     private final TransportRepository transportRepository;
+    private final AppConfig configuration;
 
     @Inject
-    public TransportService(TransportRepository transportRepository) {
+    public TransportService(TransportRepository transportRepository, AppConfig configuration) {
         this.transportRepository = transportRepository;
+        this.configuration = configuration;
     }
 
     public List<String> getAllTransports() throws SQLException {
@@ -43,7 +46,7 @@ public class TransportService {
                 transportRepository.getTransportReportFor(transportName, fromDate, toDate);
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put(Constants.ORGANIZATION_NAME_KEY, Constants.ORGANIZATION_NAME);
+        payload.put(Constants.ORGANIZATION_NAME_KEY, configuration.organizationName());
         payload.put("transportName", transportName);
         payload.put("fromDate", fromDate);
         payload.put("toDate", toDate);

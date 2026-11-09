@@ -105,8 +105,34 @@ Keep the JAR and launch script together when moving the application.
   commands above use `build/libs/`. Each location has its own database.
 - Reports are written to `report.pdf` in the working directory, replacing
   the previous report, and opened with the system's default PDF viewer.
-- The report organization name is configured in
-  `src/main/java/openconsignment/common/Constants.java`.
+
+## Application configuration
+
+At startup, the application reads UTF-8 `application.yaml` beside the JAR, regardless
+of the current working directory. If this file does not exist, the application copies
+`src/main/resources/application.yaml` from inside the JAR to that location and loads
+the new file. Existing configuration files are never overwritten.
+
+Edit the generated file to set your organization name:
+
+```yaml
+organizationName: "YOUR ORGANIZATION"
+```
+
+This name appears on the welcome screen and in buyer, supplier, and transport
+ledger reports. The bundled YAML is used only as the template for first-run creation;
+properties are not merged or filled in from it when an external file already exists.
+YAML is bound directly to configuration POJOs using SnakeYAML. Quote the name to
+preserve its exact text; scalar values such as numbers are converted to strings.
+Surrounding whitespace is trimmed. A blank or null name, malformed YAML, or an
+unreadable configuration file is reported as a startup error. An empty file or missing
+required property also fails validation. The application needs write access to the
+JAR directory when creating the file for the first time.
+
+For Gradle/IDE runs, the file is created and read in the working directory (the
+repository root for `./gradlew run`). The example file is included in `build/libs/`
+when building. Restart the application after editing the file. Updating the JAR
+does not replace an existing configuration file.
 
 ## Logging
 

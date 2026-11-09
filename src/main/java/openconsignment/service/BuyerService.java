@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.sf.jasperreports.engine.*;
+import openconsignment.common.AppConfig;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.model.BuyerLedgerAgeRow;
@@ -20,11 +21,13 @@ public class BuyerService {
 
     private final BuyerRepository buyerRepository;
     private final CollectionService collectionService;
+    private final AppConfig configuration;
 
     @Inject
-    public BuyerService(BuyerRepository buyerRepository, CollectionService collectionService) {
+    public BuyerService(BuyerRepository buyerRepository, CollectionService collectionService, AppConfig configuration) {
         this.buyerRepository = buyerRepository;
         this.collectionService = collectionService;
+        this.configuration = configuration;
     }
 
     public List<String> getAllBuyers() throws SQLException {
@@ -46,7 +49,7 @@ public class BuyerService {
     public void generatePdf(String buyerName, boolean isAgewise) throws SQLException, JRException {
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put(Constants.ORGANIZATION_NAME_KEY, Constants.ORGANIZATION_NAME);
+        payload.put(Constants.ORGANIZATION_NAME_KEY, configuration.organizationName());
         payload.put("buyerName", buyerName);
 
         if (isAgewise) {

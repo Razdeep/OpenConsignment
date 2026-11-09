@@ -4,3 +4,4 @@ build
 .pdf
 .db
 logs/
+/application.yaml
