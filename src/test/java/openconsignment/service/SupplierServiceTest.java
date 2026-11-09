@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
+import openconsignment.common.AppConfig;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
@@ -24,10 +25,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class SupplierServiceTest {
+
+    @Spy
+    private AppConfig configuration = AppConfig.forOrganization("Configured Organization");
 
     @Mock
     private SupplierRepository supplierRepository;
@@ -80,7 +85,7 @@ class SupplierServiceTest {
             utils.verify(() -> Utils.generatePdf(eq("SupplierLedger.jrxml"), payloadCaptor.capture(), eq(rows)));
 
             Map<String, Object> payload = payloadCaptor.getValue();
-            assertEquals(Constants.ORGANIZATION_NAME, payload.get(Constants.ORGANIZATION_NAME_KEY));
+            assertEquals("Configured Organization", payload.get(Constants.ORGANIZATION_NAME_KEY));
             assertEquals("Supplier A", payload.get("supplierName"));
         }
     }
@@ -109,7 +114,7 @@ class SupplierServiceTest {
                     Utils.generatePdf(eq("SupplierLedgerAge.jrxml"), payloadCaptor.capture(), rowsCaptor.capture()));
 
             Map<String, Object> payload = payloadCaptor.getValue();
-            assertEquals(Constants.ORGANIZATION_NAME, payload.get(Constants.ORGANIZATION_NAME_KEY));
+            assertEquals("Configured Organization", payload.get(Constants.ORGANIZATION_NAME_KEY));
             assertEquals("Supplier A", payload.get("supplierName"));
 
             List<SupplierLedgerAgeRow> rows = rowsCaptor.getValue();

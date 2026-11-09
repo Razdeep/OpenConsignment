@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.sqlite)
     implementation(libs.olap4j)
     implementation(libs.slf4j.api)
+    implementation(libs.snakeyaml)
     runtimeOnly(libs.log4j.slf4j2.impl)
     runtimeOnly(libs.log4j.core)
 //    implementation(libs.itext)

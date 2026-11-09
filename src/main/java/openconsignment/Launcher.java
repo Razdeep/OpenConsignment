@@ -30,6 +30,7 @@ public class Launcher extends Application {
                 throw new RuntimeException("Resource not found");
             }
             AppComponent component = DaggerAppComponent.create();
+            component.configuration();
             FXMLLoader loader = new FXMLLoader(resource);
             loader.setControllerFactory(component.controllerFactory());
             Parent root = loader.load();

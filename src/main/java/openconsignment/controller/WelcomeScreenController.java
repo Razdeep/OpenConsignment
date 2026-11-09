@@ -9,19 +9,22 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
-import openconsignment.common.Constants;
+import openconsignment.common.AppConfig;
 import openconsignment.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WelcomeScreenController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(WelcomeScreenController.class);
+    private final AppConfig configuration;
 
     @FXML
     private Text organization_name;
 
     @Inject
-    public WelcomeScreenController() {}
+    public WelcomeScreenController(AppConfig configuration) {
+        this.configuration = configuration;
+    }
 
     @FXML
     private void handleOpenGithub(ActionEvent event) {
@@ -38,6 +41,6 @@ public class WelcomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        organization_name.setText(Constants.ORGANIZATION_NAME);
+        organization_name.setText(configuration.organizationName());
     }
 }
