@@ -6,11 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javax.inject.Inject;
 import openconsignment.common.ViewLoader;
+import openconsignment.service.BackupService;
 
+@SuppressWarnings("unused")
 public class MainController implements Initializable {
 
     @FXML
@@ -25,14 +26,13 @@ public class MainController implements Initializable {
     @FXML
     private Button master_btn;
 
-    @FXML
-    private MenuItem welcome_screen;
-
     private final ViewLoader viewLoader;
+    private final BackupService backupService;
 
     @Inject
-    public MainController(ViewLoader viewLoader) {
+    public MainController(ViewLoader viewLoader, BackupService backupService) {
         this.viewLoader = viewLoader;
+        this.backupService = backupService;
     }
 
     @Override
@@ -73,5 +73,55 @@ public class MainController implements Initializable {
     @FXML
     private void showPaymentHistory(ActionEvent event) {
         viewLoader.loadCenter("/fxml/history/PaymentHistory.fxml", root);
+    }
+
+    @FXML
+    private void showBillEntryScreen(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/entry/BillEntry.fxml", root);
+    }
+
+    @FXML
+    private void showCollectionEntryScreen(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/entry/CollectionEntry.fxml", root);
+    }
+
+    @FXML
+    private void showPaymentEntryScreen(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/entry/PaymentEntry.fxml", root);
+    }
+
+    @FXML
+    private void showSupplierLedger(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/report/SupplierLedger.fxml", root);
+    }
+
+    @FXML
+    private void showBuyerLedger(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/report/BuyerLedger.fxml", root);
+    }
+
+    @FXML
+    private void showTransportLedger(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/report/TransportLedger.fxml", root);
+    }
+
+    @FXML
+    private void showSupplierMaster(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/master/MasterSupplier.fxml", root);
+    }
+
+    @FXML
+    private void showBuyerMaster(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/master/MasterBuyer.fxml", root);
+    }
+
+    @FXML
+    private void showTransportMaster(ActionEvent event) {
+        viewLoader.loadCenter("/fxml/master/MasterTransport.fxml", root);
+    }
+
+    @FXML
+    private void checkSync(ActionEvent event) {
+        backupService.checkSync();
     }
 }

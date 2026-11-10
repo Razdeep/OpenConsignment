@@ -30,7 +30,7 @@ class ConfigurationModuleTest {
         AppConfig configuration = load(file);
 
         assertEquals(bundled, Files.readString(file));
-        assertEquals(configuration.organizationName(), load(file).organizationName());
+        assertEquals(configuration.getOrganizationName(), load(file).getOrganizationName());
     }
 
     @Test
@@ -45,7 +45,7 @@ class ConfigurationModuleTest {
     void loadsUtf8OrganizationNameAndTrimsWhitespace() throws IOException {
         Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: \"  Café Agencies  \"\n");
 
-        assertEquals("Café Agencies", load(file).organizationName());
+        assertEquals("Café Agencies", load(file).getOrganizationName());
     }
 
     @Test
@@ -55,8 +55,8 @@ class ConfigurationModuleTest {
 
         Files.writeString(file, "organizationName: Second\n");
 
-        assertEquals("First", configuration.organizationName());
-        assertEquals("Second", load(file).organizationName());
+        assertEquals("First", configuration.getOrganizationName());
+        assertEquals("Second", load(file).getOrganizationName());
     }
 
     @Test
@@ -86,7 +86,7 @@ class ConfigurationModuleTest {
         String content = "# Custom settings\norganizationName: External Organization\n";
         Path file = Files.writeString(tempDir.resolve("application.yaml"), content);
 
-        assertEquals("External Organization", load(file).organizationName());
+        assertEquals("External Organization", load(file).getOrganizationName());
         assertEquals(content, Files.readString(file));
     }
 
@@ -136,7 +136,7 @@ class ConfigurationModuleTest {
     void bindsNumericScalarToStringProperty() throws IOException {
         Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: 123\n");
 
-        assertEquals("123", load(file).organizationName());
+        assertEquals("123", load(file).getOrganizationName());
     }
 
     @Test

@@ -46,7 +46,7 @@ public class TransportService {
                 transportRepository.getTransportReportFor(transportName, fromDate, toDate);
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put(Constants.ORGANIZATION_NAME_KEY, configuration.organizationName());
+        payload.put(Constants.ORGANIZATION_NAME_KEY, configuration.getOrganizationName());
         payload.put("transportName", transportName);
         payload.put("fromDate", fromDate);
         payload.put("toDate", toDate);

@@ -17,6 +17,7 @@ mockito = "5.14.2"
 slf4j = "2.0.17"
 log4j = "2.24.3"
 snakeyaml = "2.3"
+jgit = "7.8.1.202611041320-r"
 
 spotless = "7.0.2"
 shadow = "7.1.2"
@@ -37,6 +38,8 @@ javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javaf
 javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
 javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 javafx-fxml = { module = "org.openjfx:javafx-fxml", version.ref = "javafx" }
+
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit"}
 
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 

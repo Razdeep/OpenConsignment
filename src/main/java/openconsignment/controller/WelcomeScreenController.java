@@ -41,6 +41,6 @@ public class WelcomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        organization_name.setText(configuration.organizationName());
+        organization_name.setText(configuration.getOrganizationName());
     }
 }

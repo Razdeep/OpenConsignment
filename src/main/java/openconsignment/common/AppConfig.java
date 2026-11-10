@@ -10,16 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AppConfig {
     private String organizationName;
+    private String githubPAT;
 
     public static AppConfig forOrganization(String organizationName) {
         AppConfig configuration = new AppConfig();
         configuration.setOrganizationName(organizationName);
         configuration.validate();
         return configuration;
-    }
-
-    public String organizationName() {
-        return organizationName;
     }
 
     public void validate() {
