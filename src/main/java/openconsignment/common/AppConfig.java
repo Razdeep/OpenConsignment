@@ -10,13 +10,25 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AppConfig {
     private String organizationName;
-    private String githubPAT;
+    private String financialYear;
+    private Github github;
 
     public static AppConfig forOrganization(String organizationName) {
         AppConfig configuration = new AppConfig();
         configuration.setOrganizationName(organizationName);
         configuration.validate();
         return configuration;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class Github {
+        private String repoName;
+        private String token;
+        private String username;
+        private String branchName;
+        private String remoteName;
     }
 
     public void validate() {

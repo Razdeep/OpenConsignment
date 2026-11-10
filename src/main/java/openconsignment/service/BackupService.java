@@ -38,17 +38,20 @@ public class BackupService {
 
     public void pull() throws IOException, GitAPIException {
         logger.info("executing git pull");
-        String repoPath = "Satyam-Database-2026-27";
-        String branchName = "main";
-        String username = "drcbabu81";
-        String token = appConfig.getGithubPAT();
+
+        AppConfig.Github github = appConfig.getGithub();
+        String repoPath = github.getRepoName();
+        String username = github.getUsername();
+        String token = github.getToken();
+        String branchName = github.getBranchName();
+        String remoteName = github.getRemoteName();
 
         logger.info("token is {}", token);
 
         try (Git git = Git.open(new File(repoPath))) {
 
             PullResult result = git.pull()
-                    .setRemote("origin")
+                    .setRemote(remoteName)
                     .setRemoteBranchName(branchName)
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, token))
                     .call();
