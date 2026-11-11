@@ -2,9 +2,12 @@ package openconsignment.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import openconsignment.common.AppConfig;
+import openconsignment.common.Constants;
+import openconsignment.common.Utils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -33,7 +36,22 @@ public class BackupService {
             return false;
         }
         logger.info("checkSync called");
-        return true;
+
+        try {
+            String localFileHash = Utils.md5sum(Path.of(Constants.DATABASE_FILE_NAME));
+            String repoFileHash =
+                    Utils.md5sum(Path.of(appConfig.getGithub().getRepoName() + "/" + Constants.DATABASE_FILE_NAME));
+            boolean result = 0 == localFileHash.compareTo(repoFileHash);
+            logger.info(
+                    "Checksync result = {}, localFileHash = {}, repoFileHash = {}",
+                    result,
+                    localFileHash,
+                    repoFileHash);
+            return result;
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            return false;
+        }
     }
 
     public void pull() throws IOException, GitAPIException {

@@ -69,11 +69,20 @@ def init_github_repository():
         return
     github_username = "drcbabu81"
     repo_url = f"git@github.com:{github_username}/{repo_name}.git"
+    repo_url_https = f"https://github.com/{github_username}/{repo_name}.git"
 
     try:
         logger.info(f"cloning {repo_name}")
         subprocess.run(
             ["git", "clone", repo_url], check=True, capture_output=True, text=True
+        )
+
+        repo_path = os.path.abspath(repo_name)
+
+        subprocess.run(
+            ["git", "remote", "add", "origin-https", repo_url_https], 
+            cwd=repo_path,
+            check=True, capture_output=True, text=True
         )
 
         if (Path(repo_name) / ".git").is_dir():
