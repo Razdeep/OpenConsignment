@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javax.inject.Inject;
 import openconsignment.common.Utils;
@@ -135,6 +136,21 @@ public class MainController implements Initializable {
             Utils.showAlert("Data is Synced", Alert.AlertType.INFORMATION);
         } else {
             Utils.showAlert("Not Synced", Alert.AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    private void upload(ActionEvent event) {
+        try {
+            Alert alert =
+                    new Alert(Alert.AlertType.CONFIRMATION, "Do you want to upload?", ButtonType.YES, ButtonType.NO);
+            if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+                return;
+            }
+            backupService.push();
+            Utils.showAlert("Successfully uploaded", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            Utils.showAlert("Error", Alert.AlertType.ERROR);
         }
     }
 }
