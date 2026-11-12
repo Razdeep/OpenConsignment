@@ -15,15 +15,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.service.SupplierService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class SupplierLedgerController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(SupplierLedgerController.class);
 
     @FXML
     private ComboBox<String> supplier_name_combo;
@@ -57,7 +56,7 @@ public class SupplierLedgerController implements Initializable {
             supplier_name_combo.setItems(FXCollections.observableArrayList(supplierList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -70,7 +69,7 @@ public class SupplierLedgerController implements Initializable {
             Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (IOException | SQLException | JRException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -81,7 +80,7 @@ public class SupplierLedgerController implements Initializable {
             Utils.showAlert("PDF opened successfully.", AlertType.INFORMATION);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

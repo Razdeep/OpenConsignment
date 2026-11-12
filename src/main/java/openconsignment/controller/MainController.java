@@ -5,9 +5,11 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javax.inject.Inject;
+import openconsignment.common.Utils;
 import openconsignment.common.ViewLoader;
 import openconsignment.service.BackupService;
 
@@ -122,6 +124,17 @@ public class MainController implements Initializable {
 
     @FXML
     private void checkSync(ActionEvent event) {
-        backupService.checkSync();
+        boolean synced = false;
+        try {
+            synced = backupService.checkSync();
+        } catch (Exception e) {
+            Utils.showAlert("Error", Alert.AlertType.ERROR);
+        }
+
+        if (synced) {
+            Utils.showAlert("Data is Synced", Alert.AlertType.INFORMATION);
+        } else {
+            Utils.showAlert("Not Synced", Alert.AlertType.WARNING);
+        }
     }
 }
