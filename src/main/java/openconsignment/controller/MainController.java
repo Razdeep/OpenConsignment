@@ -10,10 +10,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.common.ViewLoader;
 import openconsignment.service.BackupService;
 
+@Slf4j
 @SuppressWarnings("unused")
 public class MainController implements Initializable {
 
@@ -147,10 +149,26 @@ public class MainController implements Initializable {
             if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
                 return;
             }
-            backupService.push();
+            backupService.upload();
             Utils.showAlert("Successfully uploaded", Alert.AlertType.INFORMATION);
         } catch (Exception e) {
-            Utils.showAlert("Error", Alert.AlertType.ERROR);
+            log.error(e.toString());
+            Utils.showAlert(e.toString(), Alert.AlertType.ERROR);
+        }
+    }
+
+    public void download(ActionEvent actionEvent) {
+        try {
+            Alert alert =
+                    new Alert(Alert.AlertType.CONFIRMATION, "Do you want to download?", ButtonType.YES, ButtonType.NO);
+            if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+                return;
+            }
+            backupService.download();
+            Utils.showAlert("Successfully downloaded", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            log.error(e.toString());
+            Utils.showAlert(e.toString(), Alert.AlertType.ERROR);
         }
     }
 }

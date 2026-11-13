@@ -2,7 +2,9 @@ package openconsignment.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import openconsignment.common.Utils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -46,7 +49,19 @@ public class BackupService {
         return result;
     }
 
-    public void pull() throws IOException, GitAPIException {
+    private void copyRepoToLocal() throws IOException {
+        AppConfig.Github github = appConfig.getGithub();
+        String repoPath = github.getRepoName();
+
+        log.info("Copying {} to {}", repoPath, Constants.DATABASE_FILE_NAME);
+        Files.copy(
+                Path.of(new File(repoPath + "/" + Constants.DATABASE_FILE_NAME).toURI()),
+                Path.of(new File(Constants.DATABASE_FILE_NAME).toURI()),
+                StandardCopyOption.REPLACE_EXISTING);
+        log.info("Copied {} to {}", repoPath, Constants.DATABASE_FILE_NAME);
+    }
+
+    private void pull() throws IOException, GitAPIException {
         log.info("executing git pull");
 
         AppConfig.Github github = appConfig.getGithub();
@@ -74,7 +89,43 @@ public class BackupService {
         }
     }
 
-    public void push() throws IOException, GitAPIException {
+    public void download() throws GitAPIException, IOException {
+        pull();
+        copyRepoToLocal();
+    }
+
+    private void copyLocalToRepo() throws IOException {
+        AppConfig.Github github = appConfig.getGithub();
+        String repoPath = github.getRepoName();
+
+        log.info("Copying {} to {}", Constants.DATABASE_FILE_NAME, repoPath);
+        Files.copy(
+                Path.of(new File(Constants.DATABASE_FILE_NAME).toURI()),
+                Path.of(new File(repoPath + "/" + Constants.DATABASE_FILE_NAME).toURI()),
+                StandardCopyOption.REPLACE_EXISTING);
+        log.info("Copied {} to {}", Constants.DATABASE_FILE_NAME, repoPath);
+    }
+
+    private void addAndCommit() throws IOException, GitAPIException {
+
+        log.info("executing add and commit");
+
+        AppConfig.Github github = appConfig.getGithub();
+        String repoPath = github.getRepoName();
+
+        try (Git git = Git.open(new File(repoPath))) {
+
+            // Stage changes
+            git.add().addFilepattern(".").call();
+
+            // Commit changes
+            RevCommit commit = git.commit().setMessage("Automated backup").call();
+
+            log.info("Commit: " + commit.getId().getName());
+        }
+    }
+
+    private void push() throws IOException, GitAPIException {
         log.info("executing git push");
 
         AppConfig.Github github = appConfig.getGithub();
@@ -96,5 +147,11 @@ public class BackupService {
                 log.info(result.getMessages());
             }
         }
+    }
+
+    public void upload() throws GitAPIException, IOException {
+        copyLocalToRepo();
+        addAndCommit();
+        push();
     }
 }

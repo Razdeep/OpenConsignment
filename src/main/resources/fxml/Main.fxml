@@ -65,7 +65,7 @@
                     <items>
                         <MenuItem mnemonicParsing="false" text="Check Sync" onAction="#checkSync"/>
                         <MenuItem mnemonicParsing="false" text="Upload" onAction="#upload"/>
-                        <MenuItem mnemonicParsing="false" text="Download"/>
+                        <MenuItem mnemonicParsing="false" text="Download" onAction="#download"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
