@@ -3,12 +3,11 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.DatePicker?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/8.0.111"
-            fx:controller="openconsignment.controller.report.TransportLedgerController">
+<?import javafx.scene.Group?>
+<Group fx:id="root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+       fx:controller="openconsignment.controller.report.TransportLedgerController">
     <children>
         <ComboBox fx:id="transport_name_combo" layoutX="237.0" layoutY="106.0" prefHeight="25.0" prefWidth="254.0"/>
         <DatePicker fx:id="from_date" layoutX="116.0" layoutY="216.0" prefHeight="28.0" prefWidth="137.0"/>
@@ -48,4 +47,4 @@
         </Button>
         <CheckBox fx:id="all_time_checkbox" layoutX="260.0" layoutY="161.0" mnemonicParsing="false" text="All Time"/>
     </children>
-</AnchorPane>
+</Group>

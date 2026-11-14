@@ -30,7 +30,7 @@ class ConfigurationModuleTest {
         AppConfig configuration = load(file);
 
         assertEquals(bundled, Files.readString(file));
-        assertEquals(configuration.organizationName(), load(file).organizationName());
+        assertEquals(configuration.getOrganization(), load(file).getOrganization());
     }
 
     @Test
@@ -42,33 +42,33 @@ class ConfigurationModuleTest {
     }
 
     @Test
-    void loadsUtf8OrganizationNameAndTrimsWhitespace() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: \"  Café Agencies  \"\n");
+    void loadsUtf8OrganizationAndTrimsWhitespace() throws IOException {
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: \"  Café Agencies  \"\n");
 
-        assertEquals("Café Agencies", load(file).organizationName());
+        assertEquals("Café Agencies", load(file).getOrganization());
     }
 
     @Test
     void loadedConfigurationDoesNotChangeWhenFileIsEdited() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: First\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: First\n");
         AppConfig configuration = load(file);
 
-        Files.writeString(file, "organizationName: Second\n");
+        Files.writeString(file, "organization: Second\n");
 
-        assertEquals("First", configuration.organizationName());
-        assertEquals("Second", load(file).organizationName());
+        assertEquals("First", configuration.getOrganization());
+        assertEquals("Second", load(file).getOrganization());
     }
 
     @Test
-    void rejectsBlankOrganizationName() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: \"   \"\n");
+    void rejectsBlankOrganization() throws IOException {
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: \"   \"\n");
 
         assertThrows(IllegalArgumentException.class, () -> load(file));
     }
 
     @Test
     void rejectsMalformedYaml() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: [\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: [\n");
 
         assertThrows(YAMLException.class, () -> load(file));
     }
@@ -83,16 +83,16 @@ class ConfigurationModuleTest {
 
     @Test
     void existingConfigurationIsLoadedWithoutBeingOverwritten() throws IOException {
-        String content = "# Custom settings\norganizationName: External Organization\n";
+        String content = "# Custom settings\norganization: External Organization\n";
         Path file = Files.writeString(tempDir.resolve("application.yaml"), content);
 
-        assertEquals("External Organization", load(file).organizationName());
+        assertEquals("External Organization", load(file).getOrganization());
         assertEquals(content, Files.readString(file));
     }
 
     @Test
     void malformedConfigurationErrorIdentifiesSourceFile() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: [\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: [\n");
 
         YAMLException error = assertThrows(YAMLException.class, () -> load(file));
 
@@ -134,14 +134,14 @@ class ConfigurationModuleTest {
 
     @Test
     void bindsNumericScalarToStringProperty() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: 123\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: 123\n");
 
-        assertEquals("123", load(file).organizationName());
+        assertEquals("123", load(file).getOrganization());
     }
 
     @Test
     void rejectsMappingOrganizationName() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: {name: Example}\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: {name: Example}\n");
 
         assertThrows(YAMLException.class, () -> load(file));
     }
@@ -155,22 +155,22 @@ class ConfigurationModuleTest {
 
     @Test
     void rejectsNullOrganizationName() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: null\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: null\n");
 
         assertThrows(IllegalArgumentException.class, () -> load(file));
     }
 
     @Test
     void rejectsEmptyOrganizationName() throws IOException {
-        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organizationName: \"\"\n");
+        Path file = Files.writeString(tempDir.resolve("application.yaml"), "organization: \"\"\n");
 
         assertThrows(IllegalArgumentException.class, () -> load(file));
     }
 
     @Test
     void rejectsDuplicateKeys() throws IOException {
-        Path file = Files.writeString(
-                tempDir.resolve("application.yaml"), "organizationName: First\norganizationName: Second\n");
+        Path file =
+                Files.writeString(tempDir.resolve("application.yaml"), "organization: First\norganization: Second\n");
 
         assertThrows(YAMLException.class, () -> load(file));
     }

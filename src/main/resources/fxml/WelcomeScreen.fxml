@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Hyperlink?>
-<Group xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.WelcomeScreenController">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Group xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.WelcomeScreenController">
     <children>
         <AnchorPane id="AnchorPane" prefHeight="490.0" prefWidth="757.0">
             <children>
@@ -41,13 +44,24 @@
                         <Image url="@../icons/transparent_logo.png" />
                     </image>
                 </ImageView>
-                <Hyperlink layoutX="182.0" layoutY="405.0" prefWidth="400.0"
-                           text="https://github.com/Razdeep/OpenConsignment"
-                           textAlignment="CENTER" onAction="#handleOpenGithub">
+                <Hyperlink layoutX="182.0" layoutY="405.0" onAction="#handleOpenGithub" prefWidth="402.0" text="https://github.com/Razdeep/OpenConsignment" textAlignment="CENTER">
                     <font>
                         <Font size="17.0" />
                     </font>
                 </Hyperlink>
+            <Text fx:id="year" layoutX="56.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="YYYY-YY" textAlignment="CENTER" wrappingWidth="658.658203125">
+               <font>
+                  <Font name="System Bold Italic" size="40.0" />
+               </font>
+               <fill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop color="#4800ff" />
+                        <Stop color="#ff0054" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill>
+            </Text>
             </children>
         </AnchorPane>
     </children>

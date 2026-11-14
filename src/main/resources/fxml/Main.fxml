@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@/css/main.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.MainController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="600.0" prefWidth="800.0" stylesheets="@/css/main.css" xmlns="http://javafx.com/javafx/26"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.MainController">
 
     <center>
         <Group BorderPane.alignment="CENTER">
             <children>
-                <AnchorPane layoutX="34.0" layoutY="67.0" />
+                <AnchorPane layoutX="34.0" layoutY="67.0"/>
             </children>
         </Group>
     </center>
@@ -22,21 +30,51 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Close" />
+                        <MenuItem mnemonicParsing="false" text="Close"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Navigate">
+                <Menu mnemonicParsing="false" text="Input">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showInputHistory" text="Input History" />
-                        <MenuItem mnemonicParsing="false" onAction="#showCollectionHistory" text="Collection History" />
-                        <MenuItem mnemonicParsing="false" onAction="#showPaymentHistory" text="Payment History" />
+                        <MenuItem mnemonicParsing="false" text="Bill" onAction="#showBillEntryScreen"/>
+                        <MenuItem mnemonicParsing="false" text="Collection" onAction="#showCollectionEntryScreen"/>
+                        <MenuItem mnemonicParsing="false" text="Payment" onAction="#showPaymentEntryScreen"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Report">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Supplier Ledger" onAction="#showSupplierLedger"/>
+                        <MenuItem mnemonicParsing="false" text="Buyer Ledger" onAction="#showBuyerLedger"/>
+                        <MenuItem mnemonicParsing="false" text="Transport Ledger" onAction="#showTransportLedger"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Master">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Buyer" onAction="#showBuyerMaster"/>
+                        <MenuItem mnemonicParsing="false" text="Supplier" onAction="#showSupplierMaster"/>
+                        <MenuItem mnemonicParsing="false" text="Transport" onAction="#showTransportMaster"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showInputHistory" text="Input History"/>
+                        <MenuItem mnemonicParsing="false" onAction="#showCollectionHistory" text="Collection History"/>
+                        <MenuItem mnemonicParsing="false" onAction="#showPaymentHistory" text="Payment History"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Backup">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Check Sync" onAction="#checkSync"/>
+                        <MenuItem mnemonicParsing="false" text="Upload" onAction="#upload"/>
+                        <MenuItem mnemonicParsing="false" text="Download" onAction="#download"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem fx:id="welcome_screen" mnemonicParsing="false" onAction="#showWelcomeScreen" text="Welcome Screen" />
+                        <MenuItem fx:id="welcome_screen" mnemonicParsing="false" onAction="#showWelcomeScreen"
+                                  text="Welcome Screen"/>
                     </items>
                 </Menu>
+
             </menus>
         </MenuBar>
     </top>
@@ -44,49 +82,58 @@
     <right>
         <VBox prefWidth="55.0" style="-fx-background-color: #0039a3;" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="input_btn" contentDisplay="TOP" graphicTextGap="5.0" onAction="#showInputScreen" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: skyblue; -fx-border-color: darkblue;" text="Input" VBox.vgrow="ALWAYS">
+                <Button fx:id="input_btn" contentDisplay="TOP" graphicTextGap="5.0" onAction="#showInputScreen"
+                        prefHeight="200.0" prefWidth="200.0"
+                        style="-fx-background-color: skyblue; -fx-border-color: darkblue;" text="Input"
+                        VBox.vgrow="ALWAYS">
                     <font>
-                        <Font size="18.0" />
+                        <Font size="18.0"/>
                     </font>
                     <VBox.margin>
-                        <Insets />
+                        <Insets/>
                     </VBox.margin>
                     <graphic>
                         <ImageView fitHeight="62.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../icons/Input.png" />
+                                <Image url="@../icons/Input.png"/>
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
 
-                <Button fx:id="report_btn" contentDisplay="TOP" graphicTextGap="5.0" onAction="#showReportScreen" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: skyblue; -fx-border-color: darkblue;" text="Report" VBox.vgrow="ALWAYS">
+                <Button fx:id="report_btn" contentDisplay="TOP" graphicTextGap="5.0" onAction="#showReportScreen"
+                        prefHeight="200.0" prefWidth="200.0"
+                        style="-fx-background-color: skyblue; -fx-border-color: darkblue;" text="Report"
+                        VBox.vgrow="ALWAYS">
                     <font>
-                        <Font size="18.0" />
+                        <Font size="18.0"/>
                     </font>
                     <VBox.margin>
-                        <Insets />
+                        <Insets/>
                     </VBox.margin>
                     <graphic>
                         <ImageView fitHeight="72.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../icons/Report.png" />
+                                <Image url="@../icons/Report.png"/>
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
 
-                <Button fx:id="master_btn" contentDisplay="TOP" graphicTextGap="5.0" onAction="#showMasterScreen" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: skyblue; -fx-border-color: darkblue;" text="Master" VBox.vgrow="ALWAYS">
+                <Button fx:id="master_btn" contentDisplay="TOP" graphicTextGap="5.0" onAction="#showMasterScreen"
+                        prefHeight="200.0" prefWidth="200.0"
+                        style="-fx-background-color: skyblue; -fx-border-color: darkblue;" text="Master"
+                        VBox.vgrow="ALWAYS">
                     <font>
-                        <Font size="18.0" />
+                        <Font size="18.0"/>
                     </font>
                     <VBox.margin>
-                        <Insets />
+                        <Insets/>
                     </VBox.margin>
                     <graphic>
                         <ImageView fitHeight="67.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../icons/Master.png" />
+                                <Image url="@../icons/Master.png"/>
                             </image>
                         </ImageView>
                     </graphic>
