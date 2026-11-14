@@ -43,7 +43,7 @@ public class BackupService {
     }
 
     private String getRepoFileHash() throws Exception {
-        return Utils.md5sum(Path.of(appConfig.getGithub().getRepoName() + "/" + Constants.DATABASE_FILE_NAME));
+        return Utils.md5sum(Path.of(appConfig.getGithub().getRepository() + "/" + Constants.DATABASE_FILE_NAME));
     }
 
     public boolean compareDatabaseHashes() throws Exception {
@@ -57,7 +57,7 @@ public class BackupService {
 
     private void copyRepoToLocal() throws IOException {
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepoName();
+        String repoPath = github.getRepository();
 
         log.info("Copying {} to {}", repoPath, Constants.DATABASE_FILE_NAME);
         Files.copy(
@@ -71,11 +71,11 @@ public class BackupService {
         log.info("executing git pull");
 
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepoName();
+        String repoPath = github.getRepository();
         String username = github.getUsername();
         String token = github.getToken();
-        String branchName = github.getBranchName();
-        String remoteName = github.getRemoteName();
+        String branchName = github.getBranch();
+        String remoteName = github.getRemote();
 
         log.info("token is {}", token);
 
@@ -102,7 +102,7 @@ public class BackupService {
 
     private void copyLocalToRepo() throws IOException {
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepoName();
+        String repoPath = github.getRepository();
 
         log.info("Copying {} to {}", Constants.DATABASE_FILE_NAME, repoPath);
         Files.copy(
@@ -117,7 +117,7 @@ public class BackupService {
         log.info("executing add and commit");
 
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepoName();
+        String repoPath = github.getRepository();
 
         try (Git git = Git.open(new File(repoPath))) {
 
@@ -148,11 +148,11 @@ public class BackupService {
         log.info("executing git push");
 
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepoName();
+        String repoPath = github.getRepository();
         String username = github.getUsername();
         String token = github.getToken();
-        String branchName = github.getBranchName();
-        String remoteName = github.getRemoteName();
+        String branchName = github.getBranch();
+        String remoteName = github.getRemote();
 
         log.info("token is {}", token);
 

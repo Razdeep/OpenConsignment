@@ -9,13 +9,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AppConfig {
-    private String organizationName;
-    private String financialYear;
+    private String organization;
+    private String year;
     private Github github;
 
     public static AppConfig forOrganization(String organizationName) {
         AppConfig configuration = new AppConfig();
-        configuration.setOrganizationName(organizationName);
+        configuration.setOrganization(organizationName);
         configuration.validate();
         return configuration;
     }
@@ -24,17 +24,17 @@ public class AppConfig {
     @Setter
     @NoArgsConstructor
     public static class Github {
-        private String repoName;
+        private String repository;
         private String token;
         private String username;
-        private String branchName;
-        private String remoteName;
+        private String branch;
+        private String remote;
     }
 
     public void validate() {
-        if (organizationName == null || organizationName.isBlank()) {
-            throw new IllegalArgumentException("organizationName must not be blank");
+        if (organization == null || organization.isBlank()) {
+            throw new IllegalArgumentException("organization must not be blank");
         }
-        organizationName = organizationName.strip();
+        organization = organization.strip();
     }
 }

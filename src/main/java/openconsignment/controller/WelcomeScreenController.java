@@ -9,13 +9,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.AppConfig;
 import openconsignment.common.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class WelcomeScreenController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(WelcomeScreenController.class);
     private final AppConfig configuration;
 
     @FXML
@@ -35,12 +34,12 @@ public class WelcomeScreenController implements Initializable {
             Utils.launchBrowser(url);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        organization_name.setText(configuration.getOrganizationName());
+        organization_name.setText(configuration.getOrganization());
     }
 }

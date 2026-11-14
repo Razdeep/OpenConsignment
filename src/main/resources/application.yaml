@@ -1,7 +1,8 @@
-organizationName: "SATYAM AGENCIES"
+organization: "SATYAM AGENCIES"
+#year: 2001-02
 github:
   token: ""
   username: "razdeep"
-  branchName: "main"
-  remoteName: "origin-https"
-  repoName: "Satyam-Database-2001-02"
+  branch: "main"
+  remote: "origin-https"
+  repository: "Satyam-Database-2001-02"
