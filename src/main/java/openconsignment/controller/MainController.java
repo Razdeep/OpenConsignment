@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.common.ViewLoader;
 import openconsignment.service.BackupService;
+import org.eclipse.jgit.api.errors.EmptyCommitException;
 
 @Slf4j
 @SuppressWarnings("unused")
@@ -151,6 +152,9 @@ public class MainController implements Initializable {
             }
             backupService.upload();
             Utils.showAlert("Successfully uploaded", Alert.AlertType.INFORMATION);
+        } catch (EmptyCommitException e) {
+            log.info(e.toString());
+            Utils.showAlert("Data is already synced. " + e, Alert.AlertType.INFORMATION);
         } catch (Exception e) {
             log.error(e.toString());
             Utils.showAlert(e.toString(), Alert.AlertType.ERROR);

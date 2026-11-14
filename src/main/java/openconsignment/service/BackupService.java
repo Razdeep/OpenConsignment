@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +42,14 @@ public class BackupService {
         }
     }
 
+    private String getRepoFileHash() throws Exception {
+        return Utils.md5sum(Path.of(appConfig.getGithub().getRepoName() + "/" + Constants.DATABASE_FILE_NAME));
+    }
+
     public boolean compareDatabaseHashes() throws Exception {
         String localFileHash = Utils.md5sum(Path.of(Constants.DATABASE_FILE_NAME));
-        String repoFileHash =
-                Utils.md5sum(Path.of(appConfig.getGithub().getRepoName() + "/" + Constants.DATABASE_FILE_NAME));
+        String repoFileHash = getRepoFileHash();
+
         boolean result = 0 == localFileHash.compareTo(repoFileHash);
         log.info("CheckSync result = {}, localFileHash = {}, repoFileHash = {}", result, localFileHash, repoFileHash);
         return result;
@@ -118,8 +124,21 @@ public class BackupService {
             // Stage changes
             git.add().addFilepattern(".").call();
 
+            // Current time in string
+            String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            String repoFileHash = "null";
+            try {
+                repoFileHash = getRepoFileHash();
+            } catch (Exception e) {
+                log.error(e.toString());
+            }
+
+            String message = "Backed up at " + currentTime + "; database hash = " + repoFileHash;
+
             // Commit changes
-            RevCommit commit = git.commit().setMessage("Automated backup").call();
+            RevCommit commit =
+                    git.commit().setMessage(message).setAllowEmpty(false).call();
 
             log.info("Commit: " + commit.getId().getName());
         }
