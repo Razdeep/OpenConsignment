@@ -2,6 +2,7 @@ package openconsignment.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -18,6 +19,7 @@ import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 @Slf4j
@@ -29,6 +31,49 @@ public class BackupService {
     @Inject
     public BackupService(AppConfig appConfig) {
         this.appConfig = appConfig;
+    }
+
+    private void cloneRepo() throws GitAPIException, IOException, URISyntaxException {
+
+        log.info("executing git clone");
+
+        AppConfig.Github github = appConfig.getGithub();
+        String repoPath = github.getRepository();
+        String username = github.getUsername();
+        String token = github.getToken();
+        String branchName = github.getBranch();
+        String remoteName = github.getRemote();
+
+        if (Files.exists(Path.of(repoPath))) {
+            log.info("skipping git clone as repo already exist");
+            return;
+        }
+
+        String repoUrl = "https://github.com/" + username + "/" + repoPath + ".git";
+
+        try (Git ignored = Git.cloneRepository()
+                .setURI(repoUrl)
+                .setDirectory(new File(repoPath))
+                .setBranch(branchName)
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, token))
+                .call()) {
+
+            log.info("Authenticated clone successful");
+        }
+
+        try (Git git = Git.open(new File(repoPath))) {
+
+            // HTTPS remote
+            git.remoteAdd()
+                    .setName(remoteName)
+                    .setUri(new URIish("https://github.com/" + username + "/" + repoPath + ".git"))
+                    .call();
+
+            git.remoteSetUrl()
+                    .setRemoteName("origin")
+                    .setRemoteUri(new URIish("git@github.com:" + username + "/" + repoPath + ".git"))
+                    .call();
+        }
     }
 
     public boolean checkSync() throws Exception {
@@ -67,7 +112,7 @@ public class BackupService {
         log.info("Copied {} to {}", repoPath, Constants.DATABASE_FILE_NAME);
     }
 
-    private void pull() throws IOException, GitAPIException {
+    private void pull() throws IOException, GitAPIException, URISyntaxException {
         log.info("executing git pull");
 
         AppConfig.Github github = appConfig.getGithub();
@@ -76,6 +121,11 @@ public class BackupService {
         String token = github.getToken();
         String branchName = github.getBranch();
         String remoteName = github.getRemote();
+
+        if (!Files.exists(Path.of(repoPath))) {
+            log.info("cloning {}", repoPath);
+            cloneRepo();
+        }
 
         log.info("token is {}", token);
 
@@ -95,7 +145,7 @@ public class BackupService {
         }
     }
 
-    public void download() throws GitAPIException, IOException {
+    public void download() throws GitAPIException, IOException, URISyntaxException {
         pull();
         copyRepoToLocal();
     }
