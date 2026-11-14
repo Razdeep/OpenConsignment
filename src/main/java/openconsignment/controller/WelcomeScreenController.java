@@ -20,6 +20,9 @@ public class WelcomeScreenController implements Initializable {
     @FXML
     private Text organization_name;
 
+    @FXML
+    private Text year;
+
     @Inject
     public WelcomeScreenController(AppConfig configuration) {
         this.configuration = configuration;
@@ -41,5 +44,6 @@ public class WelcomeScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         organization_name.setText(configuration.getOrganization());
+        year.setText(configuration.getYear());
     }
 }
