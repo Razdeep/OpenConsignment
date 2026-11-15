@@ -2,6 +2,7 @@ package openconsignment.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,10 +13,12 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.AppConfig;
 import openconsignment.common.Utils;
+import openconsignment.di.DatabaseManager;
 
 @Slf4j
 public class WelcomeScreenController implements Initializable {
     private final AppConfig configuration;
+    private final DatabaseManager databaseManager;
 
     @FXML
     private Text organization_name;
@@ -24,8 +27,9 @@ public class WelcomeScreenController implements Initializable {
     private Text year;
 
     @Inject
-    public WelcomeScreenController(AppConfig configuration) {
+    public WelcomeScreenController(AppConfig configuration, DatabaseManager databaseManager) {
         this.configuration = configuration;
+        this.databaseManager = databaseManager;
     }
 
     @FXML
@@ -45,5 +49,11 @@ public class WelcomeScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         organization_name.setText(configuration.getOrganization());
         year.setText(configuration.getYear());
+        try {
+            databaseManager.getConnection();
+        } catch (SQLException e) {
+            log.error(e.toString());
+            Utils.showAlert(e.toString());
+        }
     }
 }

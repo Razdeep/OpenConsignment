@@ -18,6 +18,7 @@ import openconsignment.common.Utils;
 import openconsignment.di.DatabaseManager;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.PushResult;
@@ -77,6 +78,10 @@ public class BackupService {
                     .setRemoteName("origin")
                     .setRemoteUri(new URIish("git@github.com:" + username + "/" + repoPath + ".git"))
                     .call();
+
+            if (null == git.getRepository().resolve("HEAD")) {
+                git.getRepository().updateRef("HEAD").link("refs/heads/" + branchName);
+            }
         }
     }
 
@@ -92,7 +97,11 @@ public class BackupService {
     }
 
     private String getRepoFileHash() throws Exception {
-        return Utils.md5sum(Path.of(appConfig.getGithub().getRepository() + "/" + Constants.DATABASE_FILE_NAME));
+        Path remotePath = Path.of(appConfig.getGithub().getRepository() + "/" + Constants.DATABASE_FILE_NAME);
+        if (!Files.exists(remotePath)) {
+            return "";
+        }
+        return Utils.md5sum(remotePath);
     }
 
     public boolean compareDatabaseHashes() throws Exception {
@@ -120,31 +129,29 @@ public class BackupService {
         log.info("executing git pull");
 
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepository();
-        String username = github.getUsername();
-        String token = github.getToken();
-        String branchName = github.getBranch();
-        String remoteName = github.getRemote();
 
-        if (!Files.exists(Path.of(repoPath))) {
-            log.info("cloning {}", repoPath);
+        log.info("token is {}", github.getToken());
+
+        if (!Files.exists(Path.of(github.getRepository()))) {
+            log.info("cloning {}", github.getRepository());
             cloneRepo();
+            log.info("cloned {}", github.getRepository());
+            return;
         }
 
-        log.info("token is {}", token);
-
-        try (Git git = Git.open(new File(repoPath))) {
+        try (Git git = Git.open(new File(github.getRepository()))) {
 
             PullResult result = git.pull()
-                    .setRemote(remoteName)
-                    .setRemoteBranchName(branchName)
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, token))
+                    .setRemote(github.getRemote())
+                    .setRemoteBranchName(github.getBranch())
+                    .setCredentialsProvider(
+                            new UsernamePasswordCredentialsProvider(github.getUsername(), github.getToken()))
                     .call();
 
             if (result.isSuccessful()) {
-                log.info("Successfully pulled: {}", branchName);
+                log.info("Successfully pulled: {}", github.getBranch());
             } else {
-                throw new IllegalStateException("Pull failed for branch: " + branchName);
+                throw new IllegalStateException("Pull failed for branch: " + github.getBranch());
             }
         }
     }
@@ -203,18 +210,14 @@ public class BackupService {
         log.info("executing git push");
 
         AppConfig.Github github = appConfig.getGithub();
-        String repoPath = github.getRepository();
-        String username = github.getUsername();
-        String token = github.getToken();
-        String branchName = github.getBranch();
-        String remoteName = github.getRemote();
 
-        log.info("token is {}", token);
+        log.info("pushing with token {}", github.getToken());
 
-        try (Git git = Git.open(new File(repoPath))) {
+        try (Git git = Git.open(new File(github.getRepository()))) {
             Iterable<PushResult> results = git.push()
-                    .setRemote(remoteName)
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, token))
+                    .setRemote(github.getRemote())
+                    .setCredentialsProvider(
+                            new UsernamePasswordCredentialsProvider(github.getUsername(), github.getToken()))
                     .call();
 
             for (PushResult result : results) {
@@ -225,7 +228,11 @@ public class BackupService {
 
     public void upload() throws GitAPIException, IOException {
         copyLocalToRepo();
-        addAndCommit();
+        try {
+            addAndCommit();
+        } catch (EmptyCommitException ex) {
+            log.info("swallowing EmptyCommitException");
+        }
         push();
     }
 }
