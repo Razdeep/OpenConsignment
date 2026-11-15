@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import openconsignment.di.DatabaseManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ class SupplierRepositoryTest {
     @BeforeEach
     void setUp() throws Exception {
         conn = RepositoryTestSupport.newInMemoryConnection();
-        supplierRepository = new SupplierRepository(conn);
+        supplierRepository = new SupplierRepository(new DatabaseManager(conn));
     }
 
     @AfterEach

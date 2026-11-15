@@ -1,36 +1,35 @@
 package openconsignment.repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
+import openconsignment.di.DatabaseManager;
 import openconsignment.model.TransportLedgerRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class TransportRepository {
-    private static final Logger logger = LoggerFactory.getLogger(TransportRepository.class);
 
-    private final Connection conn;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public TransportRepository(Connection conn) {
-        this.conn = conn;
+    public TransportRepository(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 
     public void saveTransport(String transportName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.TRANSPORT_SAVE);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, transportName);
             ps.execute();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -38,11 +37,11 @@ public class TransportRepository {
     public void deleteTransport(String transportName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.TRANSPORT_DELETE);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, transportName);
             ps.execute();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -50,12 +49,12 @@ public class TransportRepository {
     public void renameTransport(String oldName, String newName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.TRANSPORT_RENAME);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, newName);
             ps.setString(2, oldName);
             ps.execute();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -63,14 +62,16 @@ public class TransportRepository {
     public List<String> getAllTransports() throws SQLException {
         try {
             List<String> transportList = new ArrayList<>();
-            ResultSet transportResultSet = conn.prepareStatement(SqlLoader.load(SqlQuery.TRANSPORT_GET_ALL))
+            ResultSet transportResultSet = databaseManager
+                    .getConnection()
+                    .prepareStatement(SqlLoader.load(SqlQuery.TRANSPORT_GET_ALL))
                     .executeQuery();
             while (transportResultSet.next()) {
                 transportList.add(transportResultSet.getString("name"));
             }
             return transportList;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -82,7 +83,7 @@ public class TransportRepository {
 
             String sql = SqlLoader.load(SqlQuery.TRANSPORT_REPORT);
 
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, transportName);
             ps.setString(2, fromDate);
             ps.setString(3, fromDate);
@@ -105,7 +106,7 @@ public class TransportRepository {
             }
             return result;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }

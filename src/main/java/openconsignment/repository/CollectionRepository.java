@@ -1,36 +1,36 @@
 package openconsignment.repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
 import openconsignment.common.Utils;
+import openconsignment.di.DatabaseManager;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.CollectionEntity;
 import openconsignment.entity.CollectionItemEntity;
 import openconsignment.model.BuyerLedgerRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class CollectionRepository {
-    private static final Logger logger = LoggerFactory.getLogger(CollectionRepository.class);
 
-    private final Connection conn;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public CollectionRepository(Connection conn) {
-        this.conn = conn;
+    public CollectionRepository(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 
     public List<BillEntity> fetchPendingBillsForBuyer(String buyerName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.COLLECTION_PENDING_BILLS_FOR_BUYER);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, buyerName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -45,7 +45,7 @@ public class CollectionRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -53,7 +53,8 @@ public class CollectionRepository {
     public int fetchPendingAmountForBillNo(String billNo) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.COLLECTION_PENDING_AMOUNT_FOR_BILL);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -63,17 +64,18 @@ public class CollectionRepository {
 
             return resultSet.getInt("pending_amount");
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
 
     public void saveCollection(CollectionEntity collectionEntity) throws SQLException {
         try {
-            conn.setAutoCommit(false);
+            databaseManager.getConnection().setAutoCommit(false);
             deleteCollection(collectionEntity.getVoucherNo());
             String sql = SqlLoader.load(SqlQuery.COLLECTION_SAVE);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, collectionEntity.getVoucherNo());
             preparedStatement.setString(2, collectionEntity.getVoucherDate());
             preparedStatement.setString(3, collectionEntity.getBuyerName());
@@ -85,7 +87,7 @@ public class CollectionRepository {
             if (null != collectionEntity.getItems()) {
                 for (CollectionItemEntity collectionItem : collectionEntity.getItems()) {
 
-                    preparedStatement = conn.prepareStatement(sql);
+                    preparedStatement = databaseManager.getConnection().prepareStatement(sql);
                     preparedStatement.setString(1, collectionEntity.getVoucherNo());
                     preparedStatement.setString(2, collectionItem.getSupplierName());
                     preparedStatement.setString(3, collectionItem.getBillNo());
@@ -101,11 +103,11 @@ public class CollectionRepository {
                 }
             }
 
-            conn.commit();
+            databaseManager.getConnection().commit();
 
         } catch (SQLException ex) {
-            conn.rollback();
-            logger.error(ex.toString(), ex);
+            databaseManager.getConnection().rollback();
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -113,11 +115,12 @@ public class CollectionRepository {
     public String getLastVoucher() throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.COLLECTION_LAST_VOUCHER);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -126,7 +129,8 @@ public class CollectionRepository {
 
         try {
             String sql = SqlLoader.load(SqlQuery.COLLECTION_GET_ITEMS);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             ResultSet collectionResultSet = preparedStatement.executeQuery();
 
@@ -146,7 +150,7 @@ public class CollectionRepository {
             }
 
             sql = SqlLoader.load(SqlQuery.COLLECTION_GET);
-            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement = databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             collectionResultSet = preparedStatement.executeQuery();
             if (collectionResultSet.isClosed()) {
@@ -161,31 +165,32 @@ public class CollectionRepository {
                     .items(collectionItemList)
                     .build();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
 
     public void deleteCollection(String voucherNo) throws SQLException {
         try {
-            conn.setAutoCommit(false);
+            databaseManager.getConnection().setAutoCommit(false);
 
             String sql = SqlLoader.load(SqlQuery.COLLECTION_DELETE);
 
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
 
             sql = SqlLoader.load(SqlQuery.COLLECTION_DELETE_ITEMS);
 
-            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement = databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
-            conn.commit();
+            databaseManager.getConnection().commit();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
-            conn.rollback();
+            log.error(ex.toString(), ex);
+            databaseManager.getConnection().rollback();
         }
     }
 
@@ -193,7 +198,7 @@ public class CollectionRepository {
         try {
             List<CollectionEntity> res = new ArrayList<>();
             String sql = SqlLoader.load(SqlQuery.COLLECTION_GET_ALL);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 res.add(CollectionEntity.builder()
@@ -206,7 +211,7 @@ public class CollectionRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -214,7 +219,8 @@ public class CollectionRepository {
     public List<BuyerLedgerRow> getCollectionDetailsForBuyer(String buyerName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.COLLECTION_DETAILS_FOR_BUYER);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, buyerName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -235,7 +241,7 @@ public class CollectionRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }

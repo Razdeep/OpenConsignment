@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import openconsignment.di.DatabaseManager;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
 import openconsignment.model.TransportLedgerRow;
@@ -21,8 +22,8 @@ class TransportRepositoryTest {
     @BeforeEach
     void setUp() throws Exception {
         conn = RepositoryTestSupport.newInMemoryConnection();
-        transportRepository = new TransportRepository(conn);
-        billRepository = new BillRepository(conn);
+        transportRepository = new TransportRepository(new DatabaseManager(conn));
+        billRepository = new BillRepository(new DatabaseManager(conn));
     }
 
     @AfterEach

@@ -1,38 +1,38 @@
 package openconsignment.repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
 import openconsignment.common.Utils;
+import openconsignment.di.DatabaseManager;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
 import openconsignment.entity.PaymentItemEntity;
 import openconsignment.model.SupplierLedgerRow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class PaymentRepository {
-    private static final Logger logger = LoggerFactory.getLogger(PaymentRepository.class);
 
-    private final Connection conn;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public PaymentRepository(Connection conn) {
-        this.conn = conn;
+    public PaymentRepository(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 
     public void savePayment(PaymentEntity paymentEntity) throws SQLException {
         try {
-            conn.setAutoCommit(false);
+            databaseManager.getConnection().setAutoCommit(false);
             deletePayment(paymentEntity.getVoucherNo());
             String sql = SqlLoader.load(SqlQuery.PAYMENT_SAVE);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, paymentEntity.getVoucherNo());
             preparedStatement.setString(2, paymentEntity.getVoucherDate());
             preparedStatement.setString(3, paymentEntity.getSupplierName());
@@ -44,7 +44,7 @@ public class PaymentRepository {
             if (null != paymentEntity.getItems()) {
                 for (PaymentItemEntity paymentItem : paymentEntity.getItems()) {
 
-                    preparedStatement = conn.prepareStatement(sql);
+                    preparedStatement = databaseManager.getConnection().prepareStatement(sql);
                     preparedStatement.setString(1, paymentEntity.getVoucherNo());
                     preparedStatement.setString(2, paymentItem.getBuyerName());
                     preparedStatement.setString(3, paymentItem.getBillNo());
@@ -59,17 +59,18 @@ public class PaymentRepository {
                     preparedStatement.execute();
                 }
             }
-            conn.commit();
+            databaseManager.getConnection().commit();
         } catch (SQLException ex) {
-            conn.rollback();
-            logger.error(ex.toString(), ex);
+            databaseManager.getConnection().rollback();
+            log.error(ex.toString(), ex);
         }
     }
 
     public List<BillEntity> fetchPendingBillsForSupplier(String supplierName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.PAYMENT_PENDING_BILLS_FOR_SUPPLIER);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, supplierName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -84,7 +85,7 @@ public class PaymentRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -92,7 +93,8 @@ public class PaymentRepository {
     public int fetchPendingAmountForBillNo(String billNo) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.PAYMENT_PENDING_AMOUNT_FOR_BILL);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -102,7 +104,7 @@ public class PaymentRepository {
 
             return resultSet.getInt("pending_amount");
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -110,11 +112,12 @@ public class PaymentRepository {
     public String getLastVoucher() throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.PAYMENT_LAST_VOUCHER);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.getString("Max(`Voucher No.`)");
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -122,7 +125,7 @@ public class PaymentRepository {
     public PaymentEntity getPayment(String voucherNo) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.PAYMENT_GET_ITEMS);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, voucherNo);
             ResultSet rs = ps.executeQuery();
 
@@ -145,7 +148,7 @@ public class PaymentRepository {
 
             sql = SqlLoader.load(SqlQuery.PAYMENT_GET);
 
-            ps = conn.prepareStatement(sql);
+            ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, voucherNo);
             rs = ps.executeQuery();
 
@@ -163,31 +166,32 @@ public class PaymentRepository {
 
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
 
     public void deletePayment(String voucherNo) throws SQLException {
         try {
-            conn.setAutoCommit(false);
+            databaseManager.getConnection().setAutoCommit(false);
 
             String sql = SqlLoader.load(SqlQuery.PAYMENT_DELETE);
 
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
 
             sql = SqlLoader.load(SqlQuery.PAYMENT_DELETE_ITEMS);
 
-            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement = databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, voucherNo);
             preparedStatement.execute();
-            conn.commit();
+            databaseManager.getConnection().commit();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
-            conn.rollback();
+            log.error(ex.toString(), ex);
+            databaseManager.getConnection().rollback();
         }
     }
 
@@ -195,7 +199,7 @@ public class PaymentRepository {
         try {
             List<PaymentEntity> res = new ArrayList<>();
             String sql = SqlLoader.load(SqlQuery.PAYMENT_GET_ALL);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 res.add(PaymentEntity.builder()
@@ -208,7 +212,7 @@ public class PaymentRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -216,7 +220,8 @@ public class PaymentRepository {
     public List<SupplierLedgerRow> getPaymentDetailsForSupplier(String supplierName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.PAYMENT_DETAILS_FOR_SUPPLIER);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, supplierName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -237,7 +242,7 @@ public class PaymentRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }

@@ -11,19 +11,17 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.AppConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
 
 /** Creates the external configuration on first startup and provides validated settings from it. */
+@Slf4j
 @Module
 public final class ConfigurationModule {
-
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationModule.class);
 
     private static final String CONFIGURATION_FILE = "application.yaml";
     private static final String DEFAULTS_RESOURCE = "/" + CONFIGURATION_FILE;
@@ -77,7 +75,7 @@ public final class ConfigurationModule {
             }
             try {
                 Files.copy(defaults, path);
-                logger.info("Generated new application.yaml as it was missing at {}", path);
+                log.info("Generated new application.yaml as it was missing at {}", path);
             } catch (FileAlreadyExistsException ex) {
                 // Another startup created the file; preserve it and load its contents.
             }

@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.AppConfig;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
+import openconsignment.di.DatabaseManager;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -27,10 +29,12 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 public class BackupService {
 
     private final AppConfig appConfig;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public BackupService(AppConfig appConfig) {
+    public BackupService(AppConfig appConfig, DatabaseManager databaseManager) {
         this.appConfig = appConfig;
+        this.databaseManager = databaseManager;
     }
 
     private void cloneRepo() throws GitAPIException, IOException, URISyntaxException {
@@ -145,9 +149,10 @@ public class BackupService {
         }
     }
 
-    public void download() throws GitAPIException, IOException, URISyntaxException {
+    public void download() throws GitAPIException, IOException, URISyntaxException, SQLException {
         pull();
         copyRepoToLocal();
+        databaseManager.reopenConnection();
     }
 
     private void copyLocalToRepo() throws IOException {
