@@ -38,11 +38,6 @@ public class DatabaseManager {
         connection = null;
     }
 
-    public synchronized void reopenConnection() throws SQLException {
-        closeConnection();
-        getConnection();
-    }
-
     private static void initDatabase(Connection conn) {
         try {
             String initSQL = getInitSQL();

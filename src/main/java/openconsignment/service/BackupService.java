@@ -158,8 +158,9 @@ public class BackupService {
 
     public void download() throws GitAPIException, IOException, URISyntaxException, SQLException {
         pull();
+        databaseManager.closeConnection();
         copyRepoToLocal();
-        databaseManager.reopenConnection();
+        databaseManager.getConnection();
     }
 
     private void copyLocalToRepo() throws IOException {
