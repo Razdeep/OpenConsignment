@@ -1,38 +1,38 @@
 package openconsignment.repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
+import openconsignment.di.DatabaseManager;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class BillRepository {
-    private static final Logger logger = LoggerFactory.getLogger(BillRepository.class);
 
-    private final Connection conn;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public BillRepository(Connection conn) {
-        this.conn = conn;
+    public BillRepository(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 
     public void save(BillEntity billEntity) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.BILL_SAVE);
 
-            conn.setAutoCommit(false);
+            databaseManager.getConnection().setAutoCommit(false);
 
             deleteBill(billEntity.getBillNo());
 
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, billEntity.getSupplierName());
             preparedStatement.setString(2, billEntity.getBuyerName());
             preparedStatement.setString(3, billEntity.getBillNo());
@@ -47,17 +47,17 @@ public class BillRepository {
             if (null != billEntity.getLrEntities()) {
                 for (LREntity lr : billEntity.getLrEntities()) {
                     sql = SqlLoader.load(SqlQuery.BILL_SAVE_LR);
-                    preparedStatement = conn.prepareStatement(sql);
+                    preparedStatement = databaseManager.getConnection().prepareStatement(sql);
                     preparedStatement.setString(1, billEntity.getBillNo());
                     preparedStatement.setString(2, lr.getLrNo());
                     preparedStatement.setString(3, lr.getPm());
                     preparedStatement.execute();
                 }
             }
-            conn.commit();
+            databaseManager.getConnection().commit();
         } catch (SQLException ex) {
-            conn.rollback();
-            logger.error(ex.toString(), ex);
+            databaseManager.getConnection().rollback();
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -65,7 +65,8 @@ public class BillRepository {
     public BillEntity getBill(String billNo) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.BILL_GET);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet billResultSet = preparedStatement.executeQuery();
 
@@ -84,7 +85,7 @@ public class BillRepository {
                     .build();
 
             sql = SqlLoader.load(SqlQuery.BILL_GET_LRS);
-            preparedStatement = conn.prepareStatement(sql);
+            preparedStatement = databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             ResultSet lrPmResultSet = preparedStatement.executeQuery();
 
@@ -99,28 +100,29 @@ public class BillRepository {
             billEntity.setLrEntities(lrpmList);
             return billEntity;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
 
     public void deleteBill(String billNo) throws SQLException {
         try {
-            conn.setAutoCommit(false);
+            databaseManager.getConnection().setAutoCommit(false);
             String sql = SqlLoader.load(SqlQuery.BILL_DELETE);
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            PreparedStatement preparedStatement =
+                    databaseManager.getConnection().prepareStatement(sql);
             preparedStatement.setString(1, billNo);
             preparedStatement.execute();
 
             String sql2 = SqlLoader.load(SqlQuery.BILL_DELETE_LRS);
-            preparedStatement = conn.prepareStatement(sql2);
+            preparedStatement = databaseManager.getConnection().prepareStatement(sql2);
             preparedStatement.setString(1, billNo);
             preparedStatement.execute();
 
-            conn.commit();
+            databaseManager.getConnection().commit();
         } catch (SQLException ex) {
-            conn.rollback();
-            logger.error(ex.toString(), ex);
+            databaseManager.getConnection().rollback();
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -129,7 +131,7 @@ public class BillRepository {
         List<BillEntity> res = new ArrayList<>();
         try {
             String sql = SqlLoader.load(SqlQuery.BILL_GET_ALL);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 res.add(BillEntity.builder()
@@ -145,7 +147,7 @@ public class BillRepository {
             }
             return res;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }

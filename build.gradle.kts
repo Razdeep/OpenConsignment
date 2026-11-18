@@ -32,6 +32,8 @@ dependencies {
     implementation(libs.javafx.graphics)
     implementation(libs.javafx.fxml)
 
+    implementation(libs.jgit)
+
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 

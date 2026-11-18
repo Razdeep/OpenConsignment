@@ -3,11 +3,16 @@ package openconsignment.common;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -117,5 +122,20 @@ public class Utils {
         } catch (NumberFormatException ex) {
             return "0";
         }
+    }
+
+    public static String md5sum(Path path) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+
+        try (InputStream input = Files.newInputStream(path)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = input.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+        }
+
+        return HexFormat.of().formatHex(digest.digest());
     }
 }

@@ -3,12 +3,11 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.RadioButton?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" prefHeight="331.0" prefWidth="465.0"
-            xmlns="http://javafx.com/javafx/8.0.111"
-            fx:controller="openconsignment.controller.report.SupplierLedgerController">
+<?import javafx.scene.Group?>
+<Group fx:id="root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+       fx:controller="openconsignment.controller.report.SupplierLedgerController">
     <children>
         <RadioButton fx:id="supplier_ledger_radio" layoutX="25.0" layoutY="184.0" selected="true"
                      text="Supplier Ledger">
@@ -51,4 +50,4 @@
             </font>
         </Button>
     </children>
-</AnchorPane>
+</Group>

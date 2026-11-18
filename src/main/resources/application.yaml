@@ -1,1 +1,8 @@
-organizationName: "SATYAM AGENCIES"
+organization: "SATYAM AGENCIES"
+year: 2026-27
+github:
+  token: ""
+  username: "drcbabu81"
+  branch: "main"
+  remote: "origin-https"
+  repository: "Satyam-Database-2026-27"

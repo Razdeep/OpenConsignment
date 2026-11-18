@@ -1,35 +1,34 @@
 package openconsignment.repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import openconsignment.di.DatabaseManager;
 
+@Slf4j
 public class BuyerRepository {
-    private static final Logger logger = LoggerFactory.getLogger(BuyerRepository.class);
 
-    private final Connection conn;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public BuyerRepository(Connection conn) {
-        this.conn = conn;
+    public BuyerRepository(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 
     public void saveBuyer(String buyerName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.BUYER_SAVE);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, buyerName);
             ps.execute();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -37,11 +36,11 @@ public class BuyerRepository {
     public void deleteBuyer(String buyerName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.BUYER_DELETE);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, buyerName);
             ps.execute();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -49,12 +48,12 @@ public class BuyerRepository {
     public void renameBuyer(String oldName, String newName) throws SQLException {
         try {
             String sql = SqlLoader.load(SqlQuery.BUYER_RENAME);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = databaseManager.getConnection().prepareStatement(sql);
             ps.setString(1, newName);
             ps.setString(2, oldName);
             ps.execute();
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }
@@ -62,14 +61,16 @@ public class BuyerRepository {
     public List<String> getAllBuyers() throws SQLException {
         try {
             List<String> buyerList = new ArrayList<>();
-            ResultSet buyerResultSet = conn.prepareStatement(SqlLoader.load(SqlQuery.BUYER_GET_ALL))
+            ResultSet buyerResultSet = databaseManager
+                    .getConnection()
+                    .prepareStatement(SqlLoader.load(SqlQuery.BUYER_GET_ALL))
                     .executeQuery();
             while (buyerResultSet.next()) {
                 buyerList.add(buyerResultSet.getString("name"));
             }
             return buyerList;
         } catch (SQLException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }

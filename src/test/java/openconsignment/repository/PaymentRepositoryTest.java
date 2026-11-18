@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import openconsignment.di.DatabaseManager;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
 import openconsignment.entity.PaymentItemEntity;
@@ -23,8 +24,8 @@ class PaymentRepositoryTest {
     @BeforeEach
     void setUp() throws Exception {
         conn = RepositoryTestSupport.newInMemoryConnection();
-        paymentRepository = new PaymentRepository(conn);
-        billRepository = new BillRepository(conn);
+        paymentRepository = new PaymentRepository(new DatabaseManager(conn));
+        billRepository = new BillRepository(new DatabaseManager(conn));
     }
 
     @AfterEach

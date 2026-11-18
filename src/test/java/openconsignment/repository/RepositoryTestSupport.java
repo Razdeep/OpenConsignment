@@ -8,11 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
-final class RepositoryTestSupport {
+public final class RepositoryTestSupport {
 
     private RepositoryTestSupport() {}
 
-    static Connection newInMemoryConnection() throws ClassNotFoundException, SQLException, IOException {
+    public static Connection newInMemoryConnection() throws ClassNotFoundException, SQLException, IOException {
         Class.forName("org.sqlite.JDBC");
         Connection conn = DriverManager.getConnection("jdbc:sqlite::memory:");
         try (Statement st = conn.createStatement()) {

@@ -49,7 +49,7 @@ public class BuyerService {
     public void generatePdf(String buyerName, boolean isAgewise) throws SQLException, JRException {
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put(Constants.ORGANIZATION_NAME_KEY, configuration.organizationName());
+        payload.put(Constants.ORGANIZATION_NAME_KEY, configuration.getOrganization());
         payload.put("buyerName", buyerName);
 
         if (isAgewise) {

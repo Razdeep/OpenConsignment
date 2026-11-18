@@ -8,14 +8,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.di.AppComponent;
 import openconsignment.di.DaggerAppComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class Launcher extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
 
     public static void main(String[] args) {
         launch(args);
@@ -43,10 +42,10 @@ public class Launcher extends Application {
                 stage.getIcons().add(new Image(resourceAsStream));
             }
             stage.setTitle("OpenConsignment");
-            logger.info("OpenConsignment started at {}", java.time.LocalDateTime.now());
+            log.info("OpenConsignment started at {}", java.time.LocalDateTime.now());
         } catch (Exception ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }
