@@ -86,7 +86,7 @@ public class BackupService {
     }
 
     public boolean checkSync() throws Exception {
-        log.info("executing called");
+        log.info("executing checkSync");
         try {
             pull();
             return compareDatabaseHashes();
@@ -96,7 +96,7 @@ public class BackupService {
         }
     }
 
-    private String getRepoFileHash() throws Exception {
+    private String getRemoteFileHash() throws Exception {
         Path remotePath = Path.of(appConfig.getGithub().getRepository() + "/" + Constants.DATABASE_FILE_NAME);
         if (!Files.exists(remotePath)) {
             return "";
@@ -106,10 +106,14 @@ public class BackupService {
 
     public boolean compareDatabaseHashes() throws Exception {
         String localFileHash = Utils.md5sum(Path.of(Constants.DATABASE_FILE_NAME));
-        String repoFileHash = getRepoFileHash();
+        String remoteFileHash = getRemoteFileHash();
 
-        boolean result = 0 == localFileHash.compareTo(repoFileHash);
-        log.info("CheckSync result = {}, localFileHash = {}, repoFileHash = {}", result, localFileHash, repoFileHash);
+        boolean result = 0 == localFileHash.compareTo(remoteFileHash);
+        log.info(
+                "CheckSync result = {}, localFileHash = {}, remoteFileHash = {}",
+                result,
+                localFileHash,
+                remoteFileHash);
         return result;
     }
 
@@ -192,7 +196,7 @@ public class BackupService {
 
             String repoFileHash = "null";
             try {
-                repoFileHash = getRepoFileHash();
+                repoFileHash = getRemoteFileHash();
             } catch (Exception e) {
                 log.error(e.toString());
             }
