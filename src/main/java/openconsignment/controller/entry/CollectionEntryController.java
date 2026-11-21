@@ -17,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
@@ -27,17 +28,14 @@ import openconsignment.model.CollectionItem;
 import openconsignment.service.BillService;
 import openconsignment.service.BuyerService;
 import openconsignment.service.CollectionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class CollectionEntryController implements Initializable {
 
     private List<CollectionItem> collectionItemList;
     private List<String> buyerNameComboList;
     private List<String> billNoComboList;
     private int previouslyDue;
-
-    private static final Logger logger = LoggerFactory.getLogger(CollectionEntryController.class);
 
     @FXML
     private TextField dd_no_field;
@@ -152,7 +150,7 @@ public class CollectionEntryController implements Initializable {
             buyer_name.setItems(FXCollections.observableArrayList(buyerNameComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -166,7 +164,7 @@ public class CollectionEntryController implements Initializable {
             bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -184,7 +182,7 @@ public class CollectionEntryController implements Initializable {
             updateCollectionDue();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -227,7 +225,7 @@ public class CollectionEntryController implements Initializable {
         try {
             amountCollected = Integer.parseInt(amount_collected_field.getText());
         } catch (Exception ex) {
-            logger.warn("cannot be converted to integer");
+            log.warn("cannot be converted to integer");
         }
         collection_due_field.setText(Integer.toString(previouslyDue - amountCollected));
     }
@@ -351,7 +349,7 @@ public class CollectionEntryController implements Initializable {
             total_amount_field.setText(voucher.getTotalAmount());
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error("Failed to fetch collection voucher", ex);
+            log.error("Failed to fetch collection voucher", ex);
         }
     }
 
@@ -372,7 +370,7 @@ public class CollectionEntryController implements Initializable {
             Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (IOException | JRException | SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error("Failed to print collection voucher", ex);
+            log.error("Failed to print collection voucher", ex);
         }
     }
 
@@ -402,7 +400,7 @@ public class CollectionEntryController implements Initializable {
             Utils.showAlert(voucherNo + " was successfully deleted.", AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error("Failed to delete collection voucher", ex);
+            log.error("Failed to delete collection voucher", ex);
         }
     }
 
@@ -452,7 +450,7 @@ public class CollectionEntryController implements Initializable {
             Utils.showAlert("Saved Successfully", AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             return;
         }
 
@@ -468,7 +466,7 @@ public class CollectionEntryController implements Initializable {
             voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

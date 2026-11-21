@@ -8,35 +8,21 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.service.SupplierService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class SupplierController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(SupplierController.class);
-
-    @FXML
-    private Button add_btn;
 
     @FXML
     private TextField add_field;
 
     @FXML
-    private Button rename_btn;
-
-    @FXML
     private TextField rename_field;
-
-    @FXML
-    private Button delete_btn;
-
-    @FXML
-    private Button refresh_btn;
 
     @FXML
     private ListView<String> listView;
@@ -54,7 +40,7 @@ public class SupplierController implements Initializable {
     }
 
     @FXML
-    private void addMaster(ActionEvent event) {
+    private void addMaster(ActionEvent ignoredEvent) {
         if (add_field.getText().compareTo("") == 0) {
             Utils.showAlert("Add field is left blank. Please ensure to fill up the field properly.");
             return;
@@ -64,12 +50,12 @@ public class SupplierController implements Initializable {
             refreshList();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @FXML
-    private void renameMaster(ActionEvent event) {
+    private void renameMaster(ActionEvent ignoredEvent) {
 
         if (rename_field.getText().compareTo("") == 0) {
             Utils.showAlert("Rename field is left blank. Please ensure to fill up the field properly.");
@@ -82,12 +68,12 @@ public class SupplierController implements Initializable {
             refreshList();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @FXML
-    private void deleteMaster(ActionEvent event) {
+    private void deleteMaster(ActionEvent ignoredEvent) {
         if (listView.getSelectionModel().getSelectedItem() == null) {
             Utils.showAlert("Supplier to be deleted not selected. Please Retry");
             return;
@@ -97,7 +83,7 @@ public class SupplierController implements Initializable {
             refreshList();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -108,7 +94,7 @@ public class SupplierController implements Initializable {
             listView.getItems().setAll(supplierList);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

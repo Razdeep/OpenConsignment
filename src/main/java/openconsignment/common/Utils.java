@@ -18,14 +18,12 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class Utils {
-
-    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     public static void showAlert(String message) {
         showAlert(message, AlertType.ERROR);
@@ -51,7 +49,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().open(pdfFile);
             } catch (IOException e) {
-                logger.warn("Error opening file: {}", pdfFile.getAbsolutePath(), e);
+                log.warn("Error opening file: {}", pdfFile.getAbsolutePath(), e);
             }
         });
     }
@@ -65,7 +63,7 @@ public class Utils {
             try {
                 Desktop.getDesktop().browse(new URI(url));
             } catch (IOException | URISyntaxException e) {
-                logger.warn("Error opening browser link {}", url, e);
+                log.warn("Error opening browser link {}", url, e);
             }
         });
     }
@@ -82,7 +80,7 @@ public class Utils {
                 LocalDate.parse(dateString, outputFormatter);
                 return dateString;
             } catch (DateTimeParseException ex2) {
-                logger.warn(ex2.toString());
+                log.warn(ex2.toString());
                 throw ex2;
             }
         }
@@ -105,7 +103,7 @@ public class Utils {
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, payload, dataSource);
             JasperExportManager.exportReportToPdfFile(jasperPrint, Constants.REPORT_FILE_NAME);
         } catch (JRException ex) {
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
             throw ex;
         }
     }

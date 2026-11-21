@@ -9,20 +9,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.service.TransportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class TransportLedgerController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(TransportLedgerController.class);
 
     @FXML
     private CheckBox all_time_checkbox;
@@ -35,12 +33,6 @@ public class TransportLedgerController implements Initializable {
 
     @FXML
     private DatePicker to_date;
-
-    @FXML
-    private Button generate_pdf_report_btn;
-
-    @FXML
-    private Button launch_report_btn;
 
     private final TransportService transportService;
 
@@ -56,12 +48,12 @@ public class TransportLedgerController implements Initializable {
             transport_name_combo.setItems(FXCollections.observableArrayList(transportList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @FXML
-    private void generatePDF(ActionEvent event) {
+    private void generatePDF(ActionEvent ignoredEvent) {
         String fromDate = "01-01-2000", toDate = "01-01-2100";
         if (!all_time_checkbox.isSelected()) {
             if (from_date.getValue() == null || to_date.getValue() == null) {
@@ -78,18 +70,18 @@ public class TransportLedgerController implements Initializable {
             Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (JRException | SQLException | IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @FXML
-    private void launchPdf(ActionEvent event) {
+    private void launchPdf(ActionEvent ignoredEvent) {
         try {
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
             Utils.showAlert("PDF opened successfully.", AlertType.INFORMATION);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

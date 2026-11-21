@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.control.Button;
 import javax.inject.Inject;
 import openconsignment.common.ViewLoader;
 
@@ -21,15 +20,6 @@ import openconsignment.common.ViewLoader;
  * @author ADMIN
  */
 public class MasterController implements Initializable {
-
-    @FXML
-    private Button supplier_master_btn;
-
-    @FXML
-    private Button buyer_master_btn;
-
-    @FXML
-    private Button transport_master_btn;
 
     @FXML
     private Group root;

@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
@@ -25,12 +26,9 @@ import openconsignment.service.BuyerService;
 import openconsignment.service.SupplierService;
 import openconsignment.service.TransportService;
 import org.controlsfx.control.textfield.TextFields;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unused")
+@Slf4j
 public class BillEntryController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(BillEntryController.class);
 
     @FXML
     private TextField supplier_field;
@@ -60,15 +58,6 @@ public class BillEntryController implements Initializable {
     private TextField lr_field;
 
     @FXML
-    private Button save_btn;
-
-    @FXML
-    private Button clear_btn;
-
-    @FXML
-    private Button add_btn;
-
-    @FXML
     private TableView<LR> lrTable;
 
     @FXML
@@ -76,12 +65,6 @@ public class BillEntryController implements Initializable {
 
     @FXML
     private TableColumn<LR, String> pm_col;
-
-    @FXML
-    private Button replace_btn;
-
-    @FXML
-    private Button delete_btn;
 
     private List<LR> lrList;
 
@@ -116,12 +99,12 @@ public class BillEntryController implements Initializable {
 
         } catch (Exception ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @FXML
-    private void addToList(ActionEvent event) {
+    private void addToList(ActionEvent ignoredEvent) {
         if (bill_no_field.getText().isEmpty()
                 || lr_field.getText().isEmpty()
                 || pm_field.getText().isEmpty()) {
@@ -136,7 +119,7 @@ public class BillEntryController implements Initializable {
     }
 
     @FXML
-    private void save(ActionEvent event) {
+    private void save(ActionEvent ignoredEvent) {
         if (supplier_field.getText().isEmpty()
                 || buyer_name_field.getText().isEmpty()
                 || bill_no_field.getText().isEmpty()
@@ -169,7 +152,7 @@ public class BillEntryController implements Initializable {
             Utils.showAlert("Saved Successfully", AlertType.INFORMATION);
         } catch (Exception ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -189,7 +172,7 @@ public class BillEntryController implements Initializable {
     }
 
     @FXML
-    private void replaceInList(ActionEvent event) {
+    private void replaceInList(ActionEvent ignoredEvent) {
         if (lrTable.getSelectionModel().getSelectedIndex() == -1) {
             Utils.showAlert("Please select an item from the LR Table", AlertType.WARNING);
             return;
@@ -210,7 +193,7 @@ public class BillEntryController implements Initializable {
     }
 
     @FXML
-    private void deleteFromList(ActionEvent event) {
+    private void deleteFromList(ActionEvent ignoredEvent) {
         if (lrTable.getSelectionModel().getSelectedIndex() == -1) {
             Utils.showAlert("Please select an item from the LR Table", AlertType.WARNING);
             return;
@@ -220,7 +203,7 @@ public class BillEntryController implements Initializable {
     }
 
     @FXML
-    private void fetchBill(ActionEvent event) {
+    private void fetchBill(ActionEvent ignoredEvent) {
         try {
             BillEntity billEntity = billService.getBill(bill_no_field.getText());
 
@@ -245,12 +228,12 @@ public class BillEntryController implements Initializable {
 
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
     @FXML
-    private void deleteEntry(ActionEvent event) {
+    private void deleteEntry(ActionEvent ignoredEvent) {
         Alert alert = new Alert(
                 Alert.AlertType.CONFIRMATION,
                 "Are you sure that you want delete " + bill_no_field.getText() + " ?",
@@ -278,7 +261,7 @@ public class BillEntryController implements Initializable {
                     bill_no_field.getText().toUpperCase() + " Entry was successfully deleted.", AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

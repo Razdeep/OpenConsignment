@@ -6,20 +6,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
-import javafx.scene.control.Button;
 import javax.inject.Inject;
 import openconsignment.common.ViewLoader;
 
 public class ReportController implements Initializable {
-
-    @FXML
-    private Button supplier_ledger_btn;
-
-    @FXML
-    private Button buyer_ledger_brn;
-
-    @FXML
-    private Button transport_ledger_btn;
 
     @FXML
     private Group root;

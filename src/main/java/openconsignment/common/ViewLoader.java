@@ -8,11 +8,10 @@ import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ViewLoader {
-    private static final Logger logger = LoggerFactory.getLogger(ViewLoader.class);
 
     private final Callback<Class<?>, Object> controllerFactory;
 
@@ -29,7 +28,7 @@ public class ViewLoader {
             root.getChildren().setAll(parent);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -41,7 +40,7 @@ public class ViewLoader {
             center.setCenter(parent);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }
