@@ -127,7 +127,8 @@ public class MainController implements Initializable {
                     Platform.runLater(() -> Utils.showAlert("Not Synced", Alert.AlertType.WARNING));
                 }
             } catch (Exception e) {
-                Platform.runLater(() -> Utils.showAlert("Error", Alert.AlertType.ERROR));
+                log.warn(e.getMessage());
+                Platform.runLater(() -> Utils.showAlert(e.getMessage(), Alert.AlertType.ERROR));
             }
         });
     }
