@@ -7,22 +7,17 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.entity.CollectionEntity;
 import openconsignment.service.CollectionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class CollectionHistoryController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(CollectionHistoryController.class);
-
-    @FXML
-    private Group root;
 
     @FXML
     private TableView<CollectionEntity> tableView;
@@ -58,7 +53,7 @@ public class CollectionHistoryController implements Initializable {
             tableView.setItems(FXCollections.observableArrayList(collectionEntityList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

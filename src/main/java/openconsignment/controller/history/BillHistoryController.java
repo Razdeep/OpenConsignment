@@ -7,22 +7,17 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.service.BillService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class BillHistoryController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(BillHistoryController.class);
-
-    @FXML
-    private Group root;
 
     @FXML
     private TableColumn<BillEntity, String> supplier_name_col;
@@ -70,7 +65,7 @@ public class BillHistoryController implements Initializable {
             tableView.setItems(FXCollections.observableArrayList(billList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

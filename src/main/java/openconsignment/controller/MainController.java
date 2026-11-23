@@ -2,11 +2,12 @@ package openconsignment.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javax.inject.Inject;
@@ -16,20 +17,10 @@ import openconsignment.common.ViewLoader;
 import openconsignment.service.BackupService;
 
 @Slf4j
-@SuppressWarnings("unused")
 public class MainController implements Initializable {
 
     @FXML
-    private Button input_btn;
-
-    @FXML
     private BorderPane root;
-
-    @FXML
-    private Button report_btn;
-
-    @FXML
-    private Button master_btn;
 
     private final ViewLoader viewLoader;
     private final BackupService backupService;
@@ -46,129 +37,135 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void showInputScreen(ActionEvent event) {
+    private void showInputScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/entry/Input.fxml", root);
     }
 
     @FXML
-    private void showReportScreen(ActionEvent event) {
+    private void showReportScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/report/Report.fxml", root);
     }
 
     @FXML
-    private void showMasterScreen(ActionEvent event) {
+    private void showMasterScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/master/Master.fxml", root);
     }
 
     @FXML
-    private void showWelcomeScreen(ActionEvent event) {
+    private void showWelcomeScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/WelcomeScreen.fxml", root);
     }
 
     @FXML
-    private void showInputHistory(ActionEvent event) {
+    private void showInputHistory(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/history/InputHistory.fxml", root);
     }
 
     @FXML
-    private void showCollectionHistory(ActionEvent event) {
+    private void showCollectionHistory(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/history/CollectionHistory.fxml", root);
     }
 
     @FXML
-    private void showPaymentHistory(ActionEvent event) {
+    private void showPaymentHistory(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/history/PaymentHistory.fxml", root);
     }
 
     @FXML
-    private void showBillEntryScreen(ActionEvent event) {
+    private void showBillEntryScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/entry/BillEntry.fxml", root);
     }
 
     @FXML
-    private void showCollectionEntryScreen(ActionEvent event) {
+    private void showCollectionEntryScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/entry/CollectionEntry.fxml", root);
     }
 
     @FXML
-    private void showPaymentEntryScreen(ActionEvent event) {
+    private void showPaymentEntryScreen(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/entry/PaymentEntry.fxml", root);
     }
 
     @FXML
-    private void showSupplierLedger(ActionEvent event) {
+    private void showSupplierLedger(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/report/SupplierLedger.fxml", root);
     }
 
     @FXML
-    private void showBuyerLedger(ActionEvent event) {
+    private void showBuyerLedger(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/report/BuyerLedger.fxml", root);
     }
 
     @FXML
-    private void showTransportLedger(ActionEvent event) {
+    private void showTransportLedger(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/report/TransportLedger.fxml", root);
     }
 
     @FXML
-    private void showSupplierMaster(ActionEvent event) {
+    private void showSupplierMaster(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/master/MasterSupplier.fxml", root);
     }
 
     @FXML
-    private void showBuyerMaster(ActionEvent event) {
+    private void showBuyerMaster(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/master/MasterBuyer.fxml", root);
     }
 
     @FXML
-    private void showTransportMaster(ActionEvent event) {
+    private void showTransportMaster(ActionEvent ignore) {
         viewLoader.loadCenter("/fxml/master/MasterTransport.fxml", root);
     }
 
     @FXML
-    private void checkSync(ActionEvent event) {
-        boolean synced = false;
-        try {
-            synced = backupService.checkSync();
-        } catch (Exception e) {
-            Utils.showAlert("Error", Alert.AlertType.ERROR);
-        }
-
-        if (synced) {
-            Utils.showAlert("Data is Synced", Alert.AlertType.INFORMATION);
-        } else {
-            Utils.showAlert("Not Synced", Alert.AlertType.WARNING);
-        }
+    private void checkSync(ActionEvent ignore) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                boolean synced = backupService.checkSync();
+                if (synced) {
+                    Platform.runLater(() -> Utils.showAlert("Data is Synced", Alert.AlertType.INFORMATION));
+                } else {
+                    Platform.runLater(() -> Utils.showAlert("Not Synced", Alert.AlertType.WARNING));
+                }
+            } catch (Exception e) {
+                log.warn(e.getMessage());
+                Platform.runLater(() -> Utils.showAlert(e.getMessage(), Alert.AlertType.ERROR));
+            }
+        });
     }
 
     @FXML
-    private void upload(ActionEvent event) {
-        try {
-            Alert alert =
-                    new Alert(Alert.AlertType.CONFIRMATION, "Do you want to upload?", ButtonType.YES, ButtonType.NO);
-            if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
-                return;
-            }
-            backupService.upload();
-            Utils.showAlert("Successfully uploaded", Alert.AlertType.INFORMATION);
-        } catch (Exception e) {
-            log.error(e.toString());
-            Utils.showAlert(e.toString(), Alert.AlertType.ERROR);
+    private void upload(ActionEvent ignore) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to upload?", ButtonType.YES, ButtonType.NO);
+        if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+            return;
         }
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                backupService.upload();
+                Platform.runLater(() -> Utils.showAlert("Successfully uploaded", Alert.AlertType.INFORMATION));
+            } catch (Exception e) {
+                log.error(e.toString());
+                Platform.runLater(() -> Utils.showAlert(e.toString(), Alert.AlertType.ERROR));
+            }
+        });
     }
 
-    public void download(ActionEvent actionEvent) {
-        try {
-            Alert alert =
-                    new Alert(Alert.AlertType.CONFIRMATION, "Do you want to download?", ButtonType.YES, ButtonType.NO);
-            if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
-                return;
-            }
-            backupService.download();
-            Utils.showAlert("Successfully downloaded", Alert.AlertType.INFORMATION);
-        } catch (Exception e) {
-            log.error(e.toString());
-            Utils.showAlert(e.toString(), Alert.AlertType.ERROR);
+    public void download(ActionEvent ignore) {
+        Alert alert =
+                new Alert(Alert.AlertType.CONFIRMATION, "Do you want to download?", ButtonType.YES, ButtonType.NO);
+        if (alert.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+            return;
         }
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                backupService.download();
+                Platform.runLater(() -> Utils.showAlert("Successfully downloaded", Alert.AlertType.INFORMATION));
+            } catch (Exception ex) {
+                log.error(ex.toString());
+                Platform.runLater(() -> Utils.showAlert(ex.toString(), Alert.AlertType.ERROR));
+            }
+        });
     }
 }

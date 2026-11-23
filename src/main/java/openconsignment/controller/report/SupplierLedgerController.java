@@ -10,10 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
@@ -28,19 +26,7 @@ public class SupplierLedgerController implements Initializable {
     private ComboBox<String> supplier_name_combo;
 
     @FXML
-    private ToggleGroup choice;
-
-    @FXML
-    private RadioButton supplier_ledger_radio;
-
-    @FXML
     private RadioButton agewise_outstanding_radio;
-
-    @FXML
-    private Button generate_pdf_btn;
-
-    @FXML
-    private Button launch_pdf_btn;
 
     private final SupplierService supplierService;
 

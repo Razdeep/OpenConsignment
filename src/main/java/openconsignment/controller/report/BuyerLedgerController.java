@@ -10,38 +10,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.service.BuyerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class BuyerLedgerController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(BuyerLedgerController.class);
-
-    @FXML
-    private RadioButton buyer_ledger_radio;
-
-    @FXML
-    private ToggleGroup choice;
 
     @FXML
     private RadioButton agewise_outstanding_radio;
 
     @FXML
-    private Button generate_pdf_btn;
-
-    @FXML
     private ComboBox<String> buyer_name_combo;
-
-    @FXML
-    private Button launch_pdf_btn;
 
     private final BuyerService buyerService;
 
@@ -57,7 +42,7 @@ public class BuyerLedgerController implements Initializable {
             buyer_name_combo.setItems(FXCollections.observableArrayList(buyerNames));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -70,7 +55,7 @@ public class BuyerLedgerController implements Initializable {
             Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (SQLException | IOException | JRException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -81,7 +66,7 @@ public class BuyerLedgerController implements Initializable {
             Utils.showAlert("PDF opened successfully.", AlertType.INFORMATION);
         } catch (IOException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }

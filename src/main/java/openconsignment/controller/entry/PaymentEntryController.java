@@ -17,6 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import openconsignment.common.Constants;
 import openconsignment.common.Utils;
@@ -27,18 +28,14 @@ import openconsignment.model.PaymentItem;
 import openconsignment.service.BillService;
 import openconsignment.service.PaymentService;
 import openconsignment.service.SupplierService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unused")
+@Slf4j
 public class PaymentEntryController implements Initializable {
 
     private List<PaymentItem> paymentItems;
     private List<String> supplierNameComboList;
     private List<String> billNoComboList;
     private int previouslyDue;
-
-    private static final Logger logger = LoggerFactory.getLogger(PaymentEntryController.class);
 
     @FXML
     private TextField dd_no_field;
@@ -51,15 +48,6 @@ public class PaymentEntryController implements Initializable {
 
     @FXML
     private TextField voucher_no_field;
-
-    @FXML
-    private Button add_payment_btn;
-
-    @FXML
-    private Button replace_payment_btn;
-
-    @FXML
-    private Button delete_payment_btn;
 
     @FXML
     private TableColumn<?, ?> bill_no_col;
@@ -117,12 +105,6 @@ public class PaymentEntryController implements Initializable {
 
     @FXML
     private TextField total_amount_paid_field;
-
-    @FXML
-    private Button save_btn;
-
-    @FXML
-    private Button clear_btn;
 
     @FXML
     private Text last_voucher_field;
@@ -335,7 +317,7 @@ public class PaymentEntryController implements Initializable {
             clearAllFields();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
 
         clearAllFields();
@@ -352,7 +334,7 @@ public class PaymentEntryController implements Initializable {
             voucher_no_field.setText(upcomingVoucherNo);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -362,7 +344,7 @@ public class PaymentEntryController implements Initializable {
             supplier_name_combo.setItems(FXCollections.observableArrayList(supplierNameComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error("Failed to populate the supplier combo", ex);
+            log.error("Failed to populate the supplier combo", ex);
         }
     }
 
@@ -373,7 +355,7 @@ public class PaymentEntryController implements Initializable {
             bill_no_combo.setItems(FXCollections.observableArrayList(billNoComboList));
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error("Failed to populate bill number combo", ex);
+            log.error("Failed to populate bill number combo", ex);
         }
     }
 
@@ -391,7 +373,7 @@ public class PaymentEntryController implements Initializable {
             updateDueAmount();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -401,7 +383,7 @@ public class PaymentEntryController implements Initializable {
         try {
             amountPaid = Integer.parseInt(amount_paid_field.getText());
         } catch (Exception ex) {
-            logger.warn("cannot be converted to integer");
+            log.warn("cannot be converted to integer");
         }
         due_amount_field.setText(Integer.toString(previouslyDue - amountPaid));
     }
@@ -442,7 +424,7 @@ public class PaymentEntryController implements Initializable {
             //            delete_entry_btn.setDisable(false);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -453,7 +435,7 @@ public class PaymentEntryController implements Initializable {
             Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
         } catch (IOException | JRException | SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 
@@ -478,7 +460,7 @@ public class PaymentEntryController implements Initializable {
                     AlertType.INFORMATION);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
-            logger.error(ex.toString(), ex);
+            log.error(ex.toString(), ex);
         }
     }
 }
