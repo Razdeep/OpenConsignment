@@ -3,7 +3,6 @@ package openconsignment.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -119,20 +118,18 @@ public class MainController implements Initializable {
 
     @FXML
     private void checkSync(ActionEvent ignore) {
-        AtomicBoolean synced = new AtomicBoolean(false);
         CompletableFuture.runAsync(() -> {
             try {
-                synced.set(backupService.checkSync());
+                boolean synced = backupService.checkSync();
+                if (synced) {
+                    Platform.runLater(() -> Utils.showAlert("Data is Synced", Alert.AlertType.INFORMATION));
+                } else {
+                    Platform.runLater(() -> Utils.showAlert("Not Synced", Alert.AlertType.WARNING));
+                }
             } catch (Exception e) {
                 Platform.runLater(() -> Utils.showAlert("Error", Alert.AlertType.ERROR));
             }
         });
-
-        if (synced.get()) {
-            Utils.showAlert("Data is Synced", Alert.AlertType.INFORMATION);
-        } else {
-            Utils.showAlert("Not Synced", Alert.AlertType.WARNING);
-        }
     }
 
     @FXML
