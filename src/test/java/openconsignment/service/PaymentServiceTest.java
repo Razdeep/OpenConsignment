@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import net.sf.jasperreports.engine.JRException;
+import openconsignment.common.AppConfig;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.PaymentEntity;
@@ -28,6 +29,9 @@ class PaymentServiceTest {
 
     @Mock
     private PaymentRepository paymentRepository;
+
+    @Mock
+    private AppConfig appConfig;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -104,6 +108,7 @@ class PaymentServiceTest {
                 .items(items)
                 .build();
         when(paymentRepository.getPayment("V1")).thenReturn(paymentEntity);
+        when(appConfig.getOrganization()).thenReturn("Random organization");
 
         try (MockedStatic<Utils> utils = mockStatic(Utils.class)) {
             paymentService.generatePdf("V1");

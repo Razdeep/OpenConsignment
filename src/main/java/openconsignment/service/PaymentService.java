@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.sf.jasperreports.engine.JRException;
+import openconsignment.common.AppConfig;
+import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.*;
 import openconsignment.model.SupplierLedgerRow;
@@ -18,10 +20,12 @@ import openconsignment.repository.PaymentRepository;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final AppConfig appConfig;
 
     @Inject
-    public PaymentService(PaymentRepository paymentRepository) {
+    public PaymentService(PaymentRepository paymentRepository, AppConfig appConfig) {
         this.paymentRepository = paymentRepository;
+        this.appConfig = appConfig;
     }
 
     public List<String> fetchPendingBillNosForSupplier(String supplierName) throws SQLException {
@@ -68,6 +72,10 @@ public class PaymentService {
 
         Map<String, Object> payload = new HashMap<>();
 
+        String organization =
+                appConfig.getOrganization() == null ? "Invalid Organization" : appConfig.getOrganization();
+
+        payload.put(Constants.ORGANIZATION_NAME_KEY, organization);
         payload.put("voucherNo", voucherNo);
         payload.put("voucherDate", paymentEntity.getVoucherDate());
         payload.put("supplierName", paymentEntity.getSupplierName());
