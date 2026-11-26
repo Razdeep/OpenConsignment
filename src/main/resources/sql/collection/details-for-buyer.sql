@@ -8,12 +8,12 @@ WITH cte_collected_partial AS (SELECT `Bill No.`,
                                    `Bill Amount`,
                                    `Supplier Name`,
                                    `Buyer Name`,
-                                   coalesce(amount_collected, 0) as amount_collected
-                            from `Bill_Entry_Table`
-                                     left join cte_collected_partial using ("Bill No.")),
+                                   coalesce(amount_collected, 0) AS amount_collected
+                            FROM `Bill_Entry_Table`
+                                     LEFT JOIN cte_collected_partial USING ("Bill No.")),
 
-     cte_collection_joined as (SELECT *
-                               from `Collection_Entry_Extended_Table`
+     cte_collection_joined AS (SELECT *
+                               FROM `Collection_Entry_Extended_Table`
                                         JOIN `Collection_Entry_Table` USING ("Voucher No.")),
 
      cte_final AS (SELECT *, cte_collected_full.`Bill Amount` - amount_collected AS pending_amount
