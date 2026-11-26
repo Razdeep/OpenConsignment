@@ -21,7 +21,5 @@ WITH cte_collected_partial AS (SELECT `Bill No.`,
                             LEFT JOIN cte_collection_joined USING ("Bill No.")
                    WHERE cte_collected_full.`Buyer Name` = ?)
 
-
 SELECT *
 FROM cte_final;
-
