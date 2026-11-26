@@ -1,11 +1,17 @@
-WITH cte_collected_only AS (SELECT `Bill No.`,
-                                   sum(`Amount Collected`) AS amount_collected
-                            FROM Collection_Entry_Extended_Table
-                            GROUP BY `Bill No.`),
+WITH cte_collected_partial AS (SELECT `Bill No.`,
+                                      sum(`Amount Collected`) AS amount_collected
+                               FROM Collection_Entry_Extended_Table
+                               GROUP BY `Bill No.`),
 
-     cte_collected_full AS (SELECT `Bill No.`, `Bill Amount`, `Buyer Name`, coalesce(amount_collected, 0) as amount_collected
+     cte_collected_full AS (SELECT `Bill No.`,
+                                   `Bill Date`,
+                                   `Bill Amount`,
+                                   `Supplier Name`,
+                                   `Buyer Name`,
+                                   coalesce(amount_collected, 0) as amount_collected
                             from `Bill_Entry_Table`
-                                     left join cte_collected_only using ("Bill No.")),
+                                     left join cte_collected_partial using ("Bill No.")),
+
      cte_collection_joined as (SELECT *
                                from `Collection_Entry_Extended_Table`
                                         JOIN `Collection_Entry_Table` USING ("Voucher No.")),
