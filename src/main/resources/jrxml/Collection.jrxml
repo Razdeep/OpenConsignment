@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Collection" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="06e081a1-744e-4dfc-8da8-ab8f0e125c09">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Collection" pageWidth="595" pageHeight="420" orientation="Landscape" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="06e081a1-744e-4dfc-8da8-ab8f0e125c09">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="buyerName" class="java.lang.String"/>
 	<parameter name="billAmount" class="java.lang.String"/>
@@ -15,6 +15,7 @@
 	<field name="bank" class="java.lang.String"/>
 	<field name="ddNo" class="java.lang.String"/>
 	<field name="ddDate" class="java.lang.String"/>
+	<field name="due" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -226,14 +227,14 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b150011-7ea1-4315-9bed-a8182833dd39"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{billAmount}+"-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{billAmount}+"/-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="311" y="0" width="61" height="30" uuid="41920369-5b56-4bb6-b95c-485261dd69fe">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06924df6-a423-4e93-a26d-8c87247f0b11"/>
 				</reportElement>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{amountCollected}+"-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amountCollected}+"/-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="372" y="0" width="61" height="30" uuid="518940fe-d49c-4a8f-b214-9b069a280c86">
@@ -256,6 +257,13 @@
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{ddDate}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="250" y="0" width="61" height="30" uuid="7447f935-e1b2-4e91-9fba-218dc39c527b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06924df6-a423-4e93-a26d-8c87247f0b11"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{due}+"/-"]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
@@ -263,7 +271,7 @@
 			<textField>
 				<reportElement x="310" y="2" width="61" height="28" uuid="7a346a73-1b43-41d9-aac6-658118f405f2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{billAmount}+"-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{billAmount}+"/-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="250" y="2" width="60" height="28" uuid="5cadb2d6-120e-47ba-9655-a1b4a47027de"/>
