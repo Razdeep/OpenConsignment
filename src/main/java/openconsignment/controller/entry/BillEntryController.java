@@ -2,6 +2,7 @@ package openconsignment.controller.entry;
 
 import static openconsignment.common.Utils.formatDate;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
+import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
@@ -262,6 +265,23 @@ public class BillEntryController implements Initializable {
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             log.error(ex.toString(), ex);
+        }
+    }
+
+    public void printBill(ActionEvent ignoredEvent) {
+        String billNo = bill_no_field.getText().strip();
+
+        try {
+            if (null == billService.getBill(billNo)) {
+                log.warn("Bill not found");
+                Utils.showAlert("Bill not found. Cannot print");
+            }
+            billService.generatePdf(billNo);
+            Utils.launchPdf(Constants.REPORT_FILE_NAME);
+            Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
+        } catch (SQLException | JRException | IOException e) {
+            log.error(e.toString());
+            Utils.showAlert(e.toString());
         }
     }
 }
