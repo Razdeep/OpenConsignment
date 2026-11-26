@@ -89,6 +89,7 @@ class UtilsTest {
     @Test
     void generatePdfCompilesFillsAndExportsARealPdf() throws JRException {
         Map<String, Object> payload = new HashMap<>();
+        payload.put(Constants.ORGANIZATION_NAME_KEY, "Random Organization");
         payload.put("voucherNo", "V1");
         payload.put("voucherDate", "01-01-2026");
         payload.put("buyerName", "Buyer A");

@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.sf.jasperreports.engine.*;
+import openconsignment.common.AppConfig;
+import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.CollectionEntity;
@@ -18,10 +20,12 @@ import openconsignment.repository.CollectionRepository;
 public class CollectionService {
 
     private final CollectionRepository collectionRepository;
+    private final AppConfig appConfig;
 
     @Inject
-    public CollectionService(CollectionRepository collectionRepository) {
+    public CollectionService(CollectionRepository collectionRepository, AppConfig appConfig) {
         this.collectionRepository = collectionRepository;
+        this.appConfig = appConfig;
     }
 
     public List<String> fetchPendingBillNosForBuyer(String buyerName) throws SQLException {
@@ -68,6 +72,10 @@ public class CollectionService {
 
         Map<String, Object> payload = new HashMap<>();
 
+        String organizationName =
+                appConfig.getOrganization() == null ? "Invalid Organization" : appConfig.getOrganization();
+
+        payload.put(Constants.ORGANIZATION_NAME_KEY, organizationName);
         payload.put("voucherNo", voucherNo);
         payload.put("voucherDate", collectionEntity.getVoucherDate());
         payload.put("buyerName", collectionEntity.getBuyerName());
