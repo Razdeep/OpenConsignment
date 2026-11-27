@@ -2,7 +2,6 @@
 
 import platform
 import re
-import subprocess
 from pathlib import Path
 import os
 import stat
@@ -64,7 +63,7 @@ def generate_desktop_entry():
 os_name = platform.system()
 
 if os_name != "Linux":
-    logger.error(f"Created desktop entries are only supported in Linux / Ubuntu Distro")
+    logger.error("Created desktop entries are only supported in Linux / Ubuntu Distro")
     exit(1)
 
 generate_desktop_entry()
