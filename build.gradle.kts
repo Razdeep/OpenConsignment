@@ -126,8 +126,13 @@ tasks.named<Jar>("jar") { enabled = false }
 
 val copyScripts by tasks.registering(Copy::class) {
     from("scripts") {
-        include("start.sh", "start.bat", "configure-backup.py", "templates/**")
+        include("start.sh", "start.bat", "configure-backup.py", "create-desktop-entry.py", "templates/**")
     }
+
+    from("assets") {
+        include("openconsignment.png")
+    }
+
     into(layout.buildDirectory.dir("libs"))
     doLast {
         println("Copied scripts to build directory")
