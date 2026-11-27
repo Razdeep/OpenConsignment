@@ -82,7 +82,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Supplier Name]]></text>
 			</staticText>
 			<staticText>
@@ -96,7 +96,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bill No.]]></text>
 			</staticText>
 			<staticText>
@@ -110,7 +110,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bill Date]]></text>
 			</staticText>
 			<staticText>
@@ -124,7 +124,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bill Amount]]></text>
 			</staticText>
 			<staticText>
@@ -138,7 +138,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Collection Due]]></text>
 			</staticText>
 			<staticText>
@@ -152,7 +152,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Amount Collected]]></text>
 			</staticText>
 			<staticText>
@@ -166,7 +166,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bank]]></text>
 			</staticText>
 			<staticText>
@@ -180,7 +180,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[DD No.]]></text>
 			</staticText>
 			<staticText>
@@ -194,7 +194,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[DD Date]]></text>
 			</staticText>
 		</band>
@@ -205,63 +205,63 @@
 				<reportElement x="0" y="0" width="80" height="30" uuid="35476134-9890-4b84-a652-e83a857438f2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="458c8377-9e8d-47c5-8305-e469c0f9a4f6"/>
 				</reportElement>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{supplierName}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="80" y="0" width="48" height="30" uuid="9211a823-8d98-464f-96ce-2b1b2f7513db">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1f29ee00-5316-4ff7-ae24-88446e09ec59"/>
 				</reportElement>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{billNo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="128" y="0" width="61" height="30" uuid="16bf8f92-8b45-4a22-acc6-4cec8d64aa03">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bcf4fa9a-8001-45c4-9785-9479bd25450b"/>
 				</reportElement>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{billDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="189" y="0" width="61" height="30" uuid="6f80dbe5-e4a3-461d-83a4-32577d95cb77">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b150011-7ea1-4315-9bed-a8182833dd39"/>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{billAmount}+"/-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="311" y="0" width="61" height="30" uuid="41920369-5b56-4bb6-b95c-485261dd69fe">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06924df6-a423-4e93-a26d-8c87247f0b11"/>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{amountCollected}+"/-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="372" y="0" width="61" height="30" uuid="518940fe-d49c-4a8f-b214-9b069a280c86">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1af0b97e-b946-4931-ac00-cc9a55f6cb8f"/>
 				</reportElement>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{bank}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="433" y="0" width="61" height="30" uuid="e934bf41-3432-4e85-9a3d-8552427ea60a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6eae1da7-541d-4c84-b70c-81dc06cadab2"/>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{ddNo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="494" y="0" width="61" height="30" uuid="ddcfc4c9-73a4-454f-a526-045e0038b2b2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fdf71b2-1514-4a4d-b211-30c42a744d44"/>
 				</reportElement>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{ddDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="250" y="0" width="61" height="30" uuid="7447f935-e1b2-4e91-9fba-218dc39c527b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06924df6-a423-4e93-a26d-8c87247f0b11"/>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{due}+"/-"]]></textFieldExpression>
 			</textField>
 		</band>
