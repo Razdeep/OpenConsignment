@@ -237,7 +237,7 @@ public class PaymentRepository {
                         .bank(resultSet.getString("Bank"))
                         .ddNo(resultSet.getString("DD No."))
                         .ddDate(resultSet.getString("DD Date"))
-                        .dueAmount(resultSet.getInt("Due Amount"))
+                        .dueAmount(resultSet.getInt("pending_amount"))
                         .build());
             }
             return res;

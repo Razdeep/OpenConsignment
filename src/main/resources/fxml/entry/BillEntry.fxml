@@ -38,7 +38,7 @@
                                 </font></TextField>
                         </VBox>
                         <Button mnemonicParsing="false" onAction="#fetchBill" prefWidth="78.0" styleClass="bill-secondary-button" text="Fetch" />
-                        <Button mnemonicParsing="false" prefWidth="78.0" styleClass="bill-secondary-button" text="Print" />
+                        <Button mnemonicParsing="false" onAction="#printBill" prefWidth="78.0" styleClass="bill-secondary-button" text="Print" />
                         <Button mnemonicParsing="false" onAction="#deleteEntry" prefWidth="78.0" styleClass="bill-danger-button" text="Delete" />
                         <VBox minWidth="150.0" prefWidth="180.0" spacing="6.0">
                             <Label styleClass="bill-field-label" text="Bill date" />

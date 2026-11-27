@@ -236,7 +236,7 @@ public class CollectionRepository {
                         .bank(resultSet.getString("Bank"))
                         .ddNo(resultSet.getString("DD No."))
                         .ddDate(resultSet.getString("DD Date"))
-                        .collectionDue(resultSet.getInt("Collection Due"))
+                        .collectionDue(resultSet.getInt("pending_amount"))
                         .build());
             }
             return res;

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SupplierLedger" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2b5461f1-4580-477e-9d69-6885b2c7bb67">
-	<parameter name="organizationName"/>
-	<parameter name="supplierName"/>
-	<field name="billNo"/>
-	<field name="billDate"/>
+	<parameter name="organizationName" class="java.lang.String"/>
+	<parameter name="supplierName" class="java.lang.String"/>
+	<field name="billNo" class="java.lang.String"/>
+	<field name="billDate" class="java.lang.String"/>
 	<field name="billAmount" class="java.lang.Integer"/>
-	<field name="buyerName"/>
-	<field name="voucherNo"/>
+	<field name="buyerName" class="java.lang.String"/>
+	<field name="voucherNo" class="java.lang.String"/>
 	<field name="amountPaid" class="java.lang.Integer"/>
-	<field name="bank"/>
-	<field name="ddNo"/>
-	<field name="ddDate"/>
+	<field name="bank" class="java.lang.String"/>
+	<field name="ddNo" class="java.lang.String"/>
+	<field name="ddDate" class="java.lang.String"/>
 	<field name="dueAmount" class="java.lang.Integer"/>
 	<variable name="bill_amount_page_total" class="java.lang.Integer" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{billAmount}]]></variableExpression>
@@ -72,7 +72,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bill No.]]></text>
 			</staticText>
 			<staticText>
@@ -82,7 +82,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bill Date]]></text>
 			</staticText>
 			<staticText>
@@ -90,7 +90,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bill Amount]]></text>
 			</staticText>
 			<staticText>
@@ -98,7 +98,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Buyer Name]]></text>
 			</staticText>
 			<staticText>
@@ -108,7 +108,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Voucher No.]]></text>
 			</staticText>
 			<staticText>
@@ -116,7 +116,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Amount Paid]]></text>
 			</staticText>
 			<staticText>
@@ -124,7 +124,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Bank]]></text>
 			</staticText>
 			<staticText>
@@ -132,7 +132,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[DD No.]]></text>
 			</staticText>
 			<staticText>
@@ -140,7 +140,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[DD Date]]></text>
 			</staticText>
 			<staticText>
@@ -148,7 +148,7 @@
 				<box padding="3">
 					<pen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Due Amount]]></text>
 			</staticText>
 		</band>
@@ -165,7 +165,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{billNo}]]></textFieldExpression>
@@ -179,7 +179,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{billDate}]]></textFieldExpression>
@@ -193,7 +193,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{billAmount}]]></textFieldExpression>
@@ -207,7 +207,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{buyerName}]]></textFieldExpression>
@@ -221,7 +221,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{voucherNo}]]></textFieldExpression>
@@ -235,7 +235,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amountPaid}]]></textFieldExpression>
@@ -249,7 +249,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bank}]]></textFieldExpression>
@@ -263,7 +263,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ddNo}]]></textFieldExpression>
@@ -277,7 +277,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ddDate}]]></textFieldExpression>
@@ -291,7 +291,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Monospaced"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{dueAmount}]]></textFieldExpression>

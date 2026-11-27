@@ -1,7 +1,25 @@
-SELECT * FROM `Bill_Entry_Table`
-LEFT JOIN (
-    `Payment_Entry_Extended_Table`
-    JOIN `Payment_Entry_Table` USING ("Voucher No.")
-) USING("Bill No.")
-WHERE `Bill_Entry_Table`.`Supplier Name`=?
-ORDER BY `Bill_Entry_Table`.`Bill No.`
+WITH cte_payment_partial AS (SELECT `Bill No.`,
+                                    sum(`Amount Paid`) AS amount_paid
+                             FROM Payment_Entry_Extended_Table
+                             GROUP BY `Bill No.`),
+
+     cte_payment_full AS (SELECT `Bill No.`,
+                                 `Bill Date`,
+                                 `Bill Amount`,
+                                 `Supplier Name`,
+                                 `Buyer Name`,
+                                 coalesce(amount_paid, 0) AS amount_paid
+                          FROM `Bill_Entry_Table`
+                                   LEFT JOIN cte_payment_partial USING ("Bill No.")),
+
+     cte_payment_joined AS (SELECT *
+                            FROM `Payment_Entry_Extended_Table`
+                                     JOIN `Payment_Entry_Table` USING ("Voucher No.")),
+
+     cte_final AS (SELECT *, cte_payment_full.`Bill Amount` - amount_paid AS pending_amount
+                   FROM cte_payment_full
+                            LEFT JOIN cte_payment_joined USING ("Bill No.")
+                   WHERE cte_payment_full.`Supplier Name` = ?)
+
+SELECT *
+FROM cte_final;
