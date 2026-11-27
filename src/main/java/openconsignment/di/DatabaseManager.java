@@ -40,7 +40,7 @@ public class DatabaseManager {
     private static void initDatabase(Connection conn) {
         try {
             String initSQL = SqlLoader.load(SqlQuery.INIT_SQL);
-            ;
+
             try (Statement st = conn.createStatement()) {
                 conn.setAutoCommit(false);
 
