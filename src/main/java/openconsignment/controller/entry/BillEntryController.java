@@ -23,6 +23,8 @@ import openconsignment.common.Constants;
 import openconsignment.common.Utils;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.LREntity;
+import openconsignment.exception.BillNotFoundException;
+import openconsignment.exception.EmptyFieldException;
 import openconsignment.model.LR;
 import openconsignment.service.BillService;
 import openconsignment.service.BuyerService;
@@ -208,11 +210,16 @@ public class BillEntryController implements Initializable {
     @FXML
     private void fetchBill(ActionEvent ignoredEvent) {
         try {
-            BillEntity billEntity = billService.getBill(bill_no_field.getText());
+            String billNo = bill_no_field.getText().strip();
+
+            if (billNo.isEmpty()) {
+                throw new EmptyFieldException("Bill number is empty");
+            }
+
+            BillEntity billEntity = billService.getBill(billNo);
 
             if (null == billEntity) {
-                Utils.showAlert("Record not found. Please try again later.", AlertType.WARNING);
-                return;
+                throw new BillNotFoundException("Bill not found.");
             }
 
             supplier_field.setText(billEntity.getSupplierName());
@@ -227,29 +234,37 @@ public class BillEntryController implements Initializable {
                     .collect(Collectors.toCollection(ArrayList::new));
 
             lrTable.setItems(FXCollections.observableArrayList(lrList));
-            //            delete_entry_btn.setDisable(false);
 
+        } catch (EmptyFieldException | BillNotFoundException ex) {
+            log.warn(ex.getMessage());
+            Utils.showAlert(ex.getMessage(), AlertType.WARNING);
         } catch (SQLException ex) {
-            Utils.showAlert(ex.toString());
             log.error(ex.toString(), ex);
+            Utils.showAlert(ex.toString());
         }
     }
 
     @FXML
     private void deleteEntry(ActionEvent ignoredEvent) {
-        Alert alert = new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Are you sure that you want delete " + bill_no_field.getText() + " ?",
-                ButtonType.YES,
-                ButtonType.NO,
-                ButtonType.CANCEL);
-        alert.showAndWait();
-
-        if (alert.getResult() != ButtonType.YES) {
-            return;
-        }
-
         try {
+            String billNo = bill_no_field.getText().strip();
+            if (billNo.isBlank()) {
+                throw new EmptyFieldException("Bill number field is empty");
+            }
+
+            Alert alert = new Alert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Are you sure that you want delete " + billNo + " ?",
+                    ButtonType.YES,
+                    ButtonType.NO,
+                    ButtonType.CANCEL);
+            alert.showAndWait();
+
+            if (alert.getResult() != ButtonType.YES) {
+                log.info("Bill {} delete cancelled", billNo);
+                return;
+            }
+
             billService.deleteBill(bill_no_field.getText());
 
             supplier_field.setText("");
@@ -262,6 +277,9 @@ public class BillEntryController implements Initializable {
 
             Utils.showAlert(
                     bill_no_field.getText().toUpperCase() + " Entry was successfully deleted.", AlertType.INFORMATION);
+        } catch (EmptyFieldException ex) {
+            log.warn(ex.getMessage());
+            Utils.showAlert(ex.getMessage(), AlertType.WARNING);
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             log.error(ex.toString(), ex);
@@ -269,16 +287,22 @@ public class BillEntryController implements Initializable {
     }
 
     public void printBill(ActionEvent ignoredEvent) {
-        String billNo = bill_no_field.getText().strip();
-
         try {
+            String billNo = bill_no_field.getText().strip();
+
+            if (billNo.isEmpty()) {
+                throw new EmptyFieldException("Bill number field is empty");
+            }
+
             if (null == billService.getBill(billNo)) {
-                log.warn("Bill not found");
-                Utils.showAlert("Bill not found. Cannot print");
+                throw new BillNotFoundException("Could not generate pdf because bill " + billNo + " not found");
             }
             billService.generatePdf(billNo);
             Utils.launchPdf(Constants.REPORT_FILE_NAME);
             Utils.showAlert("Report Successfully Generated", AlertType.INFORMATION);
+        } catch (EmptyFieldException | BillNotFoundException ex) {
+            log.warn(ex.getMessage());
+            Utils.showAlert(ex.getMessage(), AlertType.WARNING);
         } catch (SQLException | JRException | IOException e) {
             log.error(e.toString());
             Utils.showAlert(e.toString());
