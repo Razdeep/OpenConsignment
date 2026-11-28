@@ -2,6 +2,8 @@ package openconsignment.common;
 
 /** Catalog of repository SQL resources, with paths relative to the classpath's /sql directory. */
 public enum SqlQuery {
+    INIT_SQL("init.sql"),
+
     BILL_SAVE("bill/save.sql"),
     BILL_SAVE_LR("bill/save-lr.sql"),
     BILL_GET("bill/get.sql"),

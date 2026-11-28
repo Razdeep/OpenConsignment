@@ -1,6 +1,7 @@
 package openconsignment.controller;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Utils;
 import openconsignment.common.ViewLoader;
+import openconsignment.di.DatabaseManager;
 import openconsignment.service.BackupService;
 
 @Slf4j
@@ -24,11 +26,13 @@ public class MainController implements Initializable {
 
     private final ViewLoader viewLoader;
     private final BackupService backupService;
+    private final DatabaseManager databaseManager;
 
     @Inject
-    public MainController(ViewLoader viewLoader, BackupService backupService) {
+    public MainController(ViewLoader viewLoader, BackupService backupService, DatabaseManager databaseManager) {
         this.viewLoader = viewLoader;
         this.backupService = backupService;
+        this.databaseManager = databaseManager;
     }
 
     @Override
@@ -57,8 +61,8 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void showInputHistory(ActionEvent ignore) {
-        viewLoader.loadCenter("/fxml/history/InputHistory.fxml", root);
+    private void showBillHistory(ActionEvent ignore) {
+        viewLoader.loadCenter("/fxml/history/BillHistory.fxml", root);
     }
 
     @FXML
@@ -167,5 +171,18 @@ public class MainController implements Initializable {
                 Platform.runLater(() -> Utils.showAlert(ex.toString(), Alert.AlertType.ERROR));
             }
         });
+    }
+
+    public void exit(ActionEvent ignored) {
+        log.info("Closing database connection");
+        try {
+            databaseManager.closeConnection();
+        } catch (SQLException e) {
+            log.error(e.toString(), e);
+            Utils.showAlert(e.toString());
+        }
+        log.info("Closing database connection");
+        log.info("Exiting now");
+        Platform.exit();
     }
 }

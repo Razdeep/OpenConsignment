@@ -30,7 +30,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Close"/>
+                        <MenuItem mnemonicParsing="false" text="Exit" onAction="#exit"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Input">
@@ -54,9 +54,9 @@
                         <MenuItem mnemonicParsing="false" text="Transport" onAction="#showTransportMaster"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="View">
+                <Menu mnemonicParsing="false" text="History">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showInputHistory" text="Input History"/>
+                        <MenuItem mnemonicParsing="false" onAction="#showBillHistory" text="Bill History"/>
                         <MenuItem mnemonicParsing="false" onAction="#showCollectionHistory" text="Collection History"/>
                         <MenuItem mnemonicParsing="false" onAction="#showPaymentHistory" text="Payment History"/>
                     </items>

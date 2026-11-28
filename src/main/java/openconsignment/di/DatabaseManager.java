@@ -1,14 +1,13 @@
 package openconsignment.di;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.Constants;
+import openconsignment.common.SqlLoader;
+import openconsignment.common.SqlQuery;
 
 @Slf4j
 public class DatabaseManager {
@@ -40,7 +39,8 @@ public class DatabaseManager {
 
     private static void initDatabase(Connection conn) {
         try {
-            String initSQL = getInitSQL();
+            String initSQL = SqlLoader.load(SqlQuery.INIT_SQL);
+
             try (Statement st = conn.createStatement()) {
                 conn.setAutoCommit(false);
 
@@ -61,12 +61,5 @@ public class DatabaseManager {
         } catch (Exception ex) {
             log.error(ex.toString(), ex);
         }
-    }
-
-    private static String getInitSQL() throws IOException {
-        return new String(
-                Objects.requireNonNull(DatabaseModule.class.getResourceAsStream("/sql/init.sql"))
-                        .readAllBytes(),
-                StandardCharsets.UTF_8);
     }
 }
