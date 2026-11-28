@@ -1,5 +1,6 @@
 .payment-page-title {
     -fx-fill: #17324f;
+    -fx-font-size: 23px;
     -fx-font-weight: bold;
 }
 
@@ -30,6 +31,7 @@
     -fx-background-radius: 5;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-font-size: 12px;
 }
 
 .payment-primary-button:hover {
@@ -40,22 +42,33 @@
     -fx-background-color: #eaf2fa;
     -fx-background-radius: 5;
     -fx-text-fill: #35536f;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
 .payment-danger-button {
     -fx-background-color: #fff1f2;
     -fx-background-radius: 5;
     -fx-text-fill: #be123c;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }
 
 .payment-entry .text-field,
 .payment-entry .combo-box,
 .payment-entry .date-picker {
+    -fx-background-color: white;
     -fx-background-radius: 5;
     -fx-border-color: #c8d9e9;
     -fx-border-radius: 5;
-    -fx-padding: 5 8 5 8;
+    -fx-font-size: 13px;
 }
+
+.payment-entry .text-field { -fx-padding: 5 8; }
+.payment-entry .text-field:readonly { -fx-background-color: #edf3fa; }
+.payment-entry .date-picker > .text-field { -fx-border-width: 0; -fx-background-color: transparent; }
+.payment-secondary-button:hover { -fx-background-color: #d7e5f3; }
+.payment-danger-button:hover { -fx-background-color: #ffe1e5; }
 
 .payment-entry .text-field:focused,
 .payment-entry .combo-box:focused,

@@ -1,6 +1,8 @@
 package openconsignment.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
@@ -53,6 +55,102 @@ class CollectionRepositoryTest {
                 collectionWith("V1", "Buyer A", "400", collectionItem("B1", "1000", "400")));
 
         assertEquals(600, collectionRepository.fetchPendingAmountForBillNo("B1"));
+    }
+
+    @Test
+    void balancesReflectMultipleCollectionsReplacementAndDeletion() throws SQLException {
+        saveBill("B1", "Buyer A", "1000");
+        saveBill("B2", "Buyer B", "2000");
+        collectionRepository.saveCollection(
+                collectionWith("V1", "Buyer A", "300", collectionItem("B1", "1000", "300")));
+        collectionRepository.saveCollection(
+                collectionWith("V2", "Buyer A", "200", collectionItem("B1", "1000", "200")));
+
+        assertEquals(500, collectionRepository.fetchPendingAmountForBillNo("B1"));
+        assertEquals(2000, collectionRepository.fetchPendingAmountForBillNo("B2"));
+        assertEquals(
+                List.of("B1"),
+                collectionRepository.fetchPendingBillsForBuyer("Buyer A").stream()
+                        .map(BillEntity::getBillNo)
+                        .toList());
+
+        collectionRepository.saveCollection(
+                collectionWith("V2", "Buyer A", "700", collectionItem("B1", "1000", "700")));
+        assertEquals(0, collectionRepository.fetchPendingAmountForBillNo("B1"));
+        assertTrue(collectionRepository.fetchPendingBillsForBuyer("Buyer A").isEmpty());
+        assertEquals(1, collectionRepository.getCollection("V2").getItems().size());
+
+        collectionRepository.deleteCollection("V1");
+        assertEquals(300, collectionRepository.fetchPendingAmountForBillNo("B1"));
+        assertEquals(
+                1, collectionRepository.fetchPendingBillsForBuyer("Buyer A").size());
+        assertNull(collectionRepository.getCollection("V1"));
+    }
+
+    @Test
+    void missingCollectionAndEmptyTablesReturnNoResults() throws SQLException {
+        assertNull(collectionRepository.getLastVoucher());
+        assertNull(collectionRepository.getCollection("missing"));
+        assertTrue(collectionRepository.getCollections().isEmpty());
+        assertTrue(collectionRepository.fetchPendingBillsForBuyer("missing").isEmpty());
+    }
+
+    @Test
+    void invalidItemRollsBackNewVoucher() throws SQLException {
+        CollectionItemEntity invalid = CollectionItemEntity.builder()
+                .billNo("B1")
+                .billDate("01-01-2026")
+                .billAmount("1000")
+                .due("750")
+                .amountCollected("250")
+                .bank("Bank")
+                .ddNo("DD1")
+                .ddDate("01-01-2026")
+                .build();
+        assertThrows(
+                SQLException.class,
+                () -> collectionRepository.saveCollection(collectionWith("V1", "Buyer A", "250", invalid)));
+        assertNull(collectionRepository.getCollection("V1"));
+        assertTrue(collectionRepository.getCollections().isEmpty());
+        assertTrue(conn.getAutoCommit());
+    }
+
+    @Test
+    void failedReplacementRestoresOriginalHeaderAndItems() throws SQLException {
+        saveBill("B1", "Buyer A", "1000");
+        collectionRepository.saveCollection(
+                collectionWith("V1", "Buyer A", "300", collectionItem("B1", "1000", "300")));
+        boolean originalAutoCommit = conn.getAutoCommit();
+        CollectionItemEntity invalid =
+                CollectionItemEntity.builder().billNo("B2").build();
+
+        assertThrows(
+                SQLException.class,
+                () -> collectionRepository.saveCollection(
+                        collectionWith("V1", "Buyer B", "500", collectionItem("B1", "1000", "200"), invalid)));
+
+        CollectionEntity restored = collectionRepository.getCollection("V1");
+        assertEquals("Buyer A", restored.getBuyerName());
+        assertEquals("300", restored.getTotalAmount());
+        assertEquals(1, restored.getItems().size());
+        assertEquals("300", restored.getItems().get(0).getAmountCollected());
+        assertEquals(700, collectionRepository.fetchPendingAmountForBillNo("B1"));
+        assertEquals(originalAutoCommit, conn.getAutoCommit());
+    }
+
+    @Test
+    void deleteFailureRollsBackHeaderAndPropagates() throws SQLException {
+        collectionRepository.saveCollection(
+                collectionWith("V1", "Buyer A", "300", collectionItem("B1", "1000", "300")));
+        try (var statement = conn.createStatement()) {
+            statement.execute("CREATE TRIGGER fail_collection_delete BEFORE DELETE ON Collection_Entry_Extended_Table "
+                    + "BEGIN SELECT RAISE(ABORT, 'delete failed'); END");
+        }
+        assertThrows(SQLException.class, () -> collectionRepository.deleteCollection("V1"));
+        assertEquals(
+                "300",
+                collectionRepository.getCollection("V1").getItems().get(0).getAmountCollected());
+        assertTrue(conn.getAutoCommit());
     }
 
     @Test

@@ -15,10 +15,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import java.net.URL?>
 
-<Group fx:id="root" stylesheets="@/css/bills.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.entry.BillEntryController">
+<Group fx:id="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.entry.BillEntryController">
+    <stylesheets><URL value="@/css/bills.css" /><URL value="@/css/main.css" /></stylesheets>
     <children>
-        <AnchorPane minHeight="560.0" minWidth="660.0" prefHeight="600.0" prefWidth="717.0" styleClass="bill-entry" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+        <AnchorPane minHeight="560.0" minWidth="660.0" prefHeight="600.0" prefWidth="717.0" styleClass="bill-entry">
             <VBox spacing="16.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="20.0">
                 <VBox spacing="5.0">
                     <Label styleClass="bill-title" text="Bills" />
@@ -42,7 +44,7 @@
                         <Button mnemonicParsing="false" onAction="#deleteEntry" prefWidth="78.0" styleClass="bill-danger-button" text="Delete" />
                         <VBox minWidth="150.0" prefWidth="180.0" spacing="6.0">
                             <Label styleClass="bill-field-label" text="Bill date" />
-                            <DatePicker fx:id="date_field" maxWidth="Infinity" promptText="Choose date" />
+                            <DatePicker fx:id="date_field" maxWidth="Infinity" />
                         </VBox>
                     </HBox>
                     <VBox spacing="6.0" GridPane.rowIndex="1">
@@ -68,7 +70,7 @@
                     </VBox>
                     <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                         <Label styleClass="bill-field-label" text="LR date" />
-                        <DatePicker fx:id="lr_date" maxWidth="Infinity" promptText="Choose date" />
+                        <DatePicker fx:id="lr_date" maxWidth="Infinity" />
                     </VBox>
                     <rowConstraints>
                         <RowConstraints />
@@ -101,9 +103,6 @@
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                         </columnResizePolicy>
-                        <placeholder>
-                            <Label styleClass="bill-muted" text="Lorry receipts added to this bill will appear here" />
-                        </placeholder>
                         <columns>
                             <TableColumn fx:id="lr_no_col" prefWidth="400.0" text="LR number" />
                             <TableColumn fx:id="pm_col" prefWidth="220.0" text="PM" />

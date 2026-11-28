@@ -1,18 +1,167 @@
-
-
-.tab-pane .tab-header-background {
-    -fx-background-color: #e0f7fa; /* light sky blue */
+/* Shared application theme. Page-specific stylesheets provide layout sizing. */
+.app-shell {
+    -fx-background-color: #edf2f7;
+    -fx-font-family: "System";
 }
+.menu-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #dfe7ef transparent;
+    -fx-padding: 5 10 5 10;
+}
+.menu-bar > .container > .menu-button {
+    -fx-background-radius: 6;
+    -fx-padding: 6 10 6 10;
+}
+.menu-bar > .container > .menu-button:hover,
+.menu-bar > .container > .menu-button:showing { -fx-background-color: #e8f0fa; }
+.menu-bar > .container > .menu-button > .label { -fx-text-fill: #344b63; }
+.context-menu { -fx-background-color: white; -fx-background-radius: 8; -fx-padding: 6; }
+.menu-item:focused { -fx-background-color: #e8f0fa; }
+.menu-item:focused > .label { -fx-text-fill: #153453; }
 
-.tab-pane .tab {
-    -fx-background-insets: 0;
-    -fx-padding: 10 15 10 15;
-    -fx-background-radius: 8 8 0 0;
+.screen, .bill-entry, .collection-entry, .payment-entry {
+    -fx-background-radius: 12;
+    -fx-border-color: #e0e8f0;
+    -fx-border-radius: 12;
+}
+.screen, .bill-entry { -fx-background-color: #ffffff; }
+.screen { -fx-padding: 28; }
+.page-title, .bill-entry .bill-title {
+    -fx-text-fill: #152e49;
+    -fx-fill: #152e49;
+    -fx-font-size: 25px;
     -fx-font-weight: bold;
-    -fx-background-color: #b3e5fc;
 }
-
-.tab-pane .tab:selected {
-    -fx-background-color: #4fc3f7;
+.collection-page-title, .payment-page-title {
+    -fx-fill: #152e49;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+}
+.eyebrow {
+    -fx-text-fill: #3974ac;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.muted, .bill-entry .bill-muted, .collection-muted {
+    -fx-text-fill: #63778b;
+    -fx-font-size: 12px;
+}
+.payment-muted { -fx-fill: #63778b; -fx-font-size: 12px; }
+.field-label, .bill-entry .bill-field-label {
+    -fx-text-fill: #405b74;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.collection-field-label, .payment-field-label {
+    -fx-fill: #405b74;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.surface {
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e5ecf3;
+    -fx-border-radius: 10;
+    -fx-padding: 18;
+}
+.screen .text-field, .screen .combo-box, .screen .date-picker,
+.bill-entry .text-field, .bill-entry .date-picker,
+.collection-entry .text-field, .collection-entry .combo-box, .collection-entry .date-picker,
+.payment-entry .text-field, .payment-entry .combo-box, .payment-entry .date-picker {
+    -fx-background-color: white;
+    -fx-background-radius: 7;
+    -fx-border-color: #d3dee9;
+    -fx-border-radius: 7;
+}
+.screen .text-field, .bill-entry .text-field, .collection-entry .text-field, .payment-entry .text-field {
+    -fx-text-fill: #233e58;
+    -fx-prompt-text-fill: #8a9bad;
+}
+.screen .text-field:readonly, .collection-entry .text-field:readonly, .payment-entry .text-field:readonly {
+    -fx-background-color: #f3f6fa;
+}
+.screen .date-picker > .text-field, .bill-entry .date-picker > .text-field,
+.collection-entry .date-picker > .text-field, .payment-entry .date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+.screen .text-field:focused, .screen .combo-box:focused, .screen .date-picker:focused,
+.bill-entry .text-field:focused, .bill-entry .date-picker:focused,
+.collection-entry .text-field:focused, .collection-entry .combo-box:focused, .collection-entry .date-picker:focused,
+.payment-entry .text-field:focused, .payment-entry .combo-box:focused, .payment-entry .date-picker:focused {
+    -fx-border-color: #397fc0;
+}
+.primary-button, .secondary-button, .danger-button, .navigation-button,
+.bill-entry .bill-primary-button, .bill-entry .bill-secondary-button, .bill-entry .bill-danger-button,
+.collection-primary-button, .collection-secondary-button, .collection-danger-button,
+.payment-primary-button, .payment-secondary-button, .payment-danger-button {
+    -fx-background-radius: 7;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.primary-button, .bill-entry .bill-primary-button, .collection-primary-button, .payment-primary-button {
+    -fx-background-color: #256da9;
     -fx-text-fill: white;
 }
+.primary-button:hover, .bill-entry .bill-primary-button:hover, .collection-primary-button:hover, .payment-primary-button:hover { -fx-background-color: #1d598d; }
+.secondary-button, .bill-entry .bill-secondary-button, .collection-secondary-button, .payment-secondary-button {
+    -fx-background-color: #edf3f9;
+    -fx-text-fill: #315574;
+}
+.secondary-button:hover, .bill-entry .bill-secondary-button:hover, .collection-secondary-button:hover, .payment-secondary-button:hover { -fx-background-color: #dfeaf5; }
+.danger-button, .bill-entry .bill-danger-button, .collection-danger-button, .payment-danger-button {
+    -fx-background-color: #fdf0f1;
+    -fx-text-fill: #a63d50;
+}
+.danger-button:hover, .bill-entry .bill-danger-button:hover, .collection-danger-button:hover, .payment-danger-button:hover { -fx-background-color: #fbe0e4; }
+.navigation-button {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e8f0;
+    -fx-border-radius: 10;
+    -fx-text-fill: #1d3d5a;
+    -fx-font-size: 14px;
+}
+.navigation-button:hover { -fx-background-color: #edf5fd; -fx-border-color: #a9c8e5; }
+.navigation-button:focused, .primary-button:focused, .secondary-button:focused, .danger-button:focused {
+    -fx-border-color: #397fc0;
+    -fx-border-radius: 7;
+}
+.screen .table-view, .screen .list-view, .bill-entry .table-view,
+.collection-entry .table-view, .payment-entry .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #dfe8f0;
+    -fx-border-radius: 8;
+    -fx-padding: 1;
+}
+.screen .table-view .column-header-background, .screen .table-view .column-header, .screen .table-view .filler,
+.bill-entry .table-view .column-header-background, .bill-entry .table-view .column-header, .bill-entry .table-view .filler,
+.collection-entry .table-view .column-header-background, .collection-entry .table-view .column-header, .collection-entry .table-view .filler,
+.payment-entry .table-view .column-header-background, .payment-entry .table-view .column-header, .payment-entry .table-view .filler { -fx-background-color: #f1f5f9; }
+.screen .table-view .column-header, .bill-entry .table-view .column-header,
+.collection-entry .table-view .column-header, .payment-entry .table-view .column-header {
+    -fx-size: 34;
+    -fx-border-color: transparent transparent #e1e9f1 transparent;
+}
+.screen .table-view .column-header .label, .bill-entry .table-view .column-header .label,
+.collection-entry .table-view .column-header .label, .payment-entry .table-view .column-header .label {
+    -fx-text-fill: #526a80;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.screen .table-view .placeholder .label, .bill-entry .table-view .placeholder .label,
+.collection-entry .table-view .placeholder .label, .payment-entry .table-view .placeholder .label { -fx-text-fill: #8494a4; }
+.table-row-cell:filled:selected, .list-cell:filled:selected { -fx-background-color: #dbeaf8; -fx-text-fill: #193d60; }
+.sidebar { -fx-background-color: #173450; -fx-padding: 18 12 18 12; }
+.sidebar-heading { -fx-text-fill: #a8c4dc; -fx-font-size: 10px; -fx-font-weight: bold; }
+.sidebar-button {
+    -fx-background-color: #244764;
+    -fx-text-fill: #f3f8fc;
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.sidebar-button:hover, .sidebar-button:focused { -fx-background-color: #315a7c; }
+.hyperlink { -fx-text-fill: #256da9; }

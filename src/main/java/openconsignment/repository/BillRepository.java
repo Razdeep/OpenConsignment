@@ -1,5 +1,6 @@
 package openconsignment.repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,39 +25,37 @@ public class BillRepository {
     }
 
     public void save(BillEntity billEntity) throws SQLException {
+        Connection connection = databaseManager.getConnection();
         try {
-            String sql = SqlLoader.load(SqlQuery.BILL_SAVE);
-
-            databaseManager.getConnection().setAutoCommit(false);
-
-            deleteBill(billEntity.getBillNo());
-
-            PreparedStatement preparedStatement =
-                    databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, billEntity.getSupplierName());
-            preparedStatement.setString(2, billEntity.getBuyerName());
-            preparedStatement.setString(3, billEntity.getBillNo());
-            preparedStatement.setString(4, billEntity.getBillDate());
-            preparedStatement.setString(5, billEntity.getTransport());
-            preparedStatement.setString(6, billEntity.getLrDate());
-            preparedStatement.setString(7, billEntity.getBillAmount());
-            preparedStatement.setString(8, billEntity.getBillAmount());
-            preparedStatement.setString(9, billEntity.getBillAmount());
-            preparedStatement.execute();
-
-            if (null != billEntity.getLrEntities()) {
-                for (LREntity lr : billEntity.getLrEntities()) {
-                    sql = SqlLoader.load(SqlQuery.BILL_SAVE_LR);
-                    preparedStatement = databaseManager.getConnection().prepareStatement(sql);
-                    preparedStatement.setString(1, billEntity.getBillNo());
-                    preparedStatement.setString(2, lr.getLrNo());
-                    preparedStatement.setString(3, lr.getPm());
+            WriteTransaction.run(connection, () -> {
+                deleteBillRows(connection, billEntity.getBillNo());
+                try (PreparedStatement preparedStatement =
+                        connection.prepareStatement(SqlLoader.load(SqlQuery.BILL_SAVE))) {
+                    preparedStatement.setString(1, billEntity.getSupplierName());
+                    preparedStatement.setString(2, billEntity.getBuyerName());
+                    preparedStatement.setString(3, billEntity.getBillNo());
+                    preparedStatement.setString(4, billEntity.getBillDate());
+                    preparedStatement.setString(5, billEntity.getTransport());
+                    preparedStatement.setString(6, billEntity.getLrDate());
+                    preparedStatement.setString(7, billEntity.getBillAmount());
+                    preparedStatement.setString(8, billEntity.getBillAmount());
+                    preparedStatement.setString(9, billEntity.getBillAmount());
                     preparedStatement.execute();
                 }
-            }
-            databaseManager.getConnection().commit();
+
+                if (null != billEntity.getLrEntities()) {
+                    String sql = SqlLoader.load(SqlQuery.BILL_SAVE_LR);
+                    for (LREntity lr : billEntity.getLrEntities()) {
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                            preparedStatement.setString(1, billEntity.getBillNo());
+                            preparedStatement.setString(2, lr.getLrNo());
+                            preparedStatement.setString(3, lr.getPm());
+                            preparedStatement.execute();
+                        }
+                    }
+                }
+            });
         } catch (SQLException ex) {
-            databaseManager.getConnection().rollback();
             log.error(ex.toString(), ex);
             throw ex;
         }
@@ -106,24 +105,23 @@ public class BillRepository {
     }
 
     public void deleteBill(String billNo) throws SQLException {
+        Connection connection = databaseManager.getConnection();
         try {
-            databaseManager.getConnection().setAutoCommit(false);
-            String sql = SqlLoader.load(SqlQuery.BILL_DELETE);
-            PreparedStatement preparedStatement =
-                    databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, billNo);
-            preparedStatement.execute();
-
-            String sql2 = SqlLoader.load(SqlQuery.BILL_DELETE_LRS);
-            preparedStatement = databaseManager.getConnection().prepareStatement(sql2);
-            preparedStatement.setString(1, billNo);
-            preparedStatement.execute();
-
-            databaseManager.getConnection().commit();
+            WriteTransaction.run(connection, () -> deleteBillRows(connection, billNo));
         } catch (SQLException ex) {
-            databaseManager.getConnection().rollback();
             log.error(ex.toString(), ex);
             throw ex;
+        }
+    }
+
+    private void deleteBillRows(Connection connection, String billNo) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SqlLoader.load(SqlQuery.BILL_DELETE))) {
+            statement.setString(1, billNo);
+            statement.execute();
+        }
+        try (PreparedStatement statement = connection.prepareStatement(SqlLoader.load(SqlQuery.BILL_DELETE_LRS))) {
+            statement.setString(1, billNo);
+            statement.execute();
         }
     }
 

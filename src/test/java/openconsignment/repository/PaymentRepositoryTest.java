@@ -1,6 +1,8 @@
 package openconsignment.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
@@ -52,6 +54,93 @@ class PaymentRepositoryTest {
         paymentRepository.savePayment(paymentWith("V1", "Supplier A", "400", paymentItem("B1", "1000", "400")));
 
         assertEquals(600, paymentRepository.fetchPendingAmountForBillNo("B1"));
+    }
+
+    @Test
+    void balancesReflectMultiplePaymentsReplacementAndDeletion() throws SQLException {
+        saveBill("B1", "Supplier A", "1000");
+        saveBill("B2", "Supplier B", "2000");
+        paymentRepository.savePayment(paymentWith("V1", "Supplier A", "300", paymentItem("B1", "1000", "300")));
+        paymentRepository.savePayment(paymentWith("V2", "Supplier A", "200", paymentItem("B1", "1000", "200")));
+
+        assertEquals(500, paymentRepository.fetchPendingAmountForBillNo("B1"));
+        assertEquals(2000, paymentRepository.fetchPendingAmountForBillNo("B2"));
+        assertEquals(
+                List.of("B1"),
+                paymentRepository.fetchPendingBillsForSupplier("Supplier A").stream()
+                        .map(BillEntity::getBillNo)
+                        .toList());
+
+        paymentRepository.savePayment(paymentWith("V2", "Supplier A", "700", paymentItem("B1", "1000", "700")));
+        assertEquals(0, paymentRepository.fetchPendingAmountForBillNo("B1"));
+        assertTrue(paymentRepository.fetchPendingBillsForSupplier("Supplier A").isEmpty());
+        assertEquals(1, paymentRepository.getPayment("V2").getItems().size());
+
+        paymentRepository.deletePayment("V1");
+        assertEquals(300, paymentRepository.fetchPendingAmountForBillNo("B1"));
+        assertEquals(
+                1, paymentRepository.fetchPendingBillsForSupplier("Supplier A").size());
+        assertNull(paymentRepository.getPayment("V1"));
+    }
+
+    @Test
+    void missingPaymentAndEmptyTablesReturnNoResults() throws SQLException {
+        assertNull(paymentRepository.getLastVoucher());
+        assertNull(paymentRepository.getPayment("missing"));
+        assertTrue(paymentRepository.getPayments().isEmpty());
+        assertTrue(paymentRepository.fetchPendingBillsForSupplier("missing").isEmpty());
+    }
+
+    @Test
+    void failedReplacementRestoresOriginalHeaderAndItems() throws SQLException {
+        saveBill("B1", "Supplier A", "1000");
+        paymentRepository.savePayment(paymentWith("V1", "Supplier A", "300", paymentItem("B1", "1000", "300")));
+        boolean originalAutoCommit = conn.getAutoCommit();
+        PaymentItemEntity invalid = PaymentItemEntity.builder().billNo("B2").build();
+
+        assertThrows(
+                SQLException.class,
+                () -> paymentRepository.savePayment(
+                        paymentWith("V1", "Supplier B", "500", paymentItem("B1", "1000", "200"), invalid)));
+
+        PaymentEntity restored = paymentRepository.getPayment("V1");
+        assertEquals("Supplier A", restored.getSupplierName());
+        assertEquals("300", restored.getTotalAmount());
+        assertEquals(1, restored.getItems().size());
+        assertEquals("300", restored.getItems().get(0).getAmountPaid());
+        assertEquals(700, paymentRepository.fetchPendingAmountForBillNo("B1"));
+        assertEquals(originalAutoCommit, conn.getAutoCommit());
+    }
+
+    @Test
+    void failedNewPaymentLeavesNoPartialRowsAndRestoresAutoCommit() throws SQLException {
+        assertTrue(conn.getAutoCommit());
+        assertThrows(
+                SQLException.class,
+                () -> paymentRepository.savePayment(paymentWith(
+                        "V1",
+                        "Supplier A",
+                        "500",
+                        paymentItem("B1", "1000", "200"),
+                        PaymentItemEntity.builder().build())));
+        assertNull(paymentRepository.getPayment("V1"));
+        try (var statement = conn.createStatement();
+                var rows = statement.executeQuery("SELECT COUNT(*) FROM Payment_Entry_Extended_Table")) {
+            assertEquals(0, rows.getInt(1));
+        }
+        assertTrue(conn.getAutoCommit());
+    }
+
+    @Test
+    void deleteFailureRollsBackHeaderAndPropagates() throws SQLException {
+        paymentRepository.savePayment(paymentWith("V1", "Supplier A", "300", paymentItem("B1", "1000", "300")));
+        try (var statement = conn.createStatement()) {
+            statement.execute("CREATE TRIGGER fail_payment_delete BEFORE DELETE ON Payment_Entry_Extended_Table "
+                    + "BEGIN SELECT RAISE(ABORT, 'delete failed'); END");
+        }
+        assertThrows(SQLException.class, () -> paymentRepository.deletePayment("V1"));
+        assertEquals("300", paymentRepository.getPayment("V1").getItems().get(0).getAmountPaid());
+        assertTrue(conn.getAutoCommit());
     }
 
     @Test

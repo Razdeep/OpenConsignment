@@ -2,6 +2,8 @@ package openconsignment.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -90,6 +92,51 @@ class BillRepositoryTest {
     }
 
     @Test
+    void replacingBillReplacesItsLrsWithoutAffectingOtherBills() throws SQLException {
+        billRepository.save(bill("B1", "1000", List.of(new LREntity("B1", "old", "1"))));
+        billRepository.save(bill("B2", "500", List.of(new LREntity("B2", "other", "2"))));
+        billRepository.save(bill("B1", "2000", List.of(new LREntity("B1", "new", "3"))));
+
+        BillEntity replaced = billRepository.getBill("B1");
+        assertEquals("2000", replaced.getBillAmount());
+        assertEquals(1, replaced.getLrEntities().size());
+        assertEquals("new", replaced.getLrEntities().get(0).getLrNo());
+        assertEquals(
+                "other", billRepository.getBill("B2").getLrEntities().get(0).getLrNo());
+
+        billRepository.save(bill("B1", "2000", List.of()));
+        assertTrue(billRepository.getBill("B1").getLrEntities().isEmpty());
+    }
+
+    @Test
+    void failedReplacementRestoresBillAndOriginalLrs() throws SQLException {
+        billRepository.save(bill("B1", "1000", List.of(new LREntity("B1", "old", "1"))));
+        assertThrows(
+                SQLException.class,
+                () -> billRepository.save(bill(
+                        "B1", "2000", List.of(new LREntity("B1", "new", "2"), new LREntity("B1", "invalid", null)))));
+
+        BillEntity restored = billRepository.getBill("B1");
+        assertEquals("1000", restored.getBillAmount());
+        assertEquals(1, restored.getLrEntities().size());
+        assertEquals("old", restored.getLrEntities().get(0).getLrNo());
+        assertEquals("1", restored.getLrEntities().get(0).getPm());
+        assertTrue(conn.getAutoCommit());
+    }
+
+    @Test
+    void failedLrDeletionRollsBackBillDeletion() throws SQLException {
+        billRepository.save(bill("B1", "1000", List.of(new LREntity("B1", "old", "1"))));
+        try (var statement = conn.createStatement()) {
+            statement.execute("CREATE TRIGGER fail_lr_delete BEFORE DELETE ON LR_Table "
+                    + "BEGIN SELECT RAISE(ABORT, 'delete failed'); END");
+        }
+        assertThrows(SQLException.class, () -> billRepository.deleteBill("B1"));
+        assertEquals("old", billRepository.getBill("B1").getLrEntities().get(0).getLrNo());
+        assertTrue(conn.getAutoCommit());
+    }
+
+    @Test
     void deleteBillRemovesBillAndLrRows() throws SQLException {
         billRepository.save(BillEntity.builder()
                 .billNo("B1")
@@ -132,5 +179,18 @@ class BillRepositoryTest {
         List<BillEntity> bills = billRepository.getBills();
 
         assertEquals(2, bills.size());
+    }
+
+    private static BillEntity bill(String billNo, String amount, List<LREntity> lrs) {
+        return BillEntity.builder()
+                .billNo(billNo)
+                .supplierName("Supplier A")
+                .buyerName("Buyer A")
+                .billDate("01-01-2026")
+                .transport("Transport A")
+                .lrDate("02-01-2026")
+                .billAmount(amount)
+                .lrEntities(lrs)
+                .build();
     }
 }
