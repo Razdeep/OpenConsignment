@@ -1,5 +1,6 @@
 package openconsignment.repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,42 +28,44 @@ public class PaymentRepository {
     }
 
     public void savePayment(PaymentEntity paymentEntity) throws SQLException {
+        Connection connection = databaseManager.getConnection();
         try {
-            databaseManager.getConnection().setAutoCommit(false);
-            deletePayment(paymentEntity.getVoucherNo());
-            String sql = SqlLoader.load(SqlQuery.PAYMENT_SAVE);
-            PreparedStatement preparedStatement =
-                    databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, paymentEntity.getVoucherNo());
-            preparedStatement.setString(2, paymentEntity.getVoucherDate());
-            preparedStatement.setString(3, paymentEntity.getSupplierName());
-            preparedStatement.setString(4, paymentEntity.getTotalAmount());
-            preparedStatement.execute();
-
-            sql = SqlLoader.load(SqlQuery.PAYMENT_SAVE_ITEM);
-
-            if (null != paymentEntity.getItems()) {
-                for (PaymentItemEntity paymentItem : paymentEntity.getItems()) {
-
-                    preparedStatement = databaseManager.getConnection().prepareStatement(sql);
+            WriteTransaction.run(connection, () -> {
+                deletePaymentRows(connection, paymentEntity.getVoucherNo());
+                try (PreparedStatement preparedStatement =
+                        connection.prepareStatement(SqlLoader.load(SqlQuery.PAYMENT_SAVE))) {
                     preparedStatement.setString(1, paymentEntity.getVoucherNo());
-                    preparedStatement.setString(2, paymentItem.getBuyerName());
-                    preparedStatement.setString(3, paymentItem.getBillNo());
-                    preparedStatement.setString(4, paymentItem.getBillDate());
-                    preparedStatement.setString(5, paymentItem.getBillAmount());
-                    preparedStatement.setString(6, paymentItem.getDueAmount());
-                    preparedStatement.setString(7, paymentItem.getAmountPaid());
-                    preparedStatement.setString(8, paymentItem.getBank());
-                    preparedStatement.setString(9, paymentItem.getDdNo());
-                    preparedStatement.setString(10, paymentItem.getDdDate());
-
+                    preparedStatement.setString(2, paymentEntity.getVoucherDate());
+                    preparedStatement.setString(3, paymentEntity.getSupplierName());
+                    preparedStatement.setString(4, paymentEntity.getTotalAmount());
                     preparedStatement.execute();
                 }
-            }
-            databaseManager.getConnection().commit();
+
+                String sql = SqlLoader.load(SqlQuery.PAYMENT_SAVE_ITEM);
+
+                if (null != paymentEntity.getItems()) {
+                    for (PaymentItemEntity paymentItem : paymentEntity.getItems()) {
+
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                            preparedStatement.setString(1, paymentEntity.getVoucherNo());
+                            preparedStatement.setString(2, paymentItem.getBuyerName());
+                            preparedStatement.setString(3, paymentItem.getBillNo());
+                            preparedStatement.setString(4, paymentItem.getBillDate());
+                            preparedStatement.setString(5, paymentItem.getBillAmount());
+                            preparedStatement.setString(6, paymentItem.getDueAmount());
+                            preparedStatement.setString(7, paymentItem.getAmountPaid());
+                            preparedStatement.setString(8, paymentItem.getBank());
+                            preparedStatement.setString(9, paymentItem.getDdNo());
+                            preparedStatement.setString(10, paymentItem.getDdDate());
+
+                            preparedStatement.execute();
+                        }
+                    }
+                }
+            });
         } catch (SQLException ex) {
-            databaseManager.getConnection().rollback();
             log.error(ex.toString(), ex);
+            throw ex;
         }
     }
 
@@ -172,26 +175,23 @@ public class PaymentRepository {
     }
 
     public void deletePayment(String voucherNo) throws SQLException {
+        Connection connection = databaseManager.getConnection();
         try {
-            databaseManager.getConnection().setAutoCommit(false);
-
-            String sql = SqlLoader.load(SqlQuery.PAYMENT_DELETE);
-
-            PreparedStatement preparedStatement =
-                    databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, voucherNo);
-            preparedStatement.execute();
-
-            sql = SqlLoader.load(SqlQuery.PAYMENT_DELETE_ITEMS);
-
-            preparedStatement = databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, voucherNo);
-            preparedStatement.execute();
-            databaseManager.getConnection().commit();
+            WriteTransaction.run(connection, () -> deletePaymentRows(connection, voucherNo));
         } catch (SQLException ex) {
-            Utils.showAlert(ex.toString());
             log.error(ex.toString(), ex);
-            databaseManager.getConnection().rollback();
+            throw ex;
+        }
+    }
+
+    private void deletePaymentRows(Connection connection, String voucherNo) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SqlLoader.load(SqlQuery.PAYMENT_DELETE))) {
+            statement.setString(1, voucherNo);
+            statement.execute();
+        }
+        try (PreparedStatement statement = connection.prepareStatement(SqlLoader.load(SqlQuery.PAYMENT_DELETE_ITEMS))) {
+            statement.setString(1, voucherNo);
+            statement.execute();
         }
     }
 

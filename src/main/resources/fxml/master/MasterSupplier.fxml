@@ -1,89 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.Group?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.*?>
-<?import java.net.URL?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
-<Group xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="openconsignment.controller.master.SupplierController">
-    <children>
-        <AnchorPane id="AnchorPane" prefHeight="536.0" prefWidth="672.0" styleClass="mainFxmlClass">
-            <children>
-                <Text layoutX="237.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Master Supplier">
-                    <font>
-                        <Font size="31.0"/>
-                    </font>
-                </Text>
-                <Button fx:id="add_btn" layoutX="472.0" layoutY="139.0" onAction="#addMaster" prefHeight="72.0"
-                        prefWidth="157.0" text="Add">
-                    <graphic>
-                        <ImageView fitHeight="49.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../icons/MasterAdd.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<Group stylesheets="@/css/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.master.SupplierController">
+    <VBox prefWidth="717.0" prefHeight="540.0" spacing="20.0" styleClass="screen">
+        <VBox spacing="5.0">
+            <Label text="DIRECTORY" styleClass="eyebrow" />
+            <Label text="Master Supplier" styleClass="page-title" />
+        </VBox>
+        <HBox spacing="24.0" VBox.vgrow="ALWAYS">
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+                <Label text="Suppliers" styleClass="field-label" />
+                <ListView fx:id="listView" prefWidth="320.0" VBox.vgrow="ALWAYS" />
+                <HBox spacing="10.0">
+                    <Button fx:id="delete_btn" text="Delete" onAction="#deleteMaster" prefWidth="116.0" prefHeight="36.0" graphicTextGap="7.0" styleClass="danger-button">
+                        <graphic><ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true"><image><Image url="@../../icons/MasterDelete.png" /></image></ImageView></graphic>
+                    </Button>
+                    <Button fx:id="refresh_btn" text="Refresh" onAction="#refreshList" prefWidth="116.0" prefHeight="36.0" graphicTextGap="7.0" styleClass="secondary-button">
+                        <graphic><ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true"><image><Image url="@../../icons/Refresh.png" /></image></ImageView></graphic>
+                    </Button>
+                </HBox>
+            </VBox>
+            <VBox spacing="12.0" prefWidth="300.0" styleClass="surface">
+                <Label text="Add supplier" styleClass="field-label" />
+                <TextField fx:id="add_field" promptText="Enter supplier to add" />
+                <Button fx:id="add_btn" text="Add" onAction="#addMaster" prefWidth="116.0" prefHeight="36.0" graphicTextGap="7.0" styleClass="primary-button">
+                    <graphic><ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true"><image><Image url="@../../icons/MasterAdd.png" /></image></ImageView></graphic>
                 </Button>
-                <ListView fx:id="listView" layoutX="67.0" layoutY="93.0" prefHeight="296.0" prefWidth="262.0"/>
-                <Button fx:id="delete_btn" contentDisplay="TOP" layoutX="67.0" layoutY="422.0"
-                           onAction="#deleteMaster" prefHeight="90.0" prefWidth="97.0" text="Delete">
-                    <graphic>
-                        <ImageView fitHeight="49.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../icons/MasterDelete.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
+                <Label text="Rename selected supplier" styleClass="field-label" />
+                <TextField fx:id="rename_field" promptText="Enter new supplier name" />
+                <Button fx:id="rename_btn" text="Rename" onAction="#renameMaster" prefWidth="116.0" prefHeight="36.0" graphicTextGap="7.0" styleClass="secondary-button">
+                    <graphic><ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true"><image><Image url="@../../icons/MasterRename.png" /></image></ImageView></graphic>
                 </Button>
-                <Button fx:id="refresh_btn" contentDisplay="TOP" layoutX="221.0" layoutY="422.0"
-                           onAction="#refreshList" prefHeight="90.0" prefWidth="108.0" text="Refresh">
-                    <graphic>
-                        <ImageView fitHeight="49.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../icons/Refresh.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <TextField fx:id="add_field" layoutX="353.0" layoutY="93.0" prefHeight="25.0" prefWidth="238.0"
-                           promptText="Enter Buyer to add">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </TextField>
-                <Button fx:id="rename_btn" layoutX="481.0" layoutY="305.0" onAction="#renameMaster" prefHeight="82.0"
-                           prefWidth="165.0" text="Rename">
-                    <graphic>
-                        <ImageView fitHeight="55.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../icons/MasterRename.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <TextField fx:id="rename_field" layoutX="342.0" layoutY="260.0" prefHeight="33.0" prefWidth="290.0"
-                              promptText="Enter new Buyer to replace the existing">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </TextField>
-            </children>
-        </AnchorPane>
-    </children>
+            </VBox>
+        </HBox>
+    </VBox>
 </Group>

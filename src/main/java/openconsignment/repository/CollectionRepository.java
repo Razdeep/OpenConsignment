@@ -1,5 +1,6 @@
 package openconsignment.repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +10,6 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import openconsignment.common.SqlLoader;
 import openconsignment.common.SqlQuery;
-import openconsignment.common.Utils;
 import openconsignment.di.DatabaseManager;
 import openconsignment.entity.BillEntity;
 import openconsignment.entity.CollectionEntity;
@@ -70,43 +70,43 @@ public class CollectionRepository {
     }
 
     public void saveCollection(CollectionEntity collectionEntity) throws SQLException {
+        Connection connection = databaseManager.getConnection();
         try {
-            databaseManager.getConnection().setAutoCommit(false);
-            deleteCollection(collectionEntity.getVoucherNo());
-            String sql = SqlLoader.load(SqlQuery.COLLECTION_SAVE);
-            PreparedStatement preparedStatement =
-                    databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, collectionEntity.getVoucherNo());
-            preparedStatement.setString(2, collectionEntity.getVoucherDate());
-            preparedStatement.setString(3, collectionEntity.getBuyerName());
-            preparedStatement.setString(4, collectionEntity.getTotalAmount());
-            preparedStatement.execute();
-
-            sql = SqlLoader.load(SqlQuery.COLLECTION_SAVE_ITEM);
-
-            if (null != collectionEntity.getItems()) {
-                for (CollectionItemEntity collectionItem : collectionEntity.getItems()) {
-
-                    preparedStatement = databaseManager.getConnection().prepareStatement(sql);
+            WriteTransaction.run(connection, () -> {
+                deleteCollectionRows(connection, collectionEntity.getVoucherNo());
+                try (PreparedStatement preparedStatement =
+                        connection.prepareStatement(SqlLoader.load(SqlQuery.COLLECTION_SAVE))) {
                     preparedStatement.setString(1, collectionEntity.getVoucherNo());
-                    preparedStatement.setString(2, collectionItem.getSupplierName());
-                    preparedStatement.setString(3, collectionItem.getBillNo());
-                    preparedStatement.setString(4, collectionItem.getBillDate());
-                    preparedStatement.setString(5, collectionItem.getBillAmount());
-                    preparedStatement.setString(6, collectionItem.getDue());
-                    preparedStatement.setString(7, collectionItem.getAmountCollected());
-                    preparedStatement.setString(8, collectionItem.getBank());
-                    preparedStatement.setString(9, collectionItem.getDdNo());
-                    preparedStatement.setString(10, collectionItem.getDdDate());
-
+                    preparedStatement.setString(2, collectionEntity.getVoucherDate());
+                    preparedStatement.setString(3, collectionEntity.getBuyerName());
+                    preparedStatement.setString(4, collectionEntity.getTotalAmount());
                     preparedStatement.execute();
                 }
-            }
 
-            databaseManager.getConnection().commit();
+                String sql = SqlLoader.load(SqlQuery.COLLECTION_SAVE_ITEM);
+
+                if (null != collectionEntity.getItems()) {
+                    for (CollectionItemEntity collectionItem : collectionEntity.getItems()) {
+
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                            preparedStatement.setString(1, collectionEntity.getVoucherNo());
+                            preparedStatement.setString(2, collectionItem.getSupplierName());
+                            preparedStatement.setString(3, collectionItem.getBillNo());
+                            preparedStatement.setString(4, collectionItem.getBillDate());
+                            preparedStatement.setString(5, collectionItem.getBillAmount());
+                            preparedStatement.setString(6, collectionItem.getDue());
+                            preparedStatement.setString(7, collectionItem.getAmountCollected());
+                            preparedStatement.setString(8, collectionItem.getBank());
+                            preparedStatement.setString(9, collectionItem.getDdNo());
+                            preparedStatement.setString(10, collectionItem.getDdDate());
+
+                            preparedStatement.execute();
+                        }
+                    }
+                }
+            });
 
         } catch (SQLException ex) {
-            databaseManager.getConnection().rollback();
             log.error(ex.toString(), ex);
             throw ex;
         }
@@ -171,26 +171,24 @@ public class CollectionRepository {
     }
 
     public void deleteCollection(String voucherNo) throws SQLException {
+        Connection connection = databaseManager.getConnection();
         try {
-            databaseManager.getConnection().setAutoCommit(false);
-
-            String sql = SqlLoader.load(SqlQuery.COLLECTION_DELETE);
-
-            PreparedStatement preparedStatement =
-                    databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, voucherNo);
-            preparedStatement.execute();
-
-            sql = SqlLoader.load(SqlQuery.COLLECTION_DELETE_ITEMS);
-
-            preparedStatement = databaseManager.getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, voucherNo);
-            preparedStatement.execute();
-            databaseManager.getConnection().commit();
+            WriteTransaction.run(connection, () -> deleteCollectionRows(connection, voucherNo));
         } catch (SQLException ex) {
-            Utils.showAlert(ex.toString());
             log.error(ex.toString(), ex);
-            databaseManager.getConnection().rollback();
+            throw ex;
+        }
+    }
+
+    private void deleteCollectionRows(Connection connection, String voucherNo) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SqlLoader.load(SqlQuery.COLLECTION_DELETE))) {
+            statement.setString(1, voucherNo);
+            statement.execute();
+        }
+        try (PreparedStatement statement =
+                connection.prepareStatement(SqlLoader.load(SqlQuery.COLLECTION_DELETE_ITEMS))) {
+            statement.setString(1, voucherNo);
+            statement.execute();
         }
     }
 

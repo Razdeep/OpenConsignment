@@ -1,71 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.Group?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.paint.RadialGradient?>
-<?import javafx.scene.paint.Stop?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
-<Group xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.111"
-       fx:controller="openconsignment.controller.master.MasterController">
-    <children>
-        <Text layoutX="246.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Master"
-              wrappingWidth="167.00001107156277">
-            <font>
-                <Font size="34.0"/>
-            </font>
-        </Text>
-        <Rectangle arcHeight="5.0" arcWidth="5.0" height="218.0" layoutX="14.0" layoutY="135.0" stroke="BLACK"
-                   strokeType="INSIDE" width="686.0">
-            <fill>
-                <RadialGradient centerX="0.5" centerY="0.5" focusAngle="-169.7" radius="1.0">
-                    <stops>
-                        <Stop color="#ffbf2e"/>
-                        <Stop color="#ffea00" offset="0.007662835249042145"/>
-                        <Stop color="#ed3b00" offset="1.0"/>
-                    </stops>
-                </RadialGradient>
-            </fill>
-        </Rectangle>
-        <Button fx:id="supplier_master_btn" contentDisplay="TOP" layoutX="43.0" layoutY="179.0"
-                   onAction="#showSupplierMaster" prefHeight="145.0" prefWidth="180.0" text="Supplier Master">
-            <graphic>
-                <ImageView fitHeight="99.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../icons/SupplierMaster.png"/>
-                    </image>
-                </ImageView>
-            </graphic>
-            <font>
-                <Font size="18.0"/>
-            </font>
-        </Button>
-        <Button fx:id="buyer_master_btn" contentDisplay="TOP" layoutX="257.0" layoutY="178.0"
-                   onAction="#showBuyerMaster" prefHeight="145.0" prefWidth="180.0" text="Buyer Master">
-            <graphic>
-                <ImageView fitHeight="99.0" fitWidth="127.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../icons/BuyerMaster.png"/>
-                    </image>
-                </ImageView>
-            </graphic>
-            <font>
-                <Font size="18.0"/>
-            </font>
-        </Button>
-        <Button fx:id="transport_master_btn" contentDisplay="TOP" layoutX="475.0" layoutY="177.0"
-                onAction="#showTransportMaster" prefHeight="145.0" prefWidth="180.0" text="Transport Master">
-            <graphic>
-                <ImageView fitHeight="99.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../icons/TransportMaster.png"/>
-                    </image>
-                </ImageView>
-            </graphic>
-            <font>
-                <Font size="18.0"/>
-            </font>
-        </Button>
-    </children>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<Group fx:id="root" stylesheets="@/css/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="openconsignment.controller.master.MasterController">
+    <VBox spacing="20.0" styleClass="screen">
+        <VBox spacing="5.0">
+            <Label text="DIRECTORY" styleClass="eyebrow" />
+            <Label text="Master" styleClass="page-title" />
+        </VBox>
+        <HBox spacing="16.0" alignment="CENTER_LEFT">
+            <Button fx:id="supplier_master_btn" text="Supplier Master" onAction="#showSupplierMaster" contentDisplay="TOP" graphicTextGap="12.0" prefWidth="200.0" prefHeight="160.0" styleClass="navigation-button">
+                <graphic><ImageView fitHeight="64.0" fitWidth="80.0" preserveRatio="true"><image><Image url="@../../icons/SupplierMaster.png" /></image></ImageView></graphic>
+            </Button>
+            <Button fx:id="buyer_master_btn" text="Buyer Master" onAction="#showBuyerMaster" contentDisplay="TOP" graphicTextGap="12.0" prefWidth="200.0" prefHeight="160.0" styleClass="navigation-button">
+                <graphic><ImageView fitHeight="64.0" fitWidth="80.0" preserveRatio="true"><image><Image url="@../../icons/BuyerMaster.png" /></image></ImageView></graphic>
+            </Button>
+            <Button fx:id="transport_master_btn" text="Transport Master" onAction="#showTransportMaster" contentDisplay="TOP" graphicTextGap="12.0" prefWidth="200.0" prefHeight="160.0" styleClass="navigation-button">
+                <graphic><ImageView fitHeight="64.0" fitWidth="80.0" preserveRatio="true"><image><Image url="@../../icons/TransportMaster.png" /></image></ImageView></graphic>
+            </Button>
+        </HBox>
+    </VBox>
 </Group>

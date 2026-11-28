@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/razdeep/openconsignment/actions/workflows/build.yml/badge.svg)](https://github.com/razdeep/openconsignment/actions/workflows/build.yml)
 [![Release](https://github.com/razdeep/openconsignment/actions/workflows/release.yml/badge.svg)](https://github.com/razdeep/openconsignment/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/razdeep/openconsignment/graph/badge.svg)](https://codecov.io/gh/razdeep/openconsignment)
 [![License: GPL v3](https://img.shields.io/github/license/razdeep/openconsignment)](LICENSE)
 [![Java 17](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/projects/jdk/17/)
 [![JavaFX 17](https://img.shields.io/badge/JavaFX-17-blue)](https://openjfx.io/)
@@ -22,8 +23,8 @@ SQLite storage and PDF ledger reports.
 - **Ledger reports** — generate buyer, supplier, and transport ledgers as
   PDFs (via JasperReports), including agewise-outstanding variants.
 - **Local-first storage** — data is kept in a local SQLite database
-  (`database.db`), with helper scripts to configure backups to a
-  private Git repository (see [Backups](#backups)).
+  (`database.db`), with built-in Git backup actions and separate backup
+  helper scripts (see [Backups](#backups)).
 
 ## Tech stack
 
@@ -32,10 +33,58 @@ SQLite storage and PDF ledger reports.
   `src/main/java/openconsignment/di`)
 - SQLite (via `sqlite-jdbc`) for storage
 - JasperReports for PDF report generation
+- JGit for built-in Git backup operations; SnakeYAML for configuration
 - SLF4J with Log4j 2 for asynchronous rolling-file logging
 - Gradle (Kotlin DSL) with the Shadow plugin for a single runnable JAR
 - JUnit 5, Mockito, and TestFX for testing; Spotless (`palantir-java-format`)
   for formatting; JaCoCo for coverage
+
+## Architecture
+
+OpenConsignment is a local desktop application. Its typical request flow is:
+
+```text
+JavaFX FXML / CSS
+    ↓
+Controllers (entry, history, master, report)
+    ↓
+Services (domain operations and report preparation)
+    ↓
+Repositories → SQL resources → SQLite database.db
+
+Services → JasperReports templates → report.pdf → system PDF viewer
+MainController → BackupService → JGit / backup repository
+```
+
+- **Startup and dependency injection:** `Launcher` creates the Dagger
+  `AppComponent`, validates configuration, and loads `Main.fxml` with the
+  Dagger controller factory. `DatabaseModule`, `ConfigurationModule`, and
+  `ControllerModule` provide the shared dependencies and controller bindings.
+- **Presentation:** FXML defines the screens and binds them to JavaFX
+  controllers. `MainController` handles top-level navigation, while
+  `ViewLoader` loads nested or center views with animated transitions.
+  Controllers handle form state, validation, user feedback, and calls to
+  services; some also invoke shared utilities directly.
+- **Domain and persistence:** Services coordinate repositories and prepare
+  data for reports. Repositories use JDBC through the shared, lazily opened
+  `DatabaseManager` connection and load queries from `sql/` via `SqlQuery` and
+  `SqlLoader`. Entities represent persisted bills, vouchers, and their items;
+  models include UI table rows and ledger/report rows.
+- **Transaction boundaries:** Bill, collection, and payment saves replace the
+  existing header and associated LR or voucher items in a single transaction.
+  Their deletes also cover header and item rows in one transaction.
+  `WriteTransaction` commits on success and attempts rollback on failure,
+  restoring auto-commit when it was enabled and the transaction ended safely.
+  It owns the write on the shared connection, not a nested transaction. Payment
+  save failures are reported without clearing the entered form, so the user can
+  retry.
+- **Balances and reports:** Pending buyer collections and supplier payments
+  are calculated by SQL from bill amounts and recorded voucher items. Services
+  prepare ledger rows and report parameters; `Utils.generatePdf` compiles the
+  bundled JRXML, fills it with the data, and exports `report.pdf`.
+- **Backup and logging:** Built-in backup actions run through `BackupService`
+  using JGit; the separate scripts use the Git CLI. SLF4J/Log4j 2 provides
+  application logging. See [Backups](#backups) for important limitations.
 
 ## Getting started
 
@@ -116,7 +165,7 @@ the new file. Existing configuration files are never overwritten.
 Edit the generated file to set your organization name:
 
 ```yaml
-organizationName: "YOUR ORGANIZATION"
+organization: "YOUR ORGANIZATION"
 ```
 
 This name appears on the welcome screen and in buyer, supplier, and transport
@@ -130,9 +179,9 @@ required property also fails validation. The application needs write access to t
 JAR directory when creating the file for the first time.
 
 For Gradle/IDE runs, the file is created and read in the working directory (the
-repository root for `./gradlew run`). The example file is included in `build/libs/`
-when building. Restart the application after editing the file. Updating the JAR
-does not replace an existing configuration file.
+repository root for `./gradlew run`). The template is packaged inside the JAR.
+Restart the application after editing the file. Updating the JAR does not replace
+an existing configuration file.
 
 ## Logging
 
@@ -168,12 +217,13 @@ exception details, so restrict access and review them before sharing.
 ./gradlew test
 ```
 
-- **Unit tests** (`src/test/java/openconsignment/service`,
-  `.../repository`) cover the service layer (mocked repositories, mocked
-  static `Utils.generatePdf` calls) and the repository layer (real
-  in-memory SQLite, schema-initialized from `src/main/resources/sql/init.sql`).
-- **Functional tests** (`src/test/java/functional`) use TestFX to smoke-test
-  the JavaFX UI and check bill-entry layout.
+- **Unit and integration tests** (`src/test/java/openconsignment`) cover
+  configuration, utilities, services, and repositories. Repository tests use
+  in-memory SQLite initialized from `src/main/resources/sql/init.sql`, including
+  transaction rollback and multi-voucher balance checks; service tests mock
+  their collaborators and PDF generation where appropriate.
+- **Functional tests** (`src/test/java/functional`) use TestFX for FXML layout,
+  navigation transitions, entry and master workflows, and report actions.
 
 Tests run headlessly by default. To debug with visible JavaFX windows:
 
@@ -192,6 +242,15 @@ To run a specific group of tests:
 Every `test` run also produces a JaCoCo coverage report at
 `build/reports/jacoco/test/html/index.html`. The test results are available at
 `build/reports/tests/test/index.html`.
+
+The build workflow uploads the JaCoCo XML report to Codecov; the badge at the
+top of this README shows coverage for the default branch. To enable it, add the
+repository in Codecov and configure its upload token as the GitHub Actions
+repository secret `CODECOV_TOKEN`. Fork pull requests do not receive repository
+secrets; their uploads require Codecov's tokenless upload support to be enabled
+where applicable. Upload failures do not fail the build, so check the Codecov
+step logs if coverage is missing. The badge appears after Codecov receives a
+report for the default branch.
 
 ## Code style
 
@@ -213,22 +272,43 @@ src/main/java/openconsignment/
 ├── service/      Business logic, one per domain (bill, buyer, supplier, ...)
 ├── repository/   JDBC/SQL access, one per domain
 ├── entity/       Persistence-shaped data classes
-├── model/        Read-model/report row classes (ledgers, etc.)
-└── common/       Shared utilities (PDF generation, constants, ...)
+├── model/        UI table and report row classes
+├── common/       View loading, configuration, SQL loading, PDF utilities, ...
+└── exception/    Application-specific exceptions
 src/main/resources/
 ├── fxml/         JavaFX view definitions
 ├── jrxml/        JasperReports report templates
 ├── css/          Shared and feature-specific stylesheets
 ├── icons/        Application and toolbar icons
-└── sql/          Database schema (init.sql)
+├── sql/          Schema and domain-specific SQL queries
+├── application.yaml  First-run configuration template
+└── log4j2.xml    Logging configuration
 src/test/java/
-├── openconsignment/  Service, repository, and dependency-injection tests
-└── functional/       JavaFX UI tests
+├── openconsignment/  Common, service, repository, and DI tests
+└── functional/       JavaFX workflow, layout, and navigation tests
 scripts/              Launchers and financial-year backup helpers
 gradle/libs.versions.toml  Dependency and plugin versions
 ```
 
 ## Backups
+
+The application's **check sync**, **upload**, and **download** actions use
+`BackupService` and JGit with the `github` settings in `application.yaml`:
+`repository`, `username`, `token`, `branch`, and `remote`. The repository
+setting is also used as the local checkout path. Check sync pulls and compares
+the local and checkout database hashes; upload copies the local database into
+an existing checkout, commits changes, and pushes; download pulls and replaces the
+local database after closing its connection. These actions run in the
+background. Download overwrites local data, so keep an independent backup before
+using it.
+
+**Security warning:** the current built-in backup implementation logs the
+configured GitHub token during pull and push. Avoid using these actions until
+this is fixed; restrict access to existing logs and rotate
+any token that may have been exposed. Configuration files containing tokens
+should also be kept private.
+
+### Backup helper scripts
 
 `scripts/configure-backup.py` generates year-scoped `upload`/`download`
 scripts (from `scripts/templates`) for backing up `database.db` to a

@@ -315,15 +315,13 @@ public class PaymentEntryController implements Initializable {
             paymentService.savePayment(paymentEntity);
             Utils.showAlert("Saved Successfully", AlertType.INFORMATION);
             clearAllFields();
+            paymentItems.clear();
+            refreshPaymentTableView();
+            updateLastVoucher();
         } catch (SQLException ex) {
             Utils.showAlert(ex.toString());
             log.error(ex.toString(), ex);
         }
-
-        clearAllFields();
-        paymentItems.clear();
-        refreshPaymentTableView();
-        updateLastVoucher();
     }
 
     private void updateLastVoucher() {
